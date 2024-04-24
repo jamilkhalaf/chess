@@ -1,0 +1,1 @@
+# my initial notes for the chess project
