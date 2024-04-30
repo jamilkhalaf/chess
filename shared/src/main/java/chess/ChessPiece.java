@@ -58,7 +58,7 @@ public class ChessPiece {
         Collection<ChessMove> valid_moves = new ArrayList<>();
         if (piece.type == PieceType.PAWN) {
 
-            int[][] directions = {{1,0},{1,1},{1,-1}};
+            int[][] directions = {{1,0},{1,1},{1,-1},{2,0}};
             for (int[] direction : directions) {
                 int newRow = myPosition.getRow() + direction[0];
                 int newCol = myPosition.getColumn() + direction[1];
@@ -67,8 +67,17 @@ public class ChessPiece {
                     if (direction[0] == 1 && direction[1] == 0) {
                         if (board.getPiece(newPosition) == null) {
                             valid_moves.add(new ChessMove(myPosition, newPosition, null));
+                        } else {
+                            break;
+                        }
+                    }
+                    else if ((direction[0] == 2 && direction[1] == 0) && (myPosition.getRow() == 2)) {
+                        ChessPosition one_move_position = new ChessPosition(3, myPosition.getColumn());
+                        if ((board.getPiece(newPosition) == null) && (board.getPiece(one_move_position) == null))  {
+                            valid_moves.add(new ChessMove(myPosition, newPosition, null));
                         }
                         else {break;}
+
                     } else {
                         if (board.getPiece(newPosition).pieceColor != piece.pieceColor) {
                             valid_moves.add(new ChessMove(myPosition, newPosition, null));
