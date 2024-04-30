@@ -72,5 +72,37 @@ public class ChessBoard {
             addPiece(position,piece);
         }
 
+        //black pieces initialization
+        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+        position = new ChessPosition(8,1);
+        addPiece(position,piece);
+        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+        position = new ChessPosition(8,2);
+        addPiece(position,piece);
+        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+        position = new ChessPosition(8,3);
+        addPiece(position,piece);
+        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+        position = new ChessPosition(8,4);
+        addPiece(position,piece);
+        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+        position = new ChessPosition(8,5);
+        addPiece(position,piece);
+        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+        position = new ChessPosition(8,6);
+        addPiece(position,piece);
+        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+        position = new ChessPosition(8,7);
+        addPiece(position,piece);
+        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+        position = new ChessPosition(1,8);
+        addPiece(position,piece);
+        //add black pawns
+        for (int i = 1; i<=8; i++) {
+            piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+            position = new ChessPosition(7,i);
+            addPiece(position,piece);
+        }
+
     }
 }
