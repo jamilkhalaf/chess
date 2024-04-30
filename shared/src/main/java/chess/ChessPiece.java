@@ -57,6 +57,7 @@ public class ChessPiece {
         ChessPiece piece = board.getPiece(myPosition);
         Collection<ChessMove> valid_moves = new ArrayList<>();
         if (piece.type == PieceType.PAWN) {
+
             int[][] directions = {{1,0},{1,1},{1,-1}};
             for (int[] direction : directions) {
                 int newRow = myPosition.getRow() + direction[0];
@@ -69,7 +70,7 @@ public class ChessPiece {
                         }
                         else {break;}
                     } else {
-                        if (board.getPiece(newPosition).pieceColor == ChessGame.TeamColor.BLACK) {
+                        if (board.getPiece(newPosition).pieceColor != piece.pieceColor) {
                             valid_moves.add(new ChessMove(myPosition, newPosition, null));
                         }
                         else {break;}
