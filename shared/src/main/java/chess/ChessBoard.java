@@ -31,7 +31,7 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) {
 //        throw new RuntimeException("Not implemented");
-        if ((position.getRow()<1) || (position.getRow() > 8) || (position.getColumn() > 8)|| (position.getColumn() > 8)) {
+        if ((position.getRow()<1) || (position.getRow() > 8) || (position.getColumn() > 8) || (position.getColumn() < 1)) {
         return board[position.getRow()-1][position.getColumn()-1];}
 
         else {return null;}
