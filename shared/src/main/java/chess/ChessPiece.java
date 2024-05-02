@@ -65,7 +65,7 @@ public class ChessPiece {
 
             for (int[] p_direction : pawn_directions) {
                 // white pieces
-                if (p_direction[0] > 0) {
+                if ((p_direction[0] > 0) && (piece.getTeamColor() == ChessGame.TeamColor.WHITE)) {
                     newRow = myPosition.getRow() + p_direction[0];
                     newCol = myPosition.getColumn() + p_direction[1];
 
@@ -91,22 +91,21 @@ public class ChessPiece {
                         }
                     }
                     else if ((p_direction[1] != 0) && (newRow<=7)) {
-                        if (board.getPiece(pawn_newPosition) == null) {break;}
-                        else {valid_moves.add(new ChessMove(myPosition, pawn_newPosition, null));}
+                        if ((board.getPiece(pawn_newPosition) != null) && (board.getPiece(pawn_newPosition).getTeamColor() == ChessGame.TeamColor.BLACK)){
+                            valid_moves.add(new ChessMove(myPosition, pawn_newPosition, null));
+                        }
                     }
                     else if ((p_direction[1] != 0) && (newRow==8)) {
-                        if (board.getPiece(pawn_newPosition) == null) {break;}
-                        else {
+                        if ((board.getPiece(pawn_newPosition) != null) && (board.getPiece(pawn_newPosition).getTeamColor() == ChessGame.TeamColor.BLACK)){
                             valid_moves.add(new ChessMove(myPosition, pawn_newPosition, PieceType.QUEEN));
                             valid_moves.add(new ChessMove(myPosition, pawn_newPosition, PieceType.BISHOP));
                             valid_moves.add(new ChessMove(myPosition, pawn_newPosition, PieceType.KNIGHT));
                             valid_moves.add(new ChessMove(myPosition, pawn_newPosition, PieceType.ROOK));
                         }
                     }
-                    else {break;}
                 }
                 //black pieces
-                if (p_direction[0] < 0) {
+                if ((p_direction[0] < 0) && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
                     newRow = myPosition.getRow() + p_direction[0];
                     newCol = myPosition.getColumn() + p_direction[1];
 
@@ -132,19 +131,17 @@ public class ChessPiece {
                         }
                     }
                     else if ((p_direction[1] != 0) && (newRow>=2)) {
-                        if (board.getPiece(pawn_newPosition) == null) {break;}
-                        else {valid_moves.add(new ChessMove(myPosition, pawn_newPosition, null));}
+                        if ((board.getPiece(pawn_newPosition) != null) && (board.getPiece(pawn_newPosition).getTeamColor() == ChessGame.TeamColor.WHITE)){
+                            valid_moves.add(new ChessMove(myPosition, pawn_newPosition, null));}
                     }
                     else if ((p_direction[1] != 0) && (newRow==1)) {
-                        if (board.getPiece(pawn_newPosition) == null) {break;}
-                        else {
+                        if ((board.getPiece(pawn_newPosition) != null) && (board.getPiece(pawn_newPosition).getTeamColor() == ChessGame.TeamColor.WHITE)) {
                             valid_moves.add(new ChessMove(myPosition, pawn_newPosition, PieceType.QUEEN));
                             valid_moves.add(new ChessMove(myPosition, pawn_newPosition, PieceType.BISHOP));
                             valid_moves.add(new ChessMove(myPosition, pawn_newPosition, PieceType.KNIGHT));
                             valid_moves.add(new ChessMove(myPosition, pawn_newPosition, PieceType.ROOK));
                         }
                     }
-                    else {break;}
                 }
             }
         }
@@ -171,6 +168,17 @@ public class ChessPiece {
                 }
             }
         }
+
+        if (piece.type == PieceType.KING) {
+            int[][] king_directions = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}, {1,1}, {1,-1}, {-1,-1}, {-1,1}};
+            for (int[] r_direction : king_directions) {
+                newRow = myPosition.getRow() + r_direction[0];
+                newCol = myPosition.getColumn() + r_direction[1];
+
+            }
+        }
+
+
 
         return valid_moves;
     }
