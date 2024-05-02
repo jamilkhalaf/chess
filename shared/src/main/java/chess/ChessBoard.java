@@ -12,11 +12,6 @@ import java.util.Objects;
 public class ChessBoard {
     private final ChessPiece[][] board = new ChessPiece[8][8];
     public ChessBoard() {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                board[i][j] = null;
-            }
-        }
     }
 
     /**
