@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -7,8 +10,13 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    ChessPiece[][] board = new ChessPiece[8][8];
+    private final ChessPiece[][] board = new ChessPiece[8][8];
     public ChessBoard() {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                board[i][j] = null;
+            }
+        }
     }
 
     /**
@@ -31,10 +39,11 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) {
 //        throw new RuntimeException("Not implemented");
-        if ((position.getRow()<1) || (position.getRow() > 8) || (position.getColumn() > 8) || (position.getColumn() < 1)) {
-        return board[position.getRow()-1][position.getColumn()-1];}
-
-        else {return null;}
+        if (position.getRow() < 1 || position.getRow() > 8 || position.getColumn() > 8 || position.getColumn() < 1) {
+            throw new IllegalArgumentException("Position is out of bounds.");
+        } else {
+            return board[position.getRow() - 1][position.getColumn() - 1]; // Return the piece at the specified position
+        }
     }
 
     /**
@@ -44,8 +53,10 @@ public class ChessBoard {
     public void resetBoard() {
 //        throw new RuntimeException("Not implemented");
         //the white pieces
-        ChessPiece piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-        ChessPosition position = new ChessPosition(1,1);
+        ChessPiece piece;
+        ChessPosition position;
+        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        position = new ChessPosition(1,1);
         addPiece(position,piece);
         piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
         position = new ChessPosition(1,2);
@@ -53,10 +64,10 @@ public class ChessBoard {
         piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
         position = new ChessPosition(1,3);
         addPiece(position,piece);
-        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
         position = new ChessPosition(1,4);
         addPiece(position,piece);
-        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
         position = new ChessPosition(1,5);
         addPiece(position,piece);
         piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
@@ -69,9 +80,9 @@ public class ChessBoard {
         position = new ChessPosition(1,8);
         addPiece(position,piece);
         //add white pawns
-        for (int i = 1; i<=8; i++) {
+        for (int pos = 1; pos<=8; pos++) {
             piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-            position = new ChessPosition(2,i);
+            position = new ChessPosition(2,pos);
             addPiece(position,piece);
         }
 
@@ -85,10 +96,10 @@ public class ChessBoard {
         piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
         position = new ChessPosition(8,3);
         addPiece(position,piece);
-        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
         position = new ChessPosition(8,4);
         addPiece(position,piece);
-        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
         position = new ChessPosition(8,5);
         addPiece(position,piece);
         piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
@@ -98,14 +109,26 @@ public class ChessBoard {
         position = new ChessPosition(8,7);
         addPiece(position,piece);
         piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
-        position = new ChessPosition(1,8);
+        position = new ChessPosition(8,8);
         addPiece(position,piece);
         //add black pawns
-        for (int i = 1; i<=8; i++) {
+        for (int pos = 1; pos<=8; pos++) {
             piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-            position = new ChessPosition(7,i);
+            position = new ChessPosition(7,pos);
             addPiece(position,piece);
         }
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessBoard that = (ChessBoard) o;
+        return Objects.deepEquals(board, that.board);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(board);
     }
 }
