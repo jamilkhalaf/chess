@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import java.util.HashSet;
 import java.util.Set;
 
-import static passoffTests.TestFactory.*;
+import static passoff.TestFactory.*;
 
 public class ChessGameTests {
     @Test
