@@ -68,7 +68,7 @@ public class ChessPiece {
                 if ((p_direction[0] > 0) && (piece.getTeamColor() == ChessGame.TeamColor.WHITE)) {
                     newRow = myPosition.getRow() + p_direction[0];
                     newCol = myPosition.getColumn() + p_direction[1];
-
+                    if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) {continue;}
                     ChessPosition pawn_newPosition = new ChessPosition(newRow, newCol);
                     if ((p_direction[1] == 0) && (p_direction[0] != 2) && (newRow <= 7)) {
                         if (board.getPiece(pawn_newPosition) == null) {
@@ -108,6 +108,8 @@ public class ChessPiece {
                 if ((p_direction[0] < 0) && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
                     newRow = myPosition.getRow() + p_direction[0];
                     newCol = myPosition.getColumn() + p_direction[1];
+
+                    if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) {continue;}
 
                     ChessPosition pawn_newPosition = new ChessPosition(newRow, newCol);
                     if ((p_direction[1] == 0) && (p_direction[0] != -2) && (newRow >=2)) {
