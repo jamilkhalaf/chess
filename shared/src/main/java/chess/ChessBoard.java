@@ -9,7 +9,7 @@ import java.util.Objects;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessBoard {
+public class ChessBoard implements Cloneable {
     private final ChessPiece[][] board = new ChessPiece[8][8];
     public ChessBoard() {
     }
@@ -34,11 +34,11 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) {
 //        throw new RuntimeException("Not implemented");
-//        if (position.getRow() < 1 || position.getRow() > 8 || position.getColumn() > 8 || position.getColumn() < 1) {
-//            throw new IllegalArgumentException("Position is out of bounds.");
-//        } else {
-            return board[position.getRow() - 1][position.getColumn() - 1]; // Return the piece at the specified position
-//        }
+        if (position == null) {
+            return null;
+        }
+        return board[position.getRow() - 1][position.getColumn() - 1];
+
     }
 
     /**
@@ -112,6 +112,19 @@ public class ChessBoard {
             position = new ChessPosition(7,pos);
             addPiece(position,piece);
         }
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        ChessBoard clone = (ChessBoard) super.clone();
+        for (int i = 0; i < 8; i++) {
+            clone.board[i] = Arrays.copyOf(board[i], board[i].length);
+            for (int j = 0; j < 8; j++) {
+                clone.board[i][j] = (ChessPiece) board[i][j].clone();
+            }
+        }
+
+        return clone;
     }
 
     @Override
