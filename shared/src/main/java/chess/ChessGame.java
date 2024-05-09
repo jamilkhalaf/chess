@@ -55,7 +55,19 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
 //        throw new RuntimeException("Not implemented");
         ChessPiece piece = board.getPiece(startPosition);
-        return piece.pieceMoves(board,startPosition);
+        ChessGame.TeamColor color = board.getPiece(startPosition).getTeamColor();
+        Collection<ChessMove> valid_moves = piece.pieceMoves(board,startPosition);
+        for (ChessMove move : valid_moves) {
+            try {
+                makeMove(move);
+            }
+            catch (InvalidMoveException e) {
+                System.out.println("Invalid move");
+            }
+
+
+        }
+        return valid_moves;
     }
 
     /**
@@ -64,9 +76,34 @@ public class ChessGame {
      * @param move chess move to preform
      * @throws InvalidMoveException if move is invalid
      */
-    public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
 
+    public void makeMove(ChessMove move) throws InvalidMoveException {
+//        throw new RuntimeException("Not implemented");
+        ChessPosition startPosition = move.startPosition;
+        ChessPosition endPosition = move.endPosition;
+        ChessPiece piece = board.getPiece(startPosition);
+
+        ChessGame.TeamColor teamColor = piece.getTeamColor();
+        for (ChessMove move_1 : validMoves(startPosition)) {
+            if ((move_1 == move) && (getTeamTurn()==teamColor)) {
+                board.addPiece(startPosition,null);
+                board.addPiece(endPosition,piece);
+                if (isInCheck(teamColor)) {
+                    // Reverse the move
+                    board.addPiece(startPosition, piece);
+                    board.addPiece(endPosition, null);
+                    throw new InvalidMoveException("Move puts own king in check");
+                }
+                else {
+                    if (teamColor == TeamColor.WHITE) {
+                        setTeamTurn(TeamColor.BLACK);
+                    }
+                    if (teamColor == TeamColor.BLACK) {
+                        setTeamTurn(TeamColor.WHITE);
+                    }
+                }
+            }
+        }
 
 
     }
@@ -79,6 +116,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         throw new RuntimeException("Not implemented");
+
     }
 
     /**
