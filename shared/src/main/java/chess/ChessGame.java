@@ -132,20 +132,23 @@ public class ChessGame {
             throw new InvalidMoveException();
         }
 
-        try {
-            tryMove(move);
-            board.addPiece(startPosition,null);
-            board.addPiece(endPosition,piece);
-            if (color == TeamColor.BLACK) {
-                setTeamTurn(TeamColor.WHITE);
-            }
-            else {
-                setTeamTurn(TeamColor.BLACK);
+
+        Collection<ChessMove> valid_moves = validMoves(move.getStartPosition());
+        for (ChessMove move_1 : valid_moves) {
+            if (move_1.equals(move)) {
+                board.addPiece(startPosition,null);
+                board.addPiece(endPosition,piece);
+                if (color == TeamColor.BLACK) {
+                    setTeamTurn(TeamColor.WHITE);
+                }
+                else {
+                    setTeamTurn(TeamColor.BLACK);
+                }
             }
         }
-        catch (InvalidMoveException e) {
-            throw new InvalidMoveException();
-        }
+
+
+
 
 
     }
