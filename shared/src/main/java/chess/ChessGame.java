@@ -15,7 +15,9 @@ public class ChessGame {
     private ChessBoard board = new ChessBoard();
     private boolean isGameOver = false;
     private TeamColor teamTurn = TeamColor.WHITE;
-
+    private ChessMove lastMove;
+    private boolean isEnPassant = false;
+    private ChessPosition enPassantPosition;
 
     public ChessGame() {
         board.resetBoard();
@@ -39,6 +41,15 @@ public class ChessGame {
         this.teamTurn = team;
     }
 
+
+    public void setLastMove(ChessMove lastMove) {
+        this.lastMove = lastMove;
+    }
+
+    public ChessMove getLastMove() {
+        return lastMove;
+    }
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
@@ -58,17 +69,51 @@ public class ChessGame {
 //        throw new RuntimeException("Not implemented");
         ChessPiece piece = board.getPiece(startPosition);
         Collection<ChessMove> valid_moves = piece.pieceMoves(board,startPosition);
+
+        ChessGame.TeamColor teamColor = piece.getTeamColor();
+        int column = startPosition.getColumn();
+        // enPassant for pawns
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+            if ((startPosition.getRow() == 5) && (teamColor == TeamColor.WHITE)) {
+
+                if ((lastMove.endPosition.getColumn() == column + 1) && (lastMove.endPosition.getRow() == 5)) {
+                    valid_moves.add(new ChessMove(startPosition,new ChessPosition(startPosition.getRow()+1, startPosition.getColumn()+1),null));
+                    isEnPassant = true;
+                    enPassantPosition = lastMove.endPosition;
+                }
+                if ((lastMove.endPosition.getColumn() == column -1)&& (lastMove.endPosition.getRow() == 5)) {
+                    valid_moves.add(new ChessMove(startPosition,new ChessPosition(startPosition.getRow()+1, startPosition.getColumn()-1),null));
+                    isEnPassant = true;
+                    enPassantPosition = lastMove.endPosition;
+                }
+            }
+            else if ((startPosition.getRow() == 4) && (teamColor == TeamColor.BLACK)) {
+                if ((lastMove.endPosition.getColumn() == column + 1)&& (lastMove.endPosition.getRow() == 4)) {
+                    valid_moves.add(new ChessMove(startPosition,new ChessPosition(startPosition.getRow()-1, startPosition.getColumn()+1),null));
+                    isEnPassant = true;
+                    enPassantPosition = lastMove.endPosition;
+                }
+                if ((lastMove.endPosition.getColumn() == column -1)&& (lastMove.endPosition.getRow() == 4)) {
+                    valid_moves.add(new ChessMove(startPosition,new ChessPosition(startPosition.getRow()-1, startPosition.getColumn()-1),null));
+                    isEnPassant = true;
+                    enPassantPosition = lastMove.endPosition;
+                }
+            }
+        }
         Iterator<ChessMove> iterator = valid_moves.iterator();
         while (iterator.hasNext()) {
             ChessMove move = iterator.next();
+            System.out.println(move.endPosition);
             try {
                 tryMove(move);
+
             } catch (InvalidMoveException e) {
                 iterator.remove();
             }
         }
         return valid_moves;
     }
+
 
 
     public void tryMove(ChessMove move) throws InvalidMoveException {
@@ -124,7 +169,7 @@ public class ChessGame {
         ChessPosition endPosition = move.endPosition;
         ChessPiece piece = board.getPiece(startPosition);
         ChessGame.TeamColor color;
-
+        Collection<ChessMove> valid_moves;
         if (piece != null) {
             color = piece.getTeamColor();
         }
@@ -133,7 +178,8 @@ public class ChessGame {
         }
 
 
-        Collection<ChessMove> valid_moves = validMoves(move.getStartPosition());
+        valid_moves = validMoves(move.getStartPosition());
+
         if (valid_moves.isEmpty()) {
             throw new InvalidMoveException();
         }
@@ -142,10 +188,15 @@ public class ChessGame {
             if ((move_1.equals(move)) && (teamTurn == color)) {
                 ChessPiece.PieceType promotedPiece = move_1.promotionPiece;
                 foundMove = true;
+                setLastMove(move);
                 System.out.println(board.getPiece(startPosition).getPieceType());
                 board.addPiece(startPosition,null);
                 if ((piece.getPieceType() == ChessPiece.PieceType.PAWN) && ((endPosition.getRow() == 1) || (endPosition.getRow() == 8))) {
                     board.addPiece(endPosition, new ChessPiece(color,promotedPiece));
+                }
+                else if ((piece.getPieceType() == ChessPiece.PieceType.PAWN) && (isEnPassant)) {
+                    board.addPiece(endPosition, piece);
+                    board.addPiece(enPassantPosition,null);
                 }
                 else {
                     board.addPiece(endPosition, piece);
@@ -162,11 +213,6 @@ public class ChessGame {
         if (!foundMove) {
             throw new InvalidMoveException();
         }
-
-
-
-
-
     }
 
     /**
