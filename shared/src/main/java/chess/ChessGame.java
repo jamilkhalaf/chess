@@ -134,10 +134,23 @@ public class ChessGame {
 
 
         Collection<ChessMove> valid_moves = validMoves(move.getStartPosition());
+        if (valid_moves.isEmpty()) {
+            throw new InvalidMoveException();
+        }
+        boolean foundMove = false;
         for (ChessMove move_1 : valid_moves) {
-            if (move_1.equals(move)) {
+            if ((move_1.equals(move)) && (teamTurn == color)) {
+                ChessPiece.PieceType promotedPiece = move_1.promotionPiece;
+                foundMove = true;
+                System.out.println(board.getPiece(startPosition).getPieceType());
                 board.addPiece(startPosition,null);
-                board.addPiece(endPosition,piece);
+                if ((piece.getPieceType() == ChessPiece.PieceType.PAWN) && ((endPosition.getRow() == 1) || (endPosition.getRow() == 8))) {
+                    board.addPiece(endPosition, new ChessPiece(color,promotedPiece));
+                }
+                else {
+                    board.addPiece(endPosition, piece);
+                }
+                System.out.println(board.getPiece(endPosition).getPieceType());
                 if (color == TeamColor.BLACK) {
                     setTeamTurn(TeamColor.WHITE);
                 }
@@ -145,6 +158,9 @@ public class ChessGame {
                     setTeamTurn(TeamColor.BLACK);
                 }
             }
+        }
+        if (!foundMove) {
+            throw new InvalidMoveException();
         }
 
 
@@ -246,6 +262,7 @@ public class ChessGame {
         Collection<ChessMove> kingMoves = validMoves(kingPosition);
         if ((isInCheck(teamColor)) && (kingMoves.isEmpty())) {
             if (!pieceCanCover(teamColor)) {
+                isGameOver = true;
                 isInCheckmate = true;
             }
             else {
@@ -270,6 +287,7 @@ public class ChessGame {
         Collection<ChessMove> kingMoves = validMoves(kingPosition);
         if ((!isInCheck(teamColor)) && (kingMoves.isEmpty())) {
             if (!pieceCanCover(teamColor)) {
+                isGameOver = true;
                 isInStalemate = true;
             }
 
