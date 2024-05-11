@@ -82,28 +82,28 @@ public class ChessGame {
             eatenPiece = board.getPiece(endPosition);
         }
 
-
         ChessGame.TeamColor teamColor;
-        if (piece != null) {
+        if (board.getPiece(startPosition) != null) {
             teamColor = piece.getTeamColor();
         }
         else {
+
             throw new InvalidMoveException();
         }
-
-
         System.out.println(move.endPosition);
-        if ((getTeamTurn()==teamColor)) {
 
-            board.addPiece(startPosition,null);
-            board.addPiece(endPosition,piece);
-            if (isInCheck(teamColor)) {
-                throw new InvalidMoveException();
-            }
+
+        board.addPiece(startPosition,null);
+        board.addPiece(endPosition,piece);
+        if (isInCheck(teamColor)) {
             board.addPiece(startPosition,piece);
             board.addPiece(endPosition,eatenPiece);
-
+            throw new InvalidMoveException();
         }
+        board.addPiece(startPosition,piece);
+        board.addPiece(endPosition,eatenPiece);
+
+
 
 
 
