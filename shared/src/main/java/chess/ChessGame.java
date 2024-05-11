@@ -214,14 +214,45 @@ public class ChessGame {
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
      */
+    public boolean pieceCanCover(TeamColor teamColor) {
+        boolean canCover = false;
+        for (int i = 1;i<=8;i++) {
+            for (int j = 1;j<=8;j++) {
+                ChessPosition position = new ChessPosition(i,j);
+                if (board.getPiece(position) != null) {
+                    if ((board.getPiece(position).getTeamColor() == teamColor)) {
+                        ChessPiece piece = board.getPiece(position);
+                        Collection<ChessMove> validMoves = validMoves(position);
+                        if (!validMoves.isEmpty()) {
+                            canCover = true;
+                        }
+                    }
+                }
+
+                if (canCover) {
+                    break;
+                }
+            }
+            if (canCover) {
+                break;
+            }
+        }
+        return canCover;
+    }
     public boolean isInCheckmate(TeamColor teamColor) {
 //        throw new RuntimeException("Not implemented");
+        boolean isInCheckmate = false;
         ChessPosition kingPosition = getKingPosition(teamColor);
         Collection<ChessMove> kingMoves = validMoves(kingPosition);
         if ((isInCheck(teamColor)) && (kingMoves.isEmpty())) {
-            isGameOver = true;
+            if (!pieceCanCover(teamColor)) {
+                isInCheckmate = true;
+            }
+            else {
+                isInCheckmate= false;
+            }
         }
-        return isGameOver;
+        return isInCheckmate;
     }
 
     /**
@@ -233,14 +264,17 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
 //        throw new RuntimeException("Not implemented");
+        boolean isInStalemate = false;
         ChessPosition kingPosition = getKingPosition(teamColor);
 
         Collection<ChessMove> kingMoves = validMoves(kingPosition);
         if ((!isInCheck(teamColor)) && (kingMoves.isEmpty())) {
-            //add pieces can cover
-            isGameOver = true;
+            if (!pieceCanCover(teamColor)) {
+                isInStalemate = true;
+            }
+
         }
-        return isGameOver;
+        return isInStalemate;
     }
 
     /**
