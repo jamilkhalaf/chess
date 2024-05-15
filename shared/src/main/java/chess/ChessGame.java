@@ -12,6 +12,12 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessGame {
+    ChessPosition rightRookPosition;
+    ChessPosition newRightRookPosition;
+    ChessPosition leftRookPosition;
+    ChessPosition newLeftRookPosition;
+    private boolean canCastleLeft = false;
+    private boolean canCastleRight = false;
     private ChessBoard board = new ChessBoard();
     private boolean isGameOver = false;
     private TeamColor teamTurn = TeamColor.WHITE;
@@ -99,21 +105,90 @@ public class ChessGame {
                     enPassantPosition = lastMove.endPosition;
                 }
             }
+
         }
+
+        if ((piece.getPieceType() == ChessPiece.PieceType.KING) && !isInCheck(teamColor)) {
+            if (teamColor == TeamColor.WHITE) {
+                if ((startPosition.getRow() == 1) && (startPosition.getColumn() == 5) && (board.getPiece(new ChessPosition(1,1)).getPieceType()== ChessPiece.PieceType.ROOK) && emptyForCastle(teamColor,new ChessPosition(1,1))){
+                    canCastleLeft = true;
+                    valid_moves.add(new ChessMove(startPosition,new ChessPosition(1,3),null));
+                    leftRookPosition = new ChessPosition(1,1);
+                    newLeftRookPosition = new ChessPosition(1,4);
+                }
+                if ((startPosition.getRow() == 1) && (startPosition.getColumn() == 5) && (board.getPiece(new ChessPosition(1,8)).getPieceType()== ChessPiece.PieceType.ROOK) && emptyForCastle(teamColor,new ChessPosition(1,8))) {
+                    canCastleRight = true;
+                    valid_moves.add(new ChessMove(startPosition,new ChessPosition(1,7),null));
+                    rightRookPosition = new ChessPosition(1,8);
+                    newRightRookPosition = new ChessPosition(1,6);
+                }
+            }
+            else {
+                if ((startPosition.getRow() == 8) && (startPosition.getColumn() == 5) && (board.getPiece(new ChessPosition(8,1)).getPieceType()== ChessPiece.PieceType.ROOK) && emptyForCastle(teamColor,new ChessPosition(8,1))) {
+                    canCastleLeft = true;
+                    valid_moves.add(new ChessMove(startPosition,new ChessPosition(8,3),null));
+                    leftRookPosition = new ChessPosition(8,1);
+                    newLeftRookPosition = new ChessPosition(8,4);
+                }
+                if ((startPosition.getRow() == 8) && (startPosition.getColumn() == 5) && (board.getPiece(new ChessPosition(8,8)).getPieceType()== ChessPiece.PieceType.ROOK) && emptyForCastle(teamColor,new ChessPosition(8,8))) {
+                    canCastleRight = true;
+                    valid_moves.add(new ChessMove(startPosition,new ChessPosition(8,7),null));
+                    rightRookPosition = new ChessPosition(8,8);
+                    newRightRookPosition = new ChessPosition(8,6);
+                }
+            }
+        }
+
         Iterator<ChessMove> iterator = valid_moves.iterator();
         while (iterator.hasNext()) {
             ChessMove move = iterator.next();
             System.out.println(move.endPosition);
+
             try {
                 tryMove(move);
 
             } catch (InvalidMoveException e) {
                 iterator.remove();
             }
+
+
+
         }
         return valid_moves;
     }
 
+     public boolean emptyForCastle(TeamColor teamColor, ChessPosition position) {
+        boolean empty = false;
+        if (teamColor == TeamColor.WHITE) {
+            if (position.getColumn() == 1) {
+                if ((board.getPiece(new ChessPosition(1,2)) == null) && (board.getPiece(new ChessPosition(1,3)) == null) && (board.getPiece(new ChessPosition(1,4)) == null)) {
+                    empty = true;
+                }
+
+            }
+            if (position.getColumn() == 8) {
+                if ((board.getPiece(new ChessPosition(1,6)) == null) && (board.getPiece(new ChessPosition(1,7)) == null)) {
+                    empty = true;
+                }
+
+            }
+        }
+        else {
+            if (position.getColumn() == 1) {
+                if ((board.getPiece(new ChessPosition(8,2)) == null) && (board.getPiece(new ChessPosition(8,3)) == null) && (board.getPiece(new ChessPosition(8,4)) == null)) {
+                    empty = true;
+                }
+
+            }
+            if (position.getColumn() == 8) {
+                if ((board.getPiece(new ChessPosition(8,6)) == null) && (board.getPiece(new ChessPosition(8,7)) == null)) {
+                    empty = true;
+                }
+
+            }
+        }
+        return empty;
+     }
 
 
     public void tryMove(ChessMove move) throws InvalidMoveException {
@@ -136,7 +211,6 @@ public class ChessGame {
             throw new InvalidMoveException();
         }
         System.out.println(move.endPosition);
-
 
         board.addPiece(startPosition,null);
         board.addPiece(endPosition,piece);
@@ -198,6 +272,16 @@ public class ChessGame {
                     board.addPiece(endPosition, piece);
                     board.addPiece(enPassantPosition,null);
                 }
+                else if ((piece.getPieceType() == ChessPiece.PieceType.KING) && (canCastleLeft) && (move.endPosition.getColumn()==3) && !isInCheck(color)) {
+                    board.addPiece(endPosition, piece);
+                    board.addPiece(leftRookPosition,null);
+                    board.addPiece(newLeftRookPosition, new ChessPiece(color, ChessPiece.PieceType.ROOK));
+                }
+                else if ((piece.getPieceType() == ChessPiece.PieceType.KING) && (canCastleRight) && (move.endPosition.getColumn()==7) && !isInCheck(color)) {
+                    board.addPiece(endPosition, piece);
+                    board.addPiece(rightRookPosition,null);
+                    board.addPiece(newRightRookPosition, new ChessPiece(color, ChessPiece.PieceType.ROOK));
+                }
                 else {
                     board.addPiece(endPosition, piece);
                 }
@@ -237,7 +321,6 @@ public class ChessGame {
     }
 
     public boolean isInCheck(TeamColor teamColor) {
-//        throw new RuntimeException("Not implemented")
         boolean isInCheck = false;
         ChessPosition kingPosition = getKingPosition(teamColor);
 
