@@ -2,15 +2,11 @@ package dataaccess;
 
 import model.UserData;
 
-public class UserDAO {
+public interface UserDAO {
 
-    void createUser(String username, String password, String email) throws DataAccessException {
-    }
+    void createUser(String username, String password, String email) throws DataAccessException;
 
-    String getUser(String username, String password) throws DataAccessException {
-        return username;
-    }
+    String getUser(String username, String password) throws DataAccessException;
 
-    void clear(UserData data) throws DataAccessException {
-    }
+    void clear(UserData data) throws DataAccessException;
 }
