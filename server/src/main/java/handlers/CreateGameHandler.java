@@ -1,17 +1,13 @@
 package handlers;
 
-import Requests.CreateGameReq;
-import Requests.RegisterReq;
-import Responses.CreateGameRes;
-import Responses.RegisterRes;
+import requests.CreateGameReq;
+import responses.CreateGameRes;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
-import model.UserData;
 import service.CreateGameService;
-import service.RegisterService;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -29,10 +25,10 @@ public class CreateGameHandler {
         try {
             CreateGameReq gameRequest = gson.fromJson(request.body(), CreateGameReq.class);
             String authToken = request.headers("Authorization");
-            String AuthToken = gameService.getAuth(authToken);
+            String authsToken = gameService.getAuth(authToken);
             Integer gameID = gameService.createGame(gameRequest.getGameName());
 
-            CreateGameRes gameResponse = new CreateGameRes(gameID, AuthToken);
+            CreateGameRes gameResponse = new CreateGameRes(gameID, authsToken);
             response.status(200);
             response.type("application/json");
 

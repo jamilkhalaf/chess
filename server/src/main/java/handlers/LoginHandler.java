@@ -1,8 +1,8 @@
 package handlers;
 
-import Requests.LoginReq;
+import requests.LoginReq;
 
-import Responses.LoginRes;
+import responses.LoginRes;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;

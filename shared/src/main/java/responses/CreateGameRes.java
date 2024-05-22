@@ -1,4 +1,4 @@
-package Responses;
+package responses;
 
 public class CreateGameRes {
     protected String authToken;

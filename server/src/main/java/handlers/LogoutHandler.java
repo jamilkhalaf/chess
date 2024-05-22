@@ -1,6 +1,6 @@
 package handlers;
 
-import Responses.BaseRes;
+import responses.BaseRes;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;

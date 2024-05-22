@@ -1,12 +1,11 @@
 package handlers;
 
-import Responses.BaseRes;
+import responses.BaseRes;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import service.ClearService;
-import service.LogoutService;
 import spark.Request;
 import spark.Response;
 import spark.Route;

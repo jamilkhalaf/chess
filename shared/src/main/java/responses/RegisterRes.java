@@ -1,4 +1,4 @@
-package Responses;
+package responses;
 
 public class RegisterRes {
     protected String authToken;

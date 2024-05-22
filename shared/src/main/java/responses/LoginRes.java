@@ -1,4 +1,4 @@
-package Responses;
+package responses;
 
 public class LoginRes {
     protected String authToken;

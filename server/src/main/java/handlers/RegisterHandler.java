@@ -1,7 +1,7 @@
 package handlers;
 
-import Requests.RegisterReq;
-import Responses.RegisterRes;
+import requests.RegisterReq;
+import responses.RegisterRes;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;

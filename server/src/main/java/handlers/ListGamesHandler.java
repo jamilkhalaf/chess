@@ -1,17 +1,13 @@
 package handlers;
 
-import Requests.BaseReq;
-import Requests.CreateGameReq;
-import Responses.BaseRes;
-import Responses.CreateGameRes;
-import Responses.ListGamesRes;
+import requests.BaseReq;
+import responses.ListGamesRes;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.GameData;
-import service.CreateGameService;
 import service.ListGamesService;
 import spark.Request;
 import spark.Response;
@@ -32,8 +28,8 @@ public class ListGamesHandler {
         try {
             BaseReq listGamesRequest = gson.fromJson(request.body(), BaseReq.class);
             String authToken = request.headers("Authorization");
-            String AuthToken = listGamesService.getAuth(authToken);
-            List<GameData> gamesList = listGamesService.listGames(AuthToken);
+            String authsToken = listGamesService.getAuth(authToken);
+            List<GameData> gamesList = listGamesService.listGames(authsToken);
 
             ListGamesRes listGamesResponse = new ListGamesRes(gamesList);
             response.status(200);

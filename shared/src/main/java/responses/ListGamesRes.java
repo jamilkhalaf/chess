@@ -1,4 +1,4 @@
-package Responses;
+package responses;
 
 import model.GameData;
 import java.util.List;
