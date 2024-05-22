@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -57,8 +58,25 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 //        throw new RuntimeException("Not implemented");
+        int[][] moves = {};
         ChessPiece piece = board.getPiece(myPosition);
-        return PieceMoves.pieceValidMoves(board, myPosition, piece, getTeamColor());
+        if (piece.getPieceType() == PieceType.PAWN) {
+            return PawnPieceMoves.pieceValidMoves(board, myPosition, piece, getTeamColor());
+        }
+        if (piece.getPieceType() == PieceType.ROOK) {
+            int[][] pawnMoves = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
+            return PieceMoves.pieceValidMoves(board, myPosition, piece, getTeamColor(), pawnMoves);
+        }
+        if (piece.getPieceType() == PieceType.QUEEN) {
+            int[][] queenMoves = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1},{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
+            return PieceMoves.pieceValidMoves(board, myPosition, piece, getTeamColor(), queenMoves);
+        }
+        if (piece.getPieceType() == PieceType.BISHOP) {
+            int[][] bishopMoves = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+            return PieceMoves.pieceValidMoves(board, myPosition, piece, getTeamColor(), bishopMoves);
+        }
+        else{return PieceMoves.pieceValidMoves(board, myPosition, piece, getTeamColor(), moves);}
+
     }
 
 
