@@ -23,7 +23,7 @@ public class LoginService {
             String authToken = authDAO.createAuth(username);
             return authToken;
         } else {
-            throw new DataAccessException("Invalid username or password");
+            throw new DataAccessException("Error: unauthorized");
         }
 
     }

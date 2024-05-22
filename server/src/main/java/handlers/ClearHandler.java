@@ -1,5 +1,6 @@
 package handlers;
 
+import Responses.BaseRes;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
@@ -20,17 +21,10 @@ public class ClearHandler {
 
     public Route handleClearEverything = (Request request, Response response) -> {
 
-        String authToken = request.headers("Authorization");
-
-        if (authToken == null) {
-            response.status(401);
-            return "No authentication token provided";
-        }
-
-
-        clearService.clearUser(authToken);
+        clearService.clearUser();
         response.status(200);
-        return gson.toJson("clear successful");
+        BaseRes clearResponse = new BaseRes();
+        return gson.toJson(clearResponse);
 
 
     };

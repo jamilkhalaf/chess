@@ -20,7 +20,7 @@ public class LogoutService {
         if (AuthToken != null) {
             authDAO.deleteAuth(AuthToken);
         }
-        else {throw new DataAccessException("Not Logged In");}
+        else {throw new DataAccessException("Error: unauthorized");}
 
 
 

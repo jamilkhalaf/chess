@@ -1,5 +1,6 @@
 package handlers;
 
+import Responses.BaseRes;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
@@ -21,15 +22,10 @@ public class LogoutHandler {
 
         String authToken = request.headers("Authorization");
 
-        if (authToken == null) {
-            response.status(401);
-            return "No authentication token provided";
-        }
-
-
         logoutService.logoutUser(authToken);
         response.status(200);
-        return gson.toJson("Logout successful");
+        BaseRes logoutResponse = new BaseRes();
+        return gson.toJson(logoutResponse);
 
 
     };

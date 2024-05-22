@@ -16,16 +16,14 @@ public class ClearService {
         this.userDAO = userDAO;
     }
 
-    public void clearUser(String authToken) throws DataAccessException {
+    public void clearUser() throws DataAccessException {
 
 
-        String AuthToken = authDAO.getAuth(authToken);
-        if (AuthToken != null) {
+
             authDAO.clear();
             gameDAO.clear();
             userDAO.clear();
-        }
-        else {throw new DataAccessException("Not Logged In");}
+
 
 
 
