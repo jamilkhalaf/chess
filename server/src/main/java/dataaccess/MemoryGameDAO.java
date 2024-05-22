@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MemoryGameDAO implements GameDAO{
-
+    private static int nextGameID = 1;
     protected static Map<Integer, GameData> games = new HashMap<>();
 
     @Override
@@ -28,10 +28,8 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public Integer createGame(String gameName) throws DataAccessException {
-        Integer gameID = gameName.hashCode();
-        while (games.containsKey(gameID)) {
-            gameID++;
-        }
+        Integer gameID = nextGameID++;
+
         GameData game = new GameData(gameID, gameName);
         games.put(gameID, game);
 
