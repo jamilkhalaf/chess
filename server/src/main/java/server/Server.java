@@ -1,5 +1,8 @@
 package server;
 
+import dataaccess.*;
+import handlers.LoginHandler;
+import handlers.RegisterHandler;
 import spark.*;
 
 import java.io.InputStream;
@@ -10,8 +13,16 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Server {
+    UserDAO userDAO;
+    GameDAO gameDAO;
+    AuthDAO authDAO;
 
     public int run(int desiredPort) {
+
+        userDAO = new MemoryUserDAO();
+        gameDAO = new MemoryGameDAO();
+        authDAO = new MemoryAuthDAO();
+
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("/web");
@@ -21,7 +32,9 @@ public class Server {
             res.body(htmlContent);
             return htmlContent;
         });
-        Spark.get("/hello", (req, res) -> "hello jamil");
+        Spark.post("/user", (req, res) -> (new RegisterHandler(userDAO, gameDAO, authDAO)).handleCreateUser.handle(req, res));
+        Spark.post("/session", (req, res) -> (new LoginHandler(userDAO, gameDAO, authDAO)).handleLoginUser.handle(req, res));
+
         Spark.awaitInitialization();
         return Spark.port();
     }
