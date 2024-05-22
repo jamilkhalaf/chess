@@ -2,6 +2,7 @@ package server;
 
 import dataaccess.*;
 import handlers.LoginHandler;
+import handlers.LogoutHandler;
 import handlers.RegisterHandler;
 import spark.*;
 
@@ -34,6 +35,7 @@ public class Server {
         });
         Spark.post("/user", (req, res) -> (new RegisterHandler(userDAO, gameDAO, authDAO)).handleCreateUser.handle(req, res));
         Spark.post("/session", (req, res) -> (new LoginHandler(userDAO, gameDAO, authDAO)).handleLoginUser.handle(req, res));
+        Spark.delete("/session", (req, res) -> (new LogoutHandler(userDAO, gameDAO, authDAO)).handleLogoutUser.handle(req, res));
 
         Spark.awaitInitialization();
         return Spark.port();

@@ -19,8 +19,6 @@ public class RegisterService {
             throw new DataAccessException("User already exists");
         }
         userDAO.createUser(username, password, email);
-
-        // Generate auth token for the new user
         String authToken = authDAO.createAuth(username);
         return authToken;
     }
