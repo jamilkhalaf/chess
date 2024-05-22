@@ -3,6 +3,7 @@ package handlers;
 import Responses.BaseRes;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import service.LogoutService;
@@ -19,14 +20,19 @@ public class LogoutHandler {
     }
 
     public Route handleLogoutUser = (Request request, Response response) -> {
+        try {
+            String authToken = request.headers("Authorization");
 
-        String authToken = request.headers("Authorization");
+            logoutService.logoutUser(authToken);
+            response.status(200);
+            BaseRes logoutResponse = new BaseRes();
+            return gson.toJson(logoutResponse);
+        }
+        catch (DataAccessException e) {
+            response.status(401);
+            return "{\"message\": \"Error: unauthorized\"}";
 
-        logoutService.logoutUser(authToken);
-        response.status(200);
-        BaseRes logoutResponse = new BaseRes();
-        return gson.toJson(logoutResponse);
-
+        }
 
     };
 }

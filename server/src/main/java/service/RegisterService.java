@@ -15,6 +15,9 @@ public class RegisterService {
     }
 
     public String createUser(String username, String password, String email) throws DataAccessException {
+        if (username == null || username.isEmpty() || password == null || password.isEmpty() || email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Invalid username, password, or email");
+        }
         if (userDAO.getUser(username, password) != null) {
             throw new DataAccessException("User already exists");
         }

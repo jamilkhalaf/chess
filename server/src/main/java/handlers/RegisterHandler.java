@@ -23,16 +23,27 @@ public class RegisterHandler {
 
     public Route handleCreateUser = (Request request, Response response) -> {
 
-        RegisterReq userRequest = gson.fromJson(request.body(), RegisterReq.class);
-        String authToken = registerService.createUser(userRequest.getUsername(), userRequest.getPassword(), userRequest.getEmail());
+        try {
+            RegisterReq userRequest = gson.fromJson(request.body(), RegisterReq.class);
+            String authToken = registerService.createUser(userRequest.getUsername(), userRequest.getPassword(), userRequest.getEmail());
 
-        RegisterRes registerResponse = new RegisterRes(userRequest.getUsername(), authToken);
+            RegisterRes registerResponse = new RegisterRes(userRequest.getUsername(), authToken);
 
-        // Set the response type to JSON
-        response.type("application/json");
+            // Set the response type to JSON
+            response.type("application/json");
 
-        // Return the JSON response
-        return gson.toJson(registerResponse);
+            // Return the JSON response
+            return gson.toJson(registerResponse);
+        }
+
+        catch (DataAccessException e) {
+            response.status(403);
+            return "{\"message\": \"Error: already taken\"}";
+        }
+        catch (IllegalArgumentException e) {
+            response.status(400);
+            return "{\"message\": \"Error: bad request\"}";
+        }
 
     };
 }

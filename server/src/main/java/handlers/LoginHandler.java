@@ -6,6 +6,7 @@ import Responses.LoginRes;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import service.LoginService;
@@ -22,14 +23,18 @@ public class LoginHandler {
     }
 
     public Route handleLoginUser = (Request request, Response response) -> {
+        try {
+            LoginReq userRequest = gson.fromJson(request.body(), LoginReq.class);
+            String authToken = loginService.loginUser(userRequest.getUsername(), userRequest.getPassword());
 
-        LoginReq userRequest = gson.fromJson(request.body(), LoginReq.class);
-        String authToken = loginService.loginUser(userRequest.getUsername(), userRequest.getPassword());
+            LoginRes loginResponse = new LoginRes(userRequest.getUsername(), authToken);
+            response.type("application/json");
 
-        LoginRes loginResponse = new LoginRes(userRequest.getUsername(), authToken);
-        response.type("application/json");
-
-        return gson.toJson(loginResponse);
-
+            return gson.toJson(loginResponse);
+        }
+        catch (DataAccessException e) {
+            response.status(401);
+            return "{\"message\": \"Error: unauthorized\"}";
+        }
     };
 }
