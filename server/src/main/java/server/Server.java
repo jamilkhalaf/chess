@@ -36,6 +36,8 @@ public class Server {
         Spark.delete("/session", (req, res) -> (new LogoutHandler(userDAO, gameDAO, authDAO)).handleLogoutUser.handle(req, res));
         Spark.delete("/db", (req, res) -> (new ClearHandler(userDAO, gameDAO, authDAO)).handleClearEverything.handle(req, res));
         Spark.post("/game", (req, res) -> (new CreateGameHandler(userDAO, gameDAO, authDAO)).handleCreateGame.handle(req, res));
+        Spark.get("/game", (req, res) -> (new ListGamesHandler(userDAO, gameDAO, authDAO)).handleListGames.handle(req, res));
+        Spark.put("/game", (req, res) -> (new CreateGameHandler(userDAO, gameDAO, authDAO)).handleCreateGame.handle(req, res));
 
         Spark.awaitInitialization();
         return Spark.port();

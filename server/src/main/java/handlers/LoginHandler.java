@@ -29,7 +29,7 @@ public class LoginHandler {
 
             LoginRes loginResponse = new LoginRes(userRequest.getUsername(), authToken);
             response.type("application/json");
-
+            response.status(200);
             return gson.toJson(loginResponse);
         }
         catch (DataAccessException e) {

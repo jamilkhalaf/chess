@@ -17,10 +17,8 @@ public class LoginService {
 
     public String loginUser(String username, String password) throws DataAccessException {
         UserData user = userDAO.getUser(username, password);
-
-
+        String authToken = authDAO.createAuth(username);
         if (user != null && user.password().equals(password)) {
-            String authToken = authDAO.createAuth(username);
             return authToken;
         } else {
             throw new DataAccessException("Error: unauthorized");

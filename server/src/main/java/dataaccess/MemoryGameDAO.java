@@ -37,21 +37,13 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public List<List<String>> listGames() throws DataAccessException {
-        List<List<String>> GamesSet = new ArrayList<>();
-        for (Map.Entry<Integer, GameData> entry : MemoryGameDAO.games.entrySet()) {
-            GameData game = entry.getValue();
-            List<String> gameInformation = new ArrayList<>();
-            Integer gameID = game.getGameID();
-            gameInformation.add(String.valueOf(gameID));
-            gameInformation.add(game.getWhiteUsername());
-            gameInformation.add(game.getBlackUsername());
-            gameInformation.add(game.getGameName());
-            GamesSet.add(gameInformation);
+    public List<GameData> listGames() throws DataAccessException {
+        List<GameData> gamesList = new ArrayList<>();
+        for (Map.Entry<Integer, GameData> entry : games.entrySet()) {
+            GameData gameData = entry.getValue();
+            gamesList.add(gameData);
         }
-
-        return GamesSet;
-
+        return gamesList;
     }
 
 
