@@ -4,20 +4,21 @@ import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
+import service.ClearService;
 import service.LogoutService;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
-public class LogoutHandler {
-    private LogoutService logoutService;
+public class ClearHandler {
+    private ClearService clearService;
     private final Gson gson = new Gson();
 
-    public LogoutHandler(UserDAO userDAO, GameDAO gameDAO, AuthDAO authDAO) {
-        this.logoutService = new LogoutService(userDAO, gameDAO, authDAO);
+    public ClearHandler(UserDAO userDAO, GameDAO gameDAO, AuthDAO authDAO) {
+        this.clearService = new ClearService(userDAO, gameDAO, authDAO);
     }
 
-    public Route handleLogoutUser = (Request request, Response response) -> {
+    public Route handleClearEverything = (Request request, Response response) -> {
 
         String authToken = request.headers("Authorization");
 
@@ -27,9 +28,9 @@ public class LogoutHandler {
         }
 
 
-        logoutService.logoutUser(authToken);
+        clearService.clearUser(authToken);
         response.status(200);
-        return gson.toJson("Logout successful");
+        return gson.toJson("clear successful");
 
 
     };

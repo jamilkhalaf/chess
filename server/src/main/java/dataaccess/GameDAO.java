@@ -7,7 +7,7 @@ import model.GameData;
 
 public interface GameDAO {
 
-    void clear(GameData data) throws DataAccessException;
+    void clear() throws DataAccessException;
 
     Integer createGame(String gameName) throws DataAccessException;
 

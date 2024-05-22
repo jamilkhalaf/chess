@@ -21,7 +21,7 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void clear(GameData data) throws DataAccessException {
+    public void clear() throws DataAccessException {
         games.clear();
     }
 

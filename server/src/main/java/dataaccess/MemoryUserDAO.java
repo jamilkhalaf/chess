@@ -23,7 +23,7 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     @Override
-    public void clear(UserData data) throws DataAccessException {
+    public void clear() throws DataAccessException {
         users.clear();
     }
 }
