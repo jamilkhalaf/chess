@@ -14,8 +14,16 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public Integer getGame(Integer gameID) throws DataAccessException {
-        if (MemoryUserDAO.users.containsKey(gameID)) {
+        if (games.containsKey(gameID)) {
             return gameID;
+        }
+        return null;
+    }
+
+    @Override
+    public GameData getGameData(Integer gameID) {
+        if (games.containsKey(gameID)) {
+            return games.get(gameID);
         }
         return null;
     }

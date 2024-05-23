@@ -48,10 +48,16 @@ public class GameData {
     }
 
     public void setWhiteUsername(String whiteUsername) {
-        this.whiteUsername = whiteUsername;
+        if (this.whiteUsername == null) {
+            this.whiteUsername = whiteUsername;
+        }
+
     }
 
     public void setBlackUsername(String blackUsername) {
-        this.blackUsername = blackUsername;
+        if (this.blackUsername == null) {
+            this.blackUsername = blackUsername;
+        }
+
     }
 }

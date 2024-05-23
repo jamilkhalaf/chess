@@ -18,6 +18,14 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     @Override
+    public String getUsername(String authToken) {
+        if (auths.containsKey(authToken)) {
+            return auths.get(authToken).username();
+        }
+        return null;
+    }
+
+    @Override
     public String createAuth(String username) throws DataAccessException {
         String authToken = UUID.randomUUID().toString();
         AuthData auth = new AuthData(authToken, username);

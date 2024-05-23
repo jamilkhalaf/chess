@@ -26,10 +26,10 @@ public class LoginHandler {
         try {
             LoginReq userRequest = gson.fromJson(request.body(), LoginReq.class);
             String authToken = loginService.loginUser(userRequest.getUsername(), userRequest.getPassword());
-
+            response.status(200);
             LoginRes loginResponse = new LoginRes(userRequest.getUsername(), authToken);
             response.type("application/json");
-            response.status(200);
+
             return gson.toJson(loginResponse);
         }
         catch (DataAccessException e) {
