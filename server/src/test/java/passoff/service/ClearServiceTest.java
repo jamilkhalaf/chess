@@ -52,4 +52,33 @@ public class ClearServiceTest {
         assertEquals(0, gameDAO.getSize());
 
     }
+
+    @Test
+    @DisplayName("Clear Test")
+    public void clearData2() throws DataAccessException {
+        // Ensure initial data is present
+
+
+        String user1 = "jamil";
+        String pass1 = "123";
+        String email1 = "jamil@byu";
+        userDAO.createUser(user1, pass1, email1);
+
+        String user2 = "khalaf";
+        String pass2 = "24343";
+        String email2 = "jamil@edu";
+        userDAO.createUser(user2, pass2, email2);
+
+        gameDAO.createGame("jamil1234");
+        authDAO.createAuth("jamil");
+
+
+        ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
+        clearService.clearUser();
+
+        assertEquals(0, authDAO.getSize());
+        assertEquals(0, userDAO.getSize());
+        assertEquals(0, gameDAO.getSize());
+
+    }
 }
