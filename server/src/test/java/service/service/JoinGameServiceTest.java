@@ -52,7 +52,7 @@ public class JoinGameServiceTest {
 
     @Test
     @DisplayName("join game failure")
-    public void joinGameFailure() throws IllegalArgumentException, DataAccessException{
+    public void joinGameFailure() throws DataAccessException{
 
         String user1 = "jamil";
         String pass1 = "123";
@@ -66,13 +66,13 @@ public class JoinGameServiceTest {
         LoginService loginService = new LoginService(userDAO, gameDAO, authDAO);
 
         String authToken1 = loginService.loginUser("jamil", "123");
-        JoinGameReq joinRequest1 = new JoinGameReq(1214, ChessGame.TeamColor.WHITE);
+        JoinGameReq joinRequest1 = new JoinGameReq(1, ChessGame.TeamColor.WHITE);
 
         JoinGameService joinGameService = new JoinGameService(userDAO, gameDAO, authDAO);
 
 
         IllegalArgumentException exception1 = assertThrows(IllegalArgumentException.class, () -> {
-            joinGameService.joinGame(authToken1,3,ChessGame.TeamColor.WHITE);
+            joinGameService.joinGame(authToken1,2,ChessGame.TeamColor.WHITE);
         });
         assertEquals("Error joining game: Error: bad request", exception1.getMessage(), "Exception message should be 'Error: unauthorized' for user1");
 

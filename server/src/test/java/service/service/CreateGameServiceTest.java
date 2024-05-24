@@ -47,7 +47,7 @@ public class CreateGameServiceTest {
 
     @Test
     @DisplayName("create game failure")
-    public void createGameFailure() throws IllegalArgumentException, DataAccessException{
+    public void createGameFailure() throws DataAccessException{
 
         String user1 = "jamil";
         String pass1 = "123";
