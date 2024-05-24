@@ -18,7 +18,7 @@ public class LoginServiceTest {
 
     @Test
     @DisplayName("Login success")
-    public void LoginSuccess() throws DataAccessException {
+    public void loginSuccess() throws DataAccessException {
         // Ensure initial data is present
         String user1 = "jamil";
         String pass1 = "123";
@@ -55,7 +55,7 @@ public class LoginServiceTest {
 
     @Test
     @DisplayName("Login failure")
-    public void LoginFailure() throws DataAccessException {
+    public void loginFailure() throws DataAccessException {
 
 
         String user1 = "jamil";

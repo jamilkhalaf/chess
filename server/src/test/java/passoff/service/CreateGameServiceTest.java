@@ -21,7 +21,7 @@ public class CreateGameServiceTest {
 
     @Test
     @DisplayName("create game success")
-    public void CreateGameSuccess() throws DataAccessException {
+    public void createGameSuccess() throws DataAccessException {
         // Ensure initial data is present
         String user1 = "jamil";
         String pass1 = "123";
@@ -47,7 +47,7 @@ public class CreateGameServiceTest {
 
     @Test
     @DisplayName("create game failure")
-    public void CreateGameFailure() throws IllegalArgumentException, DataAccessException{
+    public void createGameFailure() throws IllegalArgumentException, DataAccessException{
 
         String user1 = "jamil";
         String pass1 = "123";

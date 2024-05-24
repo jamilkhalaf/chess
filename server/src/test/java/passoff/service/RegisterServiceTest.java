@@ -22,7 +22,7 @@ public class RegisterServiceTest {
 
         @Test
         @DisplayName("Register success")
-        public void RegisterSuccess() throws DataAccessException {
+        public void registerSuccess() throws DataAccessException {
             // Ensure initial data is present
             String user1 = "jamil";
             String pass1 = "123";
@@ -59,7 +59,7 @@ public class RegisterServiceTest {
 
         @Test
         @DisplayName("Register failure")
-        public void LoginFailure() throws DataAccessException {
+        public void registerFailure() throws DataAccessException {
 
 
             String user1 = "jamil";

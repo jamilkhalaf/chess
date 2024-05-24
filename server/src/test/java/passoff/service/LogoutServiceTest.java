@@ -20,7 +20,7 @@ public class LogoutServiceTest {
 
     @Test
     @DisplayName("Logoutsuccess")
-    public void LogoutSuccess() throws DataAccessException {
+    public void logoutSuccess() throws DataAccessException {
         // Ensure initial data is present
         String user1 = "jamil";
         String pass1 = "123";
@@ -51,7 +51,7 @@ public class LogoutServiceTest {
 
     @Test
     @DisplayName("Logout failure")
-    public void LogoutFailure() throws DataAccessException {
+    public void logoutFailure() throws DataAccessException {
         String user1 = "jamil";
         String pass1 = "123";
         String email1 = "jamil@byu";

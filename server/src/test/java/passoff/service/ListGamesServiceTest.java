@@ -21,7 +21,7 @@ public class ListGamesServiceTest {
 
     @Test
     @DisplayName("list game success")
-    public void ListGameSuccess() throws DataAccessException {
+    public void listGameSuccess() throws DataAccessException {
         // Ensure initial data is present
         String user1 = "jamil";
         String pass1 = "123";
@@ -52,7 +52,7 @@ public class ListGamesServiceTest {
 
     @Test
     @DisplayName("list game failure")
-    public void ListGameFailure() throws DataAccessException{
+    public void listGameFailure() throws DataAccessException{
 
         String user1 = "jamil";
         String pass1 = "123";

@@ -14,7 +14,4 @@ public class ListGamesRes {
         return games;
     }
 
-    public void setGames(List<GameData> games) {
-        this.games = games;
-    }
 }

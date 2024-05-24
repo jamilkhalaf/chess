@@ -22,7 +22,7 @@ public class JoinGameServiceTest {
 
     @Test
     @DisplayName("join game success")
-    public void JoinGameSuccess() throws DataAccessException {
+    public void joinGameSuccess() throws DataAccessException {
         // Ensure initial data is present
         String user1 = "jamil";
         String pass1 = "123";
@@ -52,7 +52,7 @@ public class JoinGameServiceTest {
 
     @Test
     @DisplayName("join game failure")
-    public void JoinGameFailure() throws IllegalArgumentException, DataAccessException{
+    public void joinGameFailure() throws IllegalArgumentException, DataAccessException{
 
         String user1 = "jamil";
         String pass1 = "123";
