@@ -42,4 +42,9 @@ public class MemoryAuthDAO implements AuthDAO {
     public void clear() throws DataAccessException {
         auths.clear(); // Clear the entire map
     }
+
+    @Override
+    public Integer getSize() {
+        return auths.size();
+    }
 }

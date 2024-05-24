@@ -64,4 +64,9 @@ public class MemoryGameDAO implements GameDAO{
             games.get(gameID).setBlackUsername(username);
         }
     }
+
+    @Override
+    public Integer getSize() {
+        return games.size();
+    }
 }

@@ -26,4 +26,9 @@ public class MemoryUserDAO implements UserDAO {
     public void clear() throws DataAccessException {
         users.clear();
     }
+
+    @Override
+    public Integer getSize() {
+        return users.size();
+    }
 }

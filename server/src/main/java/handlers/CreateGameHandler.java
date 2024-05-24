@@ -28,7 +28,7 @@ public class CreateGameHandler {
             String authsToken = gameService.getAuth(authToken);
             Integer gameID = gameService.createGame(gameRequest.getGameName());
 
-            CreateGameRes gameResponse = new CreateGameRes(gameID, authsToken);
+            CreateGameRes gameResponse = new CreateGameRes(gameID);
             response.status(200);
             response.type("application/json");
 

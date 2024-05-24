@@ -19,5 +19,7 @@ public interface GameDAO {
 
     GameData getGameData(Integer gameID) throws DataAccessException;
 
+    Integer getSize() throws DataAccessException;
+
 
 }
