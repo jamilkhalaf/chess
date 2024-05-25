@@ -31,6 +31,7 @@ public class MemoryGameDAO implements GameDAO{
     @Override
     public void clear() throws DataAccessException {
         games.clear();
+        nextGameID = 1;
     }
 
 
@@ -39,6 +40,8 @@ public class MemoryGameDAO implements GameDAO{
         Integer gameID = nextGameID++;
 
         GameData game = new GameData(gameID, gameName);
+        game.setBlackUsername(null);
+        game.setWhiteUsername(null);
         games.put(gameID, game);
 
         return gameID;
