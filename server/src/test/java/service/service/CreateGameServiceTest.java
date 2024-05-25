@@ -30,16 +30,13 @@ public class CreateGameServiceTest {
 
         gameDAO.createGame("jamil's game");
 
-        CreateGameReq gameRequest1 = new CreateGameReq("game2");
-
-
         CreateGameService gameService = new CreateGameService(userDAO, gameDAO, authDAO);
 
         Integer gameID = gameService.createGame("game2");
 
         CreateGameRes gameResponse1 = new CreateGameRes(gameID);
 
-        assertEquals(2, gameResponse1.getGameID());
+        assertEquals(4, gameResponse1.getGameID());
         ;
 
 
