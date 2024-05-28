@@ -31,6 +31,11 @@ public class Server {
             res.body(htmlContent);
             return htmlContent;
         });
+
+        try {DatabaseManager.createTables();}
+        catch (DataAccessException e) {
+        }
+
         Spark.post("/user", (req, res) -> (new RegisterHandler(userDAO, gameDAO, authDAO)).handleCreateUser.handle(req, res));
         Spark.post("/session", (req, res) -> (new LoginHandler(userDAO, gameDAO, authDAO)).handleLoginUser.handle(req, res));
         Spark.delete("/session", (req, res) -> (new LogoutHandler(userDAO, gameDAO, authDAO)).handleLogoutUser.handle(req, res));

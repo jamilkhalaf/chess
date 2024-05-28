@@ -42,6 +42,7 @@ public class DatabaseManager {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new DataAccessException(e.getMessage());
         }
     }
@@ -63,6 +64,20 @@ public class DatabaseManager {
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
             conn.setCatalog(DATABASE_NAME);
             return conn;
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
+    public static void createTables() throws DataAccessException {
+        createDatabase();
+        String createTableSQL = "CREATE TABLE IF NOT EXISTS user (" +
+                "username VARCHAR(255) NOT NULL PRIMARY KEY, " +
+                "password VARCHAR(255) NOT NULL, " +
+                "email VARCHAR(255) NOT NULL)";
+        try (Connection connection = getConnection();
+             var statement = connection.prepareStatement(createTableSQL)) {
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
