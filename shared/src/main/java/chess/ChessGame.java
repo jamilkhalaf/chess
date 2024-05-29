@@ -16,16 +16,17 @@ public class ChessGame {
     ChessPosition newRightRookPosition;
     ChessPosition leftRookPosition;
     ChessPosition newLeftRookPosition;
-    private boolean canCastleLeft = false;
-    private boolean canCastleRight = false;
+    boolean canCastleLeft = false;
+    boolean canCastleRight = false;
     private ChessBoard board = new ChessBoard();
     private boolean isGameOver = false;
     private TeamColor teamTurn = TeamColor.WHITE;
     private ChessMove lastMove;
-    private boolean isEnPassant = false;
+    boolean isEnPassant = false;
     private ChessPosition enPassantPosition;
 
     public ChessGame() {
+
         board.resetBoard();
     }
 
@@ -61,7 +62,8 @@ public class ChessGame {
      */
     public enum TeamColor {
         WHITE,
-        BLACK
+        BLACK,
+        empty,
     }
 
     /**

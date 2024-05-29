@@ -5,19 +5,22 @@ import chess.ChessGame;
 import chess.ChessBoard;
 
 public class GameData {
+    private ChessGame game;
     private Integer gameID;
-    private String whiteUsername;
-    private String blackUsername;
+    private String whiteUsername = null;
+    private String blackUsername = null;
     private String gameName;
 
 
-    public GameData(Integer gameID, String gameName){
+    public GameData(Integer gameID, String gameName, String whiteUsername,String blackUsername, ChessGame chessGame){
         this.gameName = gameName;
 
         this.gameID = gameID;
-        this.blackUsername = null;
+        this.blackUsername = blackUsername;
 
-        this.whiteUsername = null;
+        this.whiteUsername = whiteUsername;
+
+        this.game = chessGame;
 
         ChessBoard board = new ChessBoard();
         board.resetBoard();

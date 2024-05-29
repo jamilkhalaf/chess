@@ -81,10 +81,24 @@ public class DatabaseManager {
                 "username VARCHAR(255) NOT NULL, " +
                 "FOREIGN KEY (username) REFERENCES user(username) )";
 
+        String createGameSQL = "CREATE TABLE IF NOT EXISTS game (" +
+                "gameID INTEGER NOT NULL PRIMARY KEY, " +
+                "gameName VARCHAR(255) NOT NULL, " +
+                "whiteUsername VARCHAR(255), " +
+                "blackUsername VARCHAR(255), " +
+                "spectators TEXT, " +
+                "chessGame TEXT, " + // Added chessGame column
+                "FOREIGN KEY (blackUsername) REFERENCES user(username), " +
+                "FOREIGN KEY (whiteUsername) REFERENCES user(username) )";
+
+
+
         try (Connection connection = getConnection();
              var userStmt = connection.prepareStatement(createUserSQL);
+             var gameStmt = connection.prepareStatement(createGameSQL);
              var authStmt = connection.prepareStatement(createAuthSQL)) {
             userStmt.executeUpdate();
+            gameStmt.executeUpdate();
             authStmt.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());

@@ -41,7 +41,8 @@ public class JoinGameService {
 
             GameData gameData = gameDAO.getGameData(existingGameID);
 
-            if (playerColor != ChessGame.TeamColor.WHITE && playerColor != ChessGame.TeamColor.BLACK) {
+
+            if ((playerColor != ChessGame.TeamColor.WHITE) && (playerColor != ChessGame.TeamColor.BLACK) && (playerColor != ChessGame.TeamColor.empty)) {
                 throw new DataAccessException("Error: Invalid team color");
             }
 
