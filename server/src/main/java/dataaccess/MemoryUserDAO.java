@@ -83,18 +83,18 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     @Override
-    public Integer getSize() {
+    public Integer getSize() throws DataAccessException{
 
-        return users.size();
-//        Integer databaseSize = 0;
-//        String sql = "SELECT COUNT(*) FROM user";
-//        try (Connection connection = DatabaseManager.getConnection();
-//             PreparedStatement stmt = connection.prepareStatement(sql)) {
-//            stmt.executeUpdate();
-//        } catch (SQLException ex) {
-//            throw new DataAccessException("Error clearing user data: " + ex.getMessage());
-//        }
-//
-//        return databaseSize;
+//        return users.size();
+        Integer databaseSize = 0;
+        String sql = "SELECT COUNT(*) FROM user";
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            throw new DataAccessException("Error clearing user data: " + ex.getMessage());
+        }
+
+        return databaseSize;
     }
 }

@@ -71,13 +71,21 @@ public class DatabaseManager {
 
     public static void createTables() throws DataAccessException {
         createDatabase();
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS user (" +
+        String createUserSQL = "CREATE TABLE IF NOT EXISTS user (" +
                 "username VARCHAR(255) NOT NULL PRIMARY KEY, " +
                 "password VARCHAR(255) NOT NULL, " +
                 "email VARCHAR(255) NOT NULL)";
+
+        String createAuthSQL = "CREATE TABLE IF NOT EXISTS auth (" +
+                "authToken VARCHAR(255) NOT NULL PRIMARY KEY, " +
+                "username VARCHAR(255) NOT NULL, " +
+                "FOREIGN KEY (username) REFERENCES user(username) )";
+
         try (Connection connection = getConnection();
-             var statement = connection.prepareStatement(createTableSQL)) {
-            statement.executeUpdate();
+             var userStmt = connection.prepareStatement(createUserSQL);
+             var authStmt = connection.prepareStatement(createAuthSQL)) {
+            userStmt.executeUpdate();
+            authStmt.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
