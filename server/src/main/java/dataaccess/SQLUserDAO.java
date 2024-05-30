@@ -83,18 +83,18 @@ public class SQLUserDAO implements UserDAO {
     }
 
     @Override
-    public Integer getSize() throws DataAccessException{
-
-//        return users.size();
+    public Integer getSize() throws DataAccessException {
         Integer databaseSize = 0;
         String sql = "SELECT COUNT(*) FROM user";
         try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.executeUpdate();
+             PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                databaseSize = rs.getInt(1);
+            }
         } catch (SQLException ex) {
-            throw new DataAccessException("Error clearing user data: " + ex.getMessage());
+            throw new DataAccessException("Error getting game size: " + ex.getMessage());
         }
-
         return databaseSize;
     }
 }

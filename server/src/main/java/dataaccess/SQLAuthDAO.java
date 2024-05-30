@@ -117,7 +117,7 @@ public class SQLAuthDAO implements AuthDAO {
     @Override
     public Integer getSize() throws DataAccessException {
 //        return auths.size();
-        int databaseSize = 0;
+        Integer databaseSize = 0;
 
         String sql = "SELECT COUNT(*) FROM auth";
         try (Connection connection = DatabaseManager.getConnection();

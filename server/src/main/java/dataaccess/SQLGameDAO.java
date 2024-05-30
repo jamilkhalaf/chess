@@ -197,7 +197,7 @@ public class SQLGameDAO implements GameDAO{
 
     @Override
     public Integer getSize() throws DataAccessException {
-        int databaseSize = 0;
+        Integer databaseSize = 0;
         String sql = "SELECT COUNT(*) FROM game";
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql);
