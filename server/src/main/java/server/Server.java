@@ -18,9 +18,9 @@ public class Server {
 
     public int run(int desiredPort) {
 
-        userDAO = new MemoryUserDAO();
-        gameDAO = new MemoryGameDAO();
-        authDAO = new MemoryAuthDAO();
+        userDAO = new SQLUserDAO();
+        gameDAO = new SQLGameDAO();
+        authDAO = new SQLAuthDAO();
 
         Spark.port(desiredPort);
 
