@@ -48,7 +48,6 @@ public class SQLGameDAO implements GameDAO{
                 if (rs.next()) {
                     ChessGame chessGame = new Gson().fromJson(rs.getString("chessGame"), ChessGame.class);
 
-
                     return new GameData(
                             rs.getInt("gameID"),
                             rs.getString("gameName"),
@@ -135,6 +134,7 @@ public class SQLGameDAO implements GameDAO{
         String sql;
         if (playerColor == ChessGame.TeamColor.WHITE) {
             sql = "UPDATE game SET whiteUsername = ? WHERE gameID = ?";
+
         } else if (playerColor == ChessGame.TeamColor.BLACK) {
             sql = "UPDATE game SET blackUsername = ? WHERE gameID = ?";
 
@@ -152,6 +152,46 @@ public class SQLGameDAO implements GameDAO{
         } catch (SQLException ex) {
             throw new DataAccessException("Error updating game: " + ex.getMessage());
         }
+    }
+
+    @Override
+    public ChessGame makeChessMove(ChessMove move) throws DataAccessException{
+        ChessGame chessGame;
+        String selectSql = "SELECT chessGame FROM game WHERE gameID = ?";
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement selectStmt = connection.prepareStatement(selectSql)) {
+            selectStmt.setInt(1, gameID);
+            try (ResultSet rs = selectStmt.executeQuery()) {
+                if (rs.next()) {
+                    String chessGameJson = rs.getString("chessGame");
+                    chessGame = new Gson().fromJson(chessGameJson, ChessGame.class);
+                } else {
+                    throw new DataAccessException("Game not found with gameID: " + gameID);
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Error retrieving game data: " + ex.getMessage());
+        }
+
+        try {
+            chessGame.makeMove(move);
+        } catch (InvalidMoveException ex) {
+            throw new DataAccessException("Invalid move: " + ex.getMessage());
+        }
+
+        // Step 3: Update the ChessGame object back in the database
+        String updateSql = "UPDATE game SET chessGame = ? WHERE gameID = ?";
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement updateStmt = connection.prepareStatement(updateSql)) {
+            String updatedChessGameJson = new Gson().toJson(chessGame);
+            updateStmt.setString(1, updatedChessGameJson);
+            updateStmt.setInt(2, gameID);
+            updateStmt.executeUpdate();
+        } catch (SQLException ex) {
+            throw new DataAccessException("Error updating game data: " + ex.getMessage());
+        }
+
+        return chessGame;
     }
 
     @Override

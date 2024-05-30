@@ -58,7 +58,7 @@ public class Server {
                 return scanner.useDelimiter("\\A").next();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("error");
             return "<html><body><h1>Error loading HTML file</h1></body></html>";
         }
     }

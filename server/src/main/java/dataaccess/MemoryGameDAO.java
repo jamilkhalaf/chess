@@ -1,6 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -71,5 +72,10 @@ public class MemoryGameDAO implements GameDAO{
     @Override
     public Integer getSize() {
         return games.size();
+    }
+
+    @Override
+    public ChessGame makeChessMove(ChessMove move) {
+        return new ChessGame();
     }
 }
