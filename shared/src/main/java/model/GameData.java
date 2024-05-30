@@ -5,7 +5,7 @@ import chess.ChessGame;
 import chess.ChessBoard;
 
 public class GameData {
-    private ChessGame game;
+    private ChessBoard game;
     private Integer gameID;
     private String whiteUsername = null;
     private String blackUsername = null;
@@ -20,7 +20,7 @@ public class GameData {
 
         this.whiteUsername = whiteUsername;
 
-        this.game = chessGame;
+        this.game = chessGame.getBoard();
 
         ChessBoard board = new ChessBoard();
         board.resetBoard();

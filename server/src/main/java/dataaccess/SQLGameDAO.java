@@ -132,6 +132,7 @@ public class SQLGameDAO implements GameDAO{
     @Override
     public void updateGame(ChessGame.TeamColor playerColor, Integer gameID, String username) throws DataAccessException{
         String sql;
+//        makeChessMove(new ChessMove(new ChessPosition(2,1),new ChessPosition(3,1),null));
         if (playerColor == ChessGame.TeamColor.WHITE) {
             sql = "UPDATE game SET whiteUsername = ? WHERE gameID = ?";
 
