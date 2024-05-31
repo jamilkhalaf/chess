@@ -70,5 +70,7 @@ public class MakeMoveSQLTest {
 
         assertEquals("Invalid move: null", exception.getMessage(), "Exception message should be 'Error: unauthorized' for user1");
 
+
+
     }
 }
