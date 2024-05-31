@@ -55,4 +55,8 @@ public class GameData {
         }
 
     }
+
+    public ChessBoard getGame() {
+        return game;
+    }
 }

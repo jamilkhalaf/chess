@@ -24,7 +24,7 @@ public class MakeMoveSQLTest {
 
     @Test
     @DisplayName("make move success")
-    public void MakeMoveSuccess() throws DataAccessException {
+    public void makeMoveSuccess() throws DataAccessException {
 
         ClearService clearService1 = new ClearService(userDAO, gameDAO, authDAO);
         clearService1.clearUser();

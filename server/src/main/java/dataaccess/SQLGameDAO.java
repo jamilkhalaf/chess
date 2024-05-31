@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 public class SQLGameDAO implements GameDAO{
-    protected static Map<Integer, GameData> games = new HashMap<>();
     static Integer gameIDIncrement = 0;
 
     @Override
@@ -112,8 +111,7 @@ public class SQLGameDAO implements GameDAO{
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 ChessGame chessGame = new Gson().fromJson(rs.getString("chessGame"), ChessGame.class);
-//                try {chessGame.makeMove(new ChessMove(new ChessPosition(2,1),new ChessPosition(3,1),null));}
-//                catch (InvalidMoveException e) {throw new DataAccessException("error");}
+
                 gamesList.add(new GameData(
                         rs.getInt("gameID"),
                         rs.getString("gameName"),
@@ -132,7 +130,6 @@ public class SQLGameDAO implements GameDAO{
     @Override
     public void updateGame(ChessGame.TeamColor playerColor, Integer gameID, String username) throws DataAccessException{
         String sql;
-//        makeChessMove(new ChessMove(new ChessPosition(2,1),new ChessPosition(3,1),null));
         if (playerColor == ChessGame.TeamColor.WHITE) {
             sql = "UPDATE game SET whiteUsername = ? WHERE gameID = ?";
 
@@ -180,7 +177,6 @@ public class SQLGameDAO implements GameDAO{
             throw new DataAccessException("Invalid move: " + ex.getMessage());
         }
 
-        // Step 3: Update the ChessGame object back in the database
         String updateSql = "UPDATE game SET chessGame = ? WHERE gameID = ?";
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement updateStmt = connection.prepareStatement(updateSql)) {

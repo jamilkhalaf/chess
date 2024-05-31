@@ -8,12 +8,10 @@ import java.util.Map;
 import java.sql.*;
 
 public class SQLUserDAO implements UserDAO {
-    protected static Map<String, UserData> users = new HashMap<>();
 
     @Override
     public void createUser(String username, String password, String email) throws DataAccessException {
-//        UserData newUser = new UserData(username,password,email);
-//        users.put(username, newUser);
+
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         String sql = "INSERT INTO user (username, password, email) VALUES (?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE password = VALUES(password), email = VALUES(email)";
@@ -43,10 +41,7 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public UserData getUser(String username, String password) throws DataAccessException {
-//        if (users.containsKey(username)) {
-//            return users.get(username);
-//        }
-//        return null;
+
         String sql = "SELECT username, password, email FROM user WHERE username = ? ";
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -72,7 +67,6 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public void clear() throws DataAccessException {
-//        users.clear();
         String sql = "DELETE FROM user";
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
