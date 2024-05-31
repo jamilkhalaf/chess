@@ -21,6 +21,9 @@ public class RegisterService {
         if (userDAO.getUser(username, password) != null) {
             throw new DataAccessException("User already exists");
         }
+        if (userDAO.getUsername(username, password) != null) {
+            throw new DataAccessException("User already exists");
+        }
         userDAO.createUser(username, password, email);
         String authToken = authDAO.createAuth(username);
         return authToken;

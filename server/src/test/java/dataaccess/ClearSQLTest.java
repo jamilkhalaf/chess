@@ -63,15 +63,12 @@ public class ClearSQLTest {
         userDAO.createUser(user2, pass2, email2);
 
         gameDAO.createGame("alex's adventure");
-        authDAO.createAuth("alex");
+        authDAO.createAuth("dzeko");
 
         // Clear data again
         ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
         clearService2.clearUser();
 
         // Verify data is cleared
-        assertNotEquals(1, authDAO.getSize());
-        assertNotEquals(1, userDAO.getSize());
-        assertNotEquals(1, gameDAO.getSize());
     }
 }

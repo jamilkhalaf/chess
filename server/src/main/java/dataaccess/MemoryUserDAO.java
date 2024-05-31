@@ -31,4 +31,9 @@ public class MemoryUserDAO implements UserDAO {
     public Integer getSize() {
         return users.size();
     }
+
+    @Override
+    public String getUsername(String username, String password) {
+        return username;
+    }
 }

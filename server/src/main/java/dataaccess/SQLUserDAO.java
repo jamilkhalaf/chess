@@ -91,4 +91,23 @@ public class SQLUserDAO implements UserDAO {
         }
         return databaseSize;
     }
+
+    @Override
+    public String getUsername(String username, String password) throws DataAccessException{
+        String sql = "SELECT username FROM user WHERE username = ?";
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, username);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("username");
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Error getting user data: " + ex.getMessage());
+        }
+
+        return null;
+    }
 }
