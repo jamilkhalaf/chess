@@ -6,6 +6,7 @@ import service.ClearService;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ClearSQLTest {
     private UserDAO userDAO = new SQLUserDAO();
@@ -41,5 +42,36 @@ public class ClearSQLTest {
         assertEquals(0, authDAO.getSize());
         assertEquals(0, userDAO.getSize());
         assertEquals(0, gameDAO.getSize());
+    }
+
+    @Test
+    @DisplayName("SQL Clear Data Test")
+    public void testClearSQLData2() throws DataAccessException {
+        // Clear existing data
+        ClearService clearService1 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService1.clearUser();
+
+        // Add test data
+        String user1 = "haifa";
+        String pass1 = "wahbe";
+        String email1 = "fdjfbje";
+        userDAO.createUser(user1, pass1, email1);
+
+        String user2 = "dzeko";
+        String pass2 = "muller";
+        String email2 = "pop@edu";
+        userDAO.createUser(user2, pass2, email2);
+
+        gameDAO.createGame("alex's adventure");
+        authDAO.createAuth("alex");
+
+        // Clear data again
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
+
+        // Verify data is cleared
+        assertNotEquals(1, authDAO.getSize());
+        assertNotEquals(1, userDAO.getSize());
+        assertNotEquals(1, gameDAO.getSize());
     }
 }
