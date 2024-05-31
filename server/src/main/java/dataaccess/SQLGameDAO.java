@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class SQLGameDAO implements GameDAO{
     protected static Map<Integer, GameData> games = new HashMap<>();
-    static Integer gameID = 0;
+    static Integer gameIDIncrement = 0;
 
     @Override
     public Integer getGame(Integer gameID) throws DataAccessException {
@@ -65,7 +65,7 @@ public class SQLGameDAO implements GameDAO{
 
     @Override
     public void clear() throws DataAccessException {
-        gameID = 0;
+        gameIDIncrement = 0;
         String sql = "DELETE FROM game";
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -80,13 +80,13 @@ public class SQLGameDAO implements GameDAO{
     public Integer createGame(String gameName) throws DataAccessException {
 
         String sql = "INSERT INTO game (gameID, gameName, chessGame) VALUES (?,?,?)";
-        gameID += 1;
+        gameIDIncrement += 1;
         try (Connection connection = DatabaseManager.getConnection()) {
             connection.setAutoCommit(false);
 
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
                 String chessGameJson = new Gson().toJson(new ChessGame());
-                stmt.setInt(1, gameID);
+                stmt.setInt(1, gameIDIncrement);
 
                 stmt.setString(2, gameName);
                 stmt.setString(3, chessGameJson);
@@ -100,7 +100,7 @@ public class SQLGameDAO implements GameDAO{
         } catch (SQLException ex) {
             throw new DataAccessException("SQL Exception on connection: " + ex.getMessage());
         }
-        return gameID;
+        return gameIDIncrement;
     }
 
     @Override
@@ -156,7 +156,7 @@ public class SQLGameDAO implements GameDAO{
     }
 
     @Override
-    public ChessGame makeChessMove(ChessMove move) throws DataAccessException{
+    public ChessGame makeChessMove(ChessMove move, Integer gameID) throws DataAccessException{
         ChessGame chessGame;
         String selectSql = "SELECT chessGame FROM game WHERE gameID = ?";
         try (Connection connection = DatabaseManager.getConnection();

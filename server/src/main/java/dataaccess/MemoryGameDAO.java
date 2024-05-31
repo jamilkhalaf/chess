@@ -75,7 +75,7 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public ChessGame makeChessMove(ChessMove move) {
+    public ChessGame makeChessMove(ChessMove move, Integer gameID) {
         return new ChessGame();
     }
 }
