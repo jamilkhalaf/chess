@@ -5,8 +5,6 @@ import model.GameData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import requests.BaseReq;
-import requests.CreateGameReq;
-import responses.CreateGameRes;
 import responses.ListGamesRes;
 import service.*;
 
@@ -20,61 +18,54 @@ public class ListGamesSQLTest {
     private AuthDAO authDAO = new SQLAuthDAO();
 
     @Test
-    @DisplayName("list game success")
-    public void listGameSuccess() throws DataAccessException {
-
+    @DisplayName("SQL List Game Success")
+    public void testListGameSuccess() throws DataAccessException {
+        // Clear existing data
         ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
         clearService.clearUser();
+
         // Ensure initial data is present
-        String user1 = "jamil";
-        String pass1 = "123";
-        String email1 = "jamil@byu";
+        String user1 = "alex";
+        String pass1 = "pass123";
+        String email1 = "alex@byu.edu";
         userDAO.createUser(user1, pass1, email1);
 
-        gameDAO.createGame("jamil's game");
+        gameDAO.createGame("alex's game");
 
         LoginService loginService = new LoginService(userDAO, gameDAO, authDAO);
+        String authToken = loginService.loginUser("alex", "pass123");
 
-        String authToken1 = loginService.loginUser("jamil", "123");
-
-        BaseReq listRequest1 = new BaseReq();
+        BaseReq listRequest = new BaseReq();
 
         ListGamesService listGameService = new ListGamesService(userDAO, gameDAO, authDAO);
 
+        List<GameData> gamesList = listGameService.listGames(authToken);
 
+        ListGamesRes listGameResponse = new ListGamesRes(gamesList);
 
-        List<GameData> gamesList = listGameService.listGames(authToken1);
-
-        ListGamesRes listGameResponse1 = new ListGamesRes(gamesList);
-
-        assertNotNull(listGameResponse1.getGames());
-        ;
-
-
+        assertNotNull(listGameResponse.getGames());
     }
 
     @Test
-    @DisplayName("list game failure")
-    public void listGameFailure() throws DataAccessException{
-
-        String user1 = "jamil";
-        String pass1 = "123";
-        String email1 = "jamil@byu";
+    @DisplayName("SQL List Game Failure")
+    public void testListGameFailure() throws DataAccessException {
+        // Ensure initial data is present
+        String user1 = "alex";
+        String pass1 = "pass123";
+        String email1 = "alex@byu.edu";
         userDAO.createUser(user1, pass1, email1);
 
-        gameDAO.createGame("jamil's game");
+        gameDAO.createGame("alex's game");
 
         LoginService loginService = new LoginService(userDAO, gameDAO, authDAO);
+        String authToken = loginService.loginUser("alex", "pass123");
 
-        String authToken1 = loginService.loginUser("jamil", "123");
-
-        BaseReq listRequest1 = new BaseReq();
+        BaseReq listRequest = new BaseReq();
 
         ListGamesService listGameService = new ListGamesService(userDAO, gameDAO, authDAO);
 
         List<GameData> gameData = listGameService.listGames("");
 
         assertNotNull(gameData);
-
     }
 }

@@ -1,57 +1,45 @@
 package dataaccess;
 
-import dataaccess.*;
-import model.AuthData;
-import model.GameData;
-import model.UserData;
 import org.junit.jupiter.api.*;
-import passoff.model.TestUser;
-import passoff.server.TestServerFacade;
-import requests.BaseReq;
-import responses.BaseRes;
-import server.Server;
+
 import service.ClearService;
 
-import java.net.HttpURLConnection;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClearSQLTest {
     private UserDAO userDAO = new SQLUserDAO();
-private GameDAO gameDAO = new SQLGameDAO();
+    private GameDAO gameDAO = new SQLGameDAO();
     private AuthDAO authDAO = new SQLAuthDAO();
 
-
     @Test
-    @DisplayName("Clear Test")
-    public void clearData() throws DataAccessException {
-        // Ensure initial data is present
+    @DisplayName("SQL Clear Data Test")
+    public void testClearSQLData() throws DataAccessException {
+        // Clear existing data
         ClearService clearService1 = new ClearService(userDAO, gameDAO, authDAO);
         clearService1.clearUser();
 
-        String user1 = "jamil";
-        String pass1 = "123";
-        String email1 = "jamil@byu";
+        // Add test data
+        String user1 = "alex";
+        String pass1 = "pass123";
+        String email1 = "alex@byu.edu";
         userDAO.createUser(user1, pass1, email1);
 
-        String user2 = "khalaf";
-        String pass2 = "24343";
-        String email2 = "jamil@edu";
+        String user2 = "sam";
+        String pass2 = "pass456";
+        String email2 = "sam@edu.com";
         userDAO.createUser(user2, pass2, email2);
 
-        gameDAO.createGame("jamil's game");
-        authDAO.createAuth("jamil");
+        gameDAO.createGame("alex's adventure");
+        authDAO.createAuth("alex");
 
+        // Clear data again
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
 
-        ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
-        clearService.clearUser();
-
+        // Verify data is cleared
         assertEquals(0, authDAO.getSize());
         assertEquals(0, userDAO.getSize());
         assertEquals(0, gameDAO.getSize());
-
     }
 }

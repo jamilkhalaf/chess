@@ -23,8 +23,8 @@ public class GetChessGameSQLTest {
     private AuthDAO authDAO = new SQLAuthDAO();
 
     @Test
-    @DisplayName("create game success")
-    public void createGameSuccess() throws DataAccessException {
+    @DisplayName("get game success")
+    public void getGameSuccess() throws DataAccessException {
 
         ClearService clearService1 = new ClearService(userDAO, gameDAO, authDAO);
         clearService1.clearUser();
@@ -45,8 +45,8 @@ public class GetChessGameSQLTest {
     }
 
     @Test
-    @DisplayName("create game failure")
-    public void createGameFailure() throws DataAccessException{
+    @DisplayName("get game failure")
+    public void getGameFailure() throws DataAccessException{
 
         ClearService clearService1 = new ClearService(userDAO, gameDAO, authDAO);
         clearService1.clearUser();

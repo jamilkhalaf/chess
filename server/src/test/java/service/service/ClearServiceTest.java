@@ -1,20 +1,11 @@
 package service.service;
 
 import dataaccess.*;
-import model.AuthData;
-import model.GameData;
-import model.UserData;
+
 import org.junit.jupiter.api.*;
-import passoff.model.TestUser;
-import passoff.server.TestServerFacade;
-import requests.BaseReq;
-import responses.BaseRes;
-import server.Server;
+
 import service.ClearService;
 
-import java.net.HttpURLConnection;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

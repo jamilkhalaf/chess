@@ -11,7 +11,6 @@ import service.LoginService;
 import service.LogoutService;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LogoutSQLTest {
     private UserDAO userDAO = new SQLUserDAO();
@@ -19,22 +18,19 @@ public class LogoutSQLTest {
     private AuthDAO authDAO = new SQLAuthDAO();
 
     @Test
-    @DisplayName("Logoutsuccess")
-    public void logoutSuccess() throws DataAccessException {
+    @DisplayName("SQL Logout success")
+    public void testLogoutSuccess() throws DataAccessException {
         // Ensure initial data is present
-        String user1 = "jamil";
-        String pass1 = "123";
-        String email1 = "jamil@byu";
+        String user1 = "alex";
+        String pass1 = "pass123";
+        String email1 = "alex@byu.edu";
         userDAO.createUser(user1, pass1, email1);
 
-
-        LoginReq loginRequest1 = new LoginReq("jamil", "123");
-
+        LoginReq loginRequest1 = new LoginReq("alex", "pass123");
 
         LoginService loginService = new LoginService(userDAO, gameDAO, authDAO);
 
-        String authToken1 = loginService.loginUser("jamil", "123");
-
+        String authToken1 = loginService.loginUser("alex", "pass123");
 
         BaseReq logoutRequest = new BaseReq();
 
@@ -44,28 +40,23 @@ public class LogoutSQLTest {
 
         BaseRes logoutResponse = new BaseRes();
 
-
         assertNotNull(logoutResponse);
-
     }
 
     @Test
-    @DisplayName("Logout failure")
-    public void logoutFailure() throws DataAccessException {
-        String user1 = "jamil";
-        String pass1 = "123";
-        String email1 = "jamil@byu";
+    @DisplayName("SQL Logout failure")
+    public void testLogoutFailure() throws DataAccessException {
+        // Ensure initial data is present
+        String user1 = "alex";
+        String pass1 = "pass123";
+        String email1 = "alex@byu.edu";
         userDAO.createUser(user1, pass1, email1);
-
-
 
         BaseReq logoutRequest = new BaseReq();
 
         LogoutService logoutService = new LogoutService(userDAO, gameDAO, authDAO);
 
-
         BaseRes logoutResponse = new BaseRes();
-
 
         assertNotNull(logoutResponse);
 
@@ -73,6 +64,5 @@ public class LogoutSQLTest {
             logoutService.logoutUser("");
         });
         assertEquals("Error: unauthorized", exception1.getMessage(), "Exception message should be 'Error: unauthorized' for user1");
-
     }
 }
