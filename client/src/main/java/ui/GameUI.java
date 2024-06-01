@@ -1,10 +1,11 @@
 package ui;
 
+import chess.ChessBoard;
 import server.Server;
 import java.util.Scanner;
 
 
-public class PostLoginUI {
+public class GameUI {
     private static Scanner scanner;
     private static State currentState = State.LOGGED_IN;
 
@@ -26,13 +27,6 @@ public class PostLoginUI {
             String command = scanner.nextLine().trim().toLowerCase();
             String[] commandParts = command.split(" ");
             switch (commandParts[0]) {
-                case "create":
-                    if (commandParts.length == 2) {
-                        handleCreateGame(commandParts[1]);
-                    } else {
-                        System.out.println("Usage: create <gameName>");
-                    }
-                    break;
                 case "list":
                     System.exit(0);
                     break;
@@ -60,7 +54,6 @@ public class PostLoginUI {
 
 
     public static void displayMenu() {
-        System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "create <NAME>" + EscapeSequences.SET_TEXT_COLOR_MAGENTA + " - a game");
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "list" + EscapeSequences.SET_TEXT_COLOR_MAGENTA + " - games");
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "join <ID> [WHITE|BLACK]" + EscapeSequences.SET_TEXT_COLOR_MAGENTA + " - a game");
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "observe <ID>" + EscapeSequences.SET_TEXT_COLOR_MAGENTA + " - a game");
@@ -73,19 +66,11 @@ public class PostLoginUI {
         System.out.println("helping");
     }
 
-    private static void handleCreateGame(String gameName) {
-        String json = String.format("{\"gameName\":\"%s\"}", gameName);
-        try {
-            String response = HandleClientRequest.sendGameRequest("http://localhost:4510/game", json);
-            System.out.println("Server response: " + response);
-
-            GameUI.display();
-
-        } catch (Exception e) {
-            System.out.println("Failed to register: " + e.getMessage());
-        }
-    }
-
+//    public static void getBoard() {}
+//
+//    public static void displayBoard() {
+//        ChessBoard board =
+//    }
 
     private static String getPrompt() {
         String stateStr;

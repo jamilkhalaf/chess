@@ -1,5 +1,7 @@
 package ui;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import server.Server;
 import java.util.Scanner;
 
@@ -8,11 +10,16 @@ public class PreLoginUI {
     private static Scanner scanner;
     private static Server server;
     private static State currentState = State.LOGGED_OUT;
+    private static String authToken;
 
     public enum State {
         LOGGED_OUT,
         LOGGED_IN,
         IN_GAME
+    }
+
+    public static void setCurrentState(State currentState) {
+        PreLoginUI.currentState = currentState;
     }
 
     public static void init() {
@@ -23,6 +30,7 @@ public class PreLoginUI {
     }
 
     public static void display() {
+        displayMenu();
         while (true) {
             System.out.print(EscapeSequences.RESET_TEXT_COLOR + getPrompt());
             String command = scanner.nextLine().trim().toLowerCase();
@@ -57,7 +65,7 @@ public class PreLoginUI {
     private static void handleRegister(String username, String password, String email) {
         String json = String.format("{\"username\":\"%s\", \"password\":\"%s\", \"email\":\"%s\"}", username, password, email);
         try {
-            String response = HandleRegisterClient.sendPostRequest("http://localhost:4510/user", json);
+            String response = HandleClientRequest.sendPostRequest("http://localhost:4510/user", json);
             System.out.println("Server response: " + response);
 
             currentState = State.LOGGED_IN;
@@ -71,15 +79,20 @@ public class PreLoginUI {
     private static void handleLogin(String username, String password) {
         String json = String.format("{\"username\":\"%s\", \"password\":\"%s\"}", username, password);
         try {
-            String response = HandleLoginClient.sendPostRequest("http://localhost:4510/session", json);
+            String response = HandleClientRequest.sendPostRequest("http://localhost:4510/session", json);
+            JsonObject jsonObject = JsonParser.parseString(response).getAsJsonObject();
+            authToken = jsonObject.get("authToken").getAsString();
             System.out.println("Server response: " + response);
-
             currentState = State.LOGGED_IN;
             PostLoginUI.display();
 
         } catch (Exception e) {
             System.out.println("Failed to register: " + e.getMessage());
         }
+    }
+
+    public static String getAuthToken() {
+        return authToken;
     }
 
     public static void displayMenu() {

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SQLGameDAO implements GameDAO{
-    static Integer gameIDIncrement = 0;
+    static Integer gameIDIncrement;
 
     @Override
     public Integer getGame(Integer gameID) throws DataAccessException {
@@ -77,7 +77,7 @@ public class SQLGameDAO implements GameDAO{
 
     @Override
     public Integer createGame(String gameName) throws DataAccessException {
-
+        gameIDIncrement = getSize();
         String sql = "INSERT INTO game (gameID, gameName, chessGame) VALUES (?,?,?)";
         gameIDIncrement += 1;
         try (Connection connection = DatabaseManager.getConnection()) {
