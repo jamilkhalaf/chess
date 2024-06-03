@@ -68,8 +68,7 @@ public class PreLoginUI {
             String response = HandleClientRequest.sendPostRequest("http://localhost:4510/user", json);
             System.out.println("Server response: " + response);
 
-            currentState = State.LOGGED_IN;
-            PostLoginUI.display();
+            PreLoginUI.display();
 
         } catch (Exception e) {
             System.out.println("Failed to register: " + e.getMessage());
@@ -91,8 +90,14 @@ public class PreLoginUI {
         }
     }
 
+
+
     public static String getAuthToken() {
         return authToken;
+    }
+
+    public static void setAuthToken(String authToken) {
+        PreLoginUI.authToken = authToken;
     }
 
     public static void displayMenu() {

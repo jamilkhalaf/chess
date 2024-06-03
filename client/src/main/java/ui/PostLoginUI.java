@@ -1,12 +1,24 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import server.Server;
 import java.util.Scanner;
+
 
 
 public class PostLoginUI {
     private static Scanner scanner;
     private static State currentState = State.LOGGED_IN;
+    private static ChessBoard board;
+    private static Gson gson = new Gson();
+
 
     public static void init() {
         scanner = new Scanner(System.in);
@@ -29,11 +41,14 @@ public class PostLoginUI {
                 case "create":
                     if (commandParts.length == 2) {
                         handleCreateGame(commandParts[1]);
+                        handleListGames();
                     } else {
                         System.out.println("Usage: create <gameName>");
                     }
                     break;
                 case "list":
+                    handleListGames();
+
                     System.exit(0);
                     break;
                 case "join":
@@ -42,8 +57,8 @@ public class PostLoginUI {
 
                     break;
                 case "logout":
-                    PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_OUT);
-                    PreLoginUI.display();
+                    handleLogout();
+
                     break;
                 case "quit":
                     PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_OUT);
@@ -86,6 +101,37 @@ public class PostLoginUI {
         }
     }
 
+    private static void handleListGames() {
+        try {
+            String response = HandleClientRequest.sendGetRequest("http://localhost:4510/game");
+            System.out.println("Server response: " + response);
+            ChessGame chessGame = new Gson().fromJson(response, ChessGame.class);
+            board = chessGame.getBoard();
+            printWhiteBoard();
+            printBlackBoard();
+            System.out.println(board);
+
+        } catch (Exception e) {
+            System.out.println("Failed to fetch games: " + e.getMessage());
+        }
+    }
+
+
+    private static void handleLogout() {
+        try {
+            String response = HandleClientRequest.sendDeleteRequest("http://localhost:4510/session");
+            JsonObject jsonObject = JsonParser.parseString(response).getAsJsonObject();
+            System.out.println("Server response: " + response);
+            PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_OUT);
+            PreLoginUI.display();
+
+
+
+        } catch (Exception e) {
+            System.out.println("Failed to logout: " + e.getMessage());
+        }
+    }
+
 
     private static String getPrompt() {
         String stateStr;
@@ -102,5 +148,112 @@ public class PostLoginUI {
                 break;
         }
         return stateStr + " >>> ";
+    }
+
+    private static void printWhiteBoard() {
+        System.out.println("White Perspective:");
+        System.out.println(EscapeSequences.ERASE_SCREEN);
+
+        System.out.print("   ");
+        for (int i = 0; i < 8; i++) {
+            System.out.print(String.format(" "  + (char)('a' + i) + " "));
+        }
+        System.out.println();
+
+        for (int row = 1; row <= 8; row++) {
+            System.out.print(" " + row + " ");
+
+            for (int col = 1; col <= 8; col++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                String pieceSymbol = getPieceSymbol(piece);
+                boolean isBlackSquare = (row + col) % 2 != 0;
+            String square = isBlackSquare ? String.format(EscapeSequences.SET_BG_COLOR_BLACK + pieceSymbol + EscapeSequences.RESET_BG_COLOR) : String.format(EscapeSequences.SET_BG_COLOR_WHITE + pieceSymbol + EscapeSequences.RESET_BG_COLOR);
+                System.out.print(square);
+            }
+            System.out.println(" " + row);
+        }
+
+        System.out.print("   ");
+        for (int i = 0; i < 8; i++) {
+            System.out.print(" " + (char)('a' + i) + " ");
+        }
+        System.out.println();
+    }
+
+    private static void printBlackBoard() {
+        System.out.println("Black Perspective:");
+        System.out.println(EscapeSequences.ERASE_SCREEN);
+
+        System.out.print("   ");
+        for (int i = 7; i >= 0; i--) {
+            System.out.print(" " + (char)('a' + i) + " ");
+        }
+        System.out.println();
+
+        for (int row = 8; row >= 1; row--) {
+            System.out.print(" " + row + " ");
+
+            for (int col = 8; col >= 1; col--) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                String pieceSymbol = getPieceSymbol(piece);
+                boolean isBlackSquare = (row + col) % 2 != 0;
+                String square = isBlackSquare ? String.format(EscapeSequences.SET_BG_COLOR_BLACK + pieceSymbol + EscapeSequences.RESET_BG_COLOR) : String.format(EscapeSequences.SET_BG_COLOR_WHITE + pieceSymbol + EscapeSequences.RESET_BG_COLOR);
+                System.out.print(square);
+            }
+            System.out.println(" " + row);
+        }
+
+        System.out.print("   ");
+        for (int i = 7; i >= 0; i--) {
+            System.out.print(" " + (char)('a' + i) + " ");
+        }
+        System.out.println();
+    }
+
+
+
+
+
+    private static String getPieceSymbol(ChessPiece piece) {
+        if (piece == null) {
+            return EscapeSequences.EMPTY;
+        }
+        ChessGame.TeamColor color = piece.getTeamColor();
+        ChessPiece.PieceType type = piece.getPieceType();
+        switch (color) {
+            case WHITE:
+                switch (type) {
+                    case KING:
+                        return EscapeSequences.WHITE_KING;
+                    case QUEEN:
+                        return EscapeSequences.WHITE_QUEEN;
+                    case BISHOP:
+                        return EscapeSequences.WHITE_BISHOP;
+                    case KNIGHT:
+                        return EscapeSequences.WHITE_KNIGHT;
+                    case ROOK:
+                        return EscapeSequences.WHITE_ROOK;
+                    case PAWN:
+                        return EscapeSequences.WHITE_PAWN;
+                }
+                break;
+            case BLACK:
+                switch (type) {
+                    case KING:
+                        return EscapeSequences.BLACK_KING;
+                    case QUEEN:
+                        return EscapeSequences.BLACK_QUEEN;
+                    case BISHOP:
+                        return EscapeSequences.BLACK_BISHOP;
+                    case KNIGHT:
+                        return EscapeSequences.BLACK_KNIGHT;
+                    case ROOK:
+                        return EscapeSequences.BLACK_ROOK;
+                    case PAWN:
+                        return EscapeSequences.BLACK_PAWN;
+                }
+                break;
+        }
+        return EscapeSequences.EMPTY;
     }
 }
