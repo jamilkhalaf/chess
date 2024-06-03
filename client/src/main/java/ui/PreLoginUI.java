@@ -26,8 +26,8 @@ public class PreLoginUI {
 
     public static void init() {
         scanner = new Scanner(System.in);
-        server = new Server();
-        var port = server.run(4510);
+//        server = new Server();
+//        var port = server.run(4510);
         System.out.println(EscapeSequences.SET_TEXT_ITALIC +"♕ Welcome to 240 chess. Type Help to get started. ♕ ");
     }
 
@@ -64,27 +64,35 @@ public class PreLoginUI {
         }
     }
 
-    private static void handleRegister(String username, String password, String email) {
+    public static void handleRegister(String username, String password, String email) {
         String json = String.format("{\"username\":\"%s\", \"password\":\"%s\", \"email\":\"%s\"}", username, password, email);
         try {
-            String response = HandleClientRequest.sendPostRequest("http://localhost:4510/user", json);
-            System.out.println("Server response: " + response);
+            String response = ServerFacade.sendPostRequest("http://localhost:4510/user", json);
+//            System.out.println("Server response: " + response);
+            String knownErrorResponse = "{\"message\": \"Error: already taken\"}";
 
-            PreLoginUI.display();
+            if (response.equals(knownErrorResponse)) {
+                System.out.println("Already Taken username");
+            } else {
+                System.out.println("Registered successfully, login to continue");
+                PreLoginUI.display();
+            }
+
+
 
         } catch (Exception e) {
             System.out.println("Failed to register: ");
         }
     }
 
-    private static void handleLogin(String username, String password) {
+    public static void handleLogin(String username, String password) {
         String json = String.format("{\"username\":\"%s\", \"password\":\"%s\"}", username, password);
         try {
-            String response = HandleClientRequest.sendPostRequest("http://localhost:4510/session", json);
+            String response = ServerFacade.sendPostRequest("http://localhost:4510/session", json);
 
             JsonObject jsonObject = JsonParser.parseString(response).getAsJsonObject();
             authToken = jsonObject.get("authToken").getAsString();
-            System.out.println("Server response: " + response);
+//            System.out.println("Server response: " + response);
             currentState = State.LOGGED_IN;
             PostLoginUI.display();
 

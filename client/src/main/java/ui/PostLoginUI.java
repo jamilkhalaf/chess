@@ -57,7 +57,6 @@ public class PostLoginUI {
                 case "join":
                     if (commandParts.length == 3) {
                         handleJoinGame(Integer.parseInt(commandParts[1]),commandParts[2]);
-                        getBoard(Integer.parseInt(commandParts[1]));
                         GameUI.display();
                     } else {
                         System.out.println("Usage: create <gameName>");
@@ -65,7 +64,13 @@ public class PostLoginUI {
 
                     break;
                 case "observe":
-
+                    if (commandParts.length == 2) {
+                        handleObserveGame(Integer.parseInt(commandParts[1]));
+                        getBoard(Integer.parseInt(commandParts[1]));
+                        GameUI.display();
+                    } else {
+                        System.out.println("Usage: create <gameName>");
+                    }
                     break;
                 case "logout":
                     handleLogout();
@@ -102,7 +107,7 @@ public class PostLoginUI {
     private static void handleCreateGame(String gameName) {
         String json = String.format("{\"gameName\":\"%s\"}", gameName);
         try {
-            String response = HandleClientRequest.sendGameRequest("http://localhost:4510/game", json);
+            String response = ServerFacade.sendGameRequest("http://localhost:4510/game", json, PreLoginUI.getAuthToken());
             System.out.println("Server response: " + response);
 
         } catch (Exception e) {
@@ -112,8 +117,8 @@ public class PostLoginUI {
 
     private static void getBoard(Integer gameID) {
         try {
-            String response = HandleClientRequest.sendGetRequest("http://localhost:4510/game");
-            System.out.println("Server response: " + response);
+            String response = ServerFacade.sendGetRequest("http://localhost:4510/game",PreLoginUI.getAuthToken());
+//            System.out.println("Server response: " + response);
 
             GameDataResponseWrapper responseData = new Gson().fromJson(response, GameDataResponseWrapper.class);
             List<GameData> gameDataList = responseData.getGames();
@@ -121,22 +126,21 @@ public class PostLoginUI {
             for (GameData gameData : gameDataList) {
                 if (gameData.getGameID() == gameID) {
                     game = gameData.getGame();
-                    game.makeMove(new ChessMove(new ChessPosition(2,1),new ChessPosition(4,1),null));
-                    // Make aggressive moves to lead to a fast checkmate
-                    game.makeMove(new ChessMove(new ChessPosition(7, 6), new ChessPosition(6, 6), null)); // Bishop to f5
-                    game.makeMove(new ChessMove(new ChessPosition(2, 4), new ChessPosition(4, 4), null));
-                    game.makeMove(new ChessMove(new ChessPosition(7, 1), new ChessPosition(6, 1), null));
-                    game.makeMove(new ChessMove(new ChessPosition(2, 5), new ChessPosition(4, 5), null));
-                    game.makeMove(new ChessMove(new ChessPosition(7, 7), new ChessPosition(5, 7), null));// Pawn to d4
-                    game.makeMove(new ChessMove(new ChessPosition(1, 4), new ChessPosition(5, 8), null));// Pawn to d4
-
-// Pawn to d4
-
-                    System.out.println(game.isInCheckmate(ChessGame.TeamColor.BLACK));
-                    System.out.println(game.isInCheckmate(ChessGame.TeamColor.WHITE));
+//                    game.makeMove(new ChessMove(new ChessPosition(2,1),new ChessPosition(4,1),null));
+//                    // Make aggressive moves to lead to a fast checkmate
+//                    game.makeMove(new ChessMove(new ChessPosition(7, 6), new ChessPosition(6, 6), null));
+//                    game.makeMove(new ChessMove(new ChessPosition(2, 4), new ChessPosition(4, 4), null));
+//                    game.makeMove(new ChessMove(new ChessPosition(7, 1), new ChessPosition(6, 1), null));
+//                    game.makeMove(new ChessMove(new ChessPosition(2, 5), new ChessPosition(4, 5), null));
+//                    game.makeMove(new ChessMove(new ChessPosition(7, 7), new ChessPosition(5, 7), null));
+//                    game.makeMove(new ChessMove(new ChessPosition(1, 4), new ChessPosition(5, 8), null));
+//
+//
+//                    System.out.println(game.isInCheckmate(ChessGame.TeamColor.BLACK));
+//                    System.out.println(game.isInCheckmate(ChessGame.TeamColor.WHITE));
                     board = game.getBoard();
-                    printWhiteBoard();
-                    printBlackBoard();
+//                    printWhiteBoard();
+//                    printBlackBoard();
                 }
             }
         } catch (Exception e) {
@@ -146,7 +150,7 @@ public class PostLoginUI {
 
     private static void handleListGames() {
         try {
-            String response = HandleClientRequest.sendGetRequest("http://localhost:4510/game");
+            String response = ServerFacade.sendGetRequest("http://localhost:4510/game",PreLoginUI.getAuthToken());
             System.out.println("Server response: " + response);
             PostLoginUI.display();
         } catch (Exception e) {
@@ -159,8 +163,40 @@ public class PostLoginUI {
             playerColor = playerColor.toUpperCase();
             String url = "http://localhost:4510/game";
             String json = "{\"playerColor\": \"" + playerColor + "\", \"gameID\": " + gameID + "}";
-            String response = HandleClientRequest.sendPutRequest(url, json);
-            System.out.println("Server response: " + response);
+            String response = ServerFacade.sendPutRequest(url, json, PreLoginUI.getAuthToken());
+//            System.out.println("Server response: " + response);
+            String knownErrorResponse = "{\"message\": \"Error: bad request\"}";
+
+            if (response.equals(knownErrorResponse)) {
+                System.out.println("Game Not found");
+            } else {
+                System.out.println("Joined Game");
+                getBoard(gameID);
+                if (playerColor.equals("BLACK")) {
+                    printBlackBoard();
+                }
+                if (playerColor.equals("WHITE")) {
+                    printWhiteBoard();
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Failed to join game: " + e.getMessage());
+        }
+    }
+
+    private static void handleObserveGame(Integer gameID) {
+        String playerColor = "empty";
+        try {
+            String url = "http://localhost:4510/game";
+            String json = "{\"playerColor\": \"" + playerColor + "\", \"gameID\": " + gameID + "}";
+            String response = ServerFacade.sendPutRequest(url, json, PreLoginUI.getAuthToken());
+//            System.out.println("Server response: " + response);
+            String knownErrorResponse = "{\"message\": \"Error: bad request\"}";
+            if (response.equals(knownErrorResponse)) {
+                System.out.println("Game Not found");
+            } else {
+                System.out.println("Observing game");
+            }
         } catch (Exception e) {
             System.out.println("Failed to join game: " + e.getMessage());
         }
@@ -169,9 +205,10 @@ public class PostLoginUI {
 
     private static void handleLogout() {
         try {
-            String response = HandleClientRequest.sendDeleteRequest("http://localhost:4510/session");
+            String response = ServerFacade.sendDeleteRequest("http://localhost:4510/session", PreLoginUI.getAuthToken());
             JsonObject jsonObject = JsonParser.parseString(response).getAsJsonObject();
-            System.out.println("Server response: " + response);
+//            System.out.println("Server response: " + response);
+            System.out.println("Logout Success");
             PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_OUT);
             PreLoginUI.display();
 
@@ -206,12 +243,12 @@ public class PostLoginUI {
 
         System.out.print("   ");
         for (int i = 0; i < 8; i++) {
-            System.out.print(String.format(" "  + (char)('a' + i) + " "));
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + (char)('a' + i) + " " + EscapeSequences.RESET_BG_COLOR);
         }
         System.out.println();
 
         for (int row = 8; row >= 1; row--) {
-            System.out.print(" " + row + " ");
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + row + " " + EscapeSequences.RESET_BG_COLOR);
 
             for (int col = 1; col <= 8; col++) {
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
@@ -220,12 +257,12 @@ public class PostLoginUI {
                 String square = isBlackSquare ? String.format(EscapeSequences.SET_BG_COLOR_BLACK + pieceSymbol + EscapeSequences.RESET_BG_COLOR) : String.format(EscapeSequences.SET_BG_COLOR_WHITE + pieceSymbol + EscapeSequences.RESET_BG_COLOR);
                 System.out.print(square);
             }
-            System.out.println(" " + row);
+            System.out.println(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + row + " " + EscapeSequences.RESET_BG_COLOR);
         }
 
         System.out.print("   ");
         for (int i = 0; i < 8; i++) {
-            System.out.print(" " + (char)('a' + i) + " ");
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + (char)('a' + i) + " " + EscapeSequences.RESET_BG_COLOR);
         }
         System.out.println();
     }
@@ -236,12 +273,12 @@ public class PostLoginUI {
 
         System.out.print("   ");
         for (int i = 7; i >= 0; i--) {
-            System.out.print(" " + (char)('a' + i) + " ");
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + (char)('a' + i) + " " + EscapeSequences.RESET_BG_COLOR);
         }
         System.out.println();
 
         for (int row = 1; row <= 8; row++) {
-            System.out.print(" " + row + " ");
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + row + " " + EscapeSequences.RESET_BG_COLOR);
 
             for (int col = 8; col >= 1; col--) {
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
@@ -250,12 +287,12 @@ public class PostLoginUI {
                 String square = isBlackSquare ? String.format(EscapeSequences.SET_BG_COLOR_BLACK + pieceSymbol + EscapeSequences.RESET_BG_COLOR) : String.format(EscapeSequences.SET_BG_COLOR_WHITE + pieceSymbol + EscapeSequences.RESET_BG_COLOR);
                 System.out.print(square);
             }
-            System.out.println(" " + row);
+            System.out.println(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + row + " " + EscapeSequences.RESET_BG_COLOR);
         }
 
         System.out.print("   ");
         for (int i = 7; i >= 0; i--) {
-            System.out.print(" " + (char)('a' + i) + " ");
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + (char)('a' + i) + " " + EscapeSequences.RESET_BG_COLOR);
         }
         System.out.println();
     }
@@ -275,33 +312,33 @@ public class PostLoginUI {
             case WHITE:
                 switch (type) {
                     case KING:
-                        return EscapeSequences.WHITE_KING;
+                        return EscapeSequences.SET_TEXT_COLOR_BLUE + EscapeSequences.WHITE_KING + EscapeSequences.RESET_BG_COLOR;
                     case QUEEN:
-                        return EscapeSequences.WHITE_QUEEN;
+                        return EscapeSequences.SET_TEXT_COLOR_BLUE + EscapeSequences.WHITE_QUEEN+ EscapeSequences.RESET_BG_COLOR;
                     case BISHOP:
-                        return EscapeSequences.WHITE_BISHOP;
+                        return EscapeSequences.SET_TEXT_COLOR_BLUE +EscapeSequences.WHITE_BISHOP+ EscapeSequences.RESET_BG_COLOR;
                     case KNIGHT:
-                        return EscapeSequences.WHITE_KNIGHT;
+                        return EscapeSequences.SET_TEXT_COLOR_BLUE +EscapeSequences.WHITE_KNIGHT+ EscapeSequences.RESET_BG_COLOR;
                     case ROOK:
-                        return EscapeSequences.WHITE_ROOK;
+                        return EscapeSequences.SET_TEXT_COLOR_BLUE +EscapeSequences.WHITE_ROOK+ EscapeSequences.RESET_BG_COLOR;
                     case PAWN:
-                        return EscapeSequences.WHITE_PAWN;
+                        return EscapeSequences.SET_TEXT_COLOR_BLUE +EscapeSequences.WHITE_PAWN+ EscapeSequences.RESET_BG_COLOR;
                 }
                 break;
             case BLACK:
                 switch (type) {
                     case KING:
-                        return EscapeSequences.BLACK_KING;
+                        return EscapeSequences.SET_TEXT_COLOR_RED +EscapeSequences.BLACK_KING+ EscapeSequences.RESET_BG_COLOR;
                     case QUEEN:
-                        return EscapeSequences.BLACK_QUEEN;
+                        return EscapeSequences.SET_TEXT_COLOR_RED +EscapeSequences.BLACK_QUEEN+ EscapeSequences.RESET_BG_COLOR;
                     case BISHOP:
-                        return EscapeSequences.BLACK_BISHOP;
+                        return EscapeSequences.SET_TEXT_COLOR_RED +EscapeSequences.BLACK_BISHOP+ EscapeSequences.RESET_BG_COLOR;
                     case KNIGHT:
-                        return EscapeSequences.BLACK_KNIGHT;
+                        return EscapeSequences.SET_TEXT_COLOR_RED +EscapeSequences.BLACK_KNIGHT+ EscapeSequences.RESET_BG_COLOR;
                     case ROOK:
-                        return EscapeSequences.BLACK_ROOK;
+                        return EscapeSequences.SET_TEXT_COLOR_RED +EscapeSequences.BLACK_ROOK+ EscapeSequences.RESET_BG_COLOR;
                     case PAWN:
-                        return EscapeSequences.BLACK_PAWN;
+                        return EscapeSequences.SET_TEXT_COLOR_RED +EscapeSequences.BLACK_PAWN+ EscapeSequences.RESET_BG_COLOR;
                 }
                 break;
         }

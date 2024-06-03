@@ -37,8 +37,7 @@ public class GameUI {
                     PreLoginUI.display();
                     break;
                 case "quit":
-                    PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_OUT);
-                    PreLoginUI.display();
+                    PostLoginUI.display();
                     break;
                 case "help":
                     displayHelp();
@@ -62,11 +61,7 @@ public class GameUI {
         System.out.println("helping");
     }
 
-//    public static void getBoard() {}
-//
-//    public static void displayBoard() {
-//        ChessBoard board =
-//    }
+
 
     private static String getPrompt() {
         String stateStr;

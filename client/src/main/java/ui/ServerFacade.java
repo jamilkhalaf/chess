@@ -8,7 +8,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
-public class HandleClientRequest {
+public class ServerFacade {
 
     public static String sendPostRequest(String url, String json) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
@@ -22,8 +22,7 @@ public class HandleClientRequest {
         HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
         return response.body();
     }
-    public static String sendGameRequest(String url, String json) throws Exception {
-        String authToken = PreLoginUI.getAuthToken();
+    public static String sendGameRequest(String url, String json, String authToken) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
 
@@ -37,9 +36,8 @@ public class HandleClientRequest {
         return response.body();
     }
 
-    public static String sendDeleteRequest(String urlString) throws Exception {
+    public static String sendDeleteRequest(String urlString, String authToken) throws Exception {
         URL url = new URL(urlString);
-        String authToken = PreLoginUI.getAuthToken();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("DELETE");
         connection.setRequestProperty("Authorization",authToken);
@@ -53,8 +51,7 @@ public class HandleClientRequest {
         }
     }
 
-    public static String sendGetRequest(String urlString) throws Exception {
-        String authToken = PreLoginUI.getAuthToken();
+    public static String sendGetRequest(String urlString, String authToken) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(urlString))
@@ -70,8 +67,7 @@ public class HandleClientRequest {
         }
     }
 
-    public static String sendPutRequest(String url, String json) throws Exception {
-        String authToken = PreLoginUI.getAuthToken();
+    public static String sendPutRequest(String url, String json, String authToken) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(url))
