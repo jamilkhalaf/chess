@@ -69,4 +69,18 @@ public class HandleClientRequest {
             throw new Exception("Failed to fetch games: HTTP error code : " + response.statusCode());
         }
     }
+
+    public static String sendPutRequest(String url, String json) throws Exception {
+        String authToken = PreLoginUI.getAuthToken();
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(url))
+                .header("Content-Type", "application/json")
+                .header("Authorization", authToken)
+                .PUT(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+
+        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+        return response.body();
+    }
 }

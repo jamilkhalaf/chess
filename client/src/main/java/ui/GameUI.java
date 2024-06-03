@@ -27,13 +27,10 @@ public class GameUI {
             String command = scanner.nextLine().trim().toLowerCase();
             String[] commandParts = command.split(" ");
             switch (commandParts[0]) {
-                case "list":
+                case "make move":
                     System.exit(0);
                     break;
-                case "join":
-                    break;
-                case "observe":
-
+                case "resign":
                     break;
                 case "logout":
                     PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_OUT);
@@ -54,9 +51,8 @@ public class GameUI {
 
 
     public static void displayMenu() {
-        System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "list" + EscapeSequences.SET_TEXT_COLOR_MAGENTA + " - games");
-        System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "join <ID> [WHITE|BLACK]" + EscapeSequences.SET_TEXT_COLOR_MAGENTA + " - a game");
-        System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "observe <ID>" + EscapeSequences.SET_TEXT_COLOR_MAGENTA + " - a game");
+        System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "make move" + EscapeSequences.SET_TEXT_COLOR_MAGENTA );
+        System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "resign [WHITE|BLACK]" + EscapeSequences.SET_TEXT_COLOR_MAGENTA);
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "logout" + EscapeSequences.SET_TEXT_COLOR_MAGENTA + " - when you are done");
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "quit" + EscapeSequences.SET_TEXT_COLOR_MAGENTA + " - playing chess");
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "help" + EscapeSequences.SET_TEXT_COLOR_MAGENTA + " - with possible commands");

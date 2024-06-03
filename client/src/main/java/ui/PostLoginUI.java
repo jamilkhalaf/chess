@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import model.GameData;
 import server.Server;
 import java.util.Scanner;
 
@@ -41,7 +42,7 @@ public class PostLoginUI {
                 case "create":
                     if (commandParts.length == 2) {
                         handleCreateGame(commandParts[1]);
-                        handleListGames();
+                        PostLoginUI.display();
                     } else {
                         System.out.println("Usage: create <gameName>");
                     }
@@ -52,6 +53,14 @@ public class PostLoginUI {
                     System.exit(0);
                     break;
                 case "join":
+                    if (commandParts.length == 3) {
+                        handleJoinGame(Integer.parseInt(commandParts[1]),commandParts[2]);
+                        getBoard();
+                        GameUI.display();
+                    } else {
+                        System.out.println("Usage: create <gameName>");
+                    }
+
                     break;
                 case "observe":
 
@@ -94,14 +103,12 @@ public class PostLoginUI {
             String response = HandleClientRequest.sendGameRequest("http://localhost:4510/game", json);
             System.out.println("Server response: " + response);
 
-            GameUI.display();
-
         } catch (Exception e) {
             System.out.println("Failed to register: " + e.getMessage());
         }
     }
 
-    private static void handleListGames() {
+    private static void getBoard() {
         try {
             String response = HandleClientRequest.sendGetRequest("http://localhost:4510/game");
             System.out.println("Server response: " + response);
@@ -109,10 +116,32 @@ public class PostLoginUI {
             board = chessGame.getBoard();
             printWhiteBoard();
             printBlackBoard();
-            System.out.println(board);
+
 
         } catch (Exception e) {
             System.out.println("Failed to fetch games: " + e.getMessage());
+        }
+    }
+
+    private static void handleListGames() {
+        try {
+            String response = HandleClientRequest.sendGetRequest("http://localhost:4510/game");
+            System.out.println("Server response: " + response);
+            PostLoginUI.display();
+        } catch (Exception e) {
+            System.out.println("Failed to fetch games: " + e.getMessage());
+        }
+    }
+
+    private static void handleJoinGame(Integer gameID, String playerColor) {
+        try {
+            playerColor = playerColor.toUpperCase();
+            String url = "http://localhost:4510/game";
+            String json = "{\"playerColor\": \"" + playerColor + "\", \"gameID\": " + gameID + "}";
+            String response = HandleClientRequest.sendPutRequest(url, json);
+            System.out.println("Server response: " + response);
+        } catch (Exception e) {
+            System.out.println("Failed to join game: " + e.getMessage());
         }
     }
 
