@@ -1,15 +1,16 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import model.GameData;
 import server.Server;
+
+import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -17,7 +18,8 @@ import java.util.Scanner;
 public class PostLoginUI {
     private static Scanner scanner;
     private static State currentState = State.LOGGED_IN;
-    private static ChessBoard board;
+    private static ChessBoard board = new ChessBoard();
+    private static ChessGame game = new ChessGame();
     private static Gson gson = new Gson();
 
 
@@ -112,12 +114,17 @@ public class PostLoginUI {
         try {
             String response = HandleClientRequest.sendGetRequest("http://localhost:4510/game");
             System.out.println("Server response: " + response);
-            ChessGame chessGame = new Gson().fromJson(response, ChessGame.class);
-            board = chessGame.getBoard();
-            printWhiteBoard();
-            printBlackBoard();
 
+            GameDataResponseWrapper responseData = new Gson().fromJson(response, GameDataResponseWrapper.class);
+            List<GameData> gameDataList = responseData.getGames();
 
+            for (GameData gameData : gameDataList) {
+                game = gameData.getGame();
+                game.makeMove(new ChessMove(new ChessPosition(2,1),new ChessPosition(4,1),null));
+                board = game.getBoard();
+                printWhiteBoard();
+                printBlackBoard();
+            }
         } catch (Exception e) {
             System.out.println("Failed to fetch games: " + e.getMessage());
         }
@@ -189,14 +196,14 @@ public class PostLoginUI {
         }
         System.out.println();
 
-        for (int row = 1; row <= 8; row++) {
+        for (int row = 8; row >= 1; row--) {
             System.out.print(" " + row + " ");
 
             for (int col = 1; col <= 8; col++) {
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
                 String pieceSymbol = getPieceSymbol(piece);
                 boolean isBlackSquare = (row + col) % 2 != 0;
-            String square = isBlackSquare ? String.format(EscapeSequences.SET_BG_COLOR_BLACK + pieceSymbol + EscapeSequences.RESET_BG_COLOR) : String.format(EscapeSequences.SET_BG_COLOR_WHITE + pieceSymbol + EscapeSequences.RESET_BG_COLOR);
+                String square = isBlackSquare ? String.format(EscapeSequences.SET_BG_COLOR_BLACK + pieceSymbol + EscapeSequences.RESET_BG_COLOR) : String.format(EscapeSequences.SET_BG_COLOR_WHITE + pieceSymbol + EscapeSequences.RESET_BG_COLOR);
                 System.out.print(square);
             }
             System.out.println(" " + row);
@@ -219,7 +226,7 @@ public class PostLoginUI {
         }
         System.out.println();
 
-        for (int row = 8; row >= 1; row--) {
+        for (int row = 1; row <= 8; row++) {
             System.out.print(" " + row + " ");
 
             for (int col = 8; col >= 1; col--) {
@@ -238,6 +245,7 @@ public class PostLoginUI {
         }
         System.out.println();
     }
+
 
 
 
