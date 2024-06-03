@@ -3,6 +3,8 @@ package ui;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import server.Server;
+
+import java.sql.SQLException;
 import java.util.Scanner;
 
 
@@ -71,7 +73,7 @@ public class PreLoginUI {
             PreLoginUI.display();
 
         } catch (Exception e) {
-            System.out.println("Failed to register: " + e.getMessage());
+            System.out.println("Failed to register: ");
         }
     }
 
@@ -79,14 +81,16 @@ public class PreLoginUI {
         String json = String.format("{\"username\":\"%s\", \"password\":\"%s\"}", username, password);
         try {
             String response = HandleClientRequest.sendPostRequest("http://localhost:4510/session", json);
+
             JsonObject jsonObject = JsonParser.parseString(response).getAsJsonObject();
             authToken = jsonObject.get("authToken").getAsString();
             System.out.println("Server response: " + response);
             currentState = State.LOGGED_IN;
             PostLoginUI.display();
 
-        } catch (Exception e) {
-            System.out.println("Failed to register: " + e.getMessage());
+        }
+        catch (Exception e) {
+            System.out.println("Unregistered User");
         }
     }
 

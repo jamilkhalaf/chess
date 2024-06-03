@@ -55,6 +55,7 @@ public class SQLUserDAO implements UserDAO {
                             rs.getString("email")
                     );
                 }
+
             } catch (SQLException ex) {
                 throw new DataAccessException("Error getting user data: " + ex.getMessage());
             }

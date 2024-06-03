@@ -122,6 +122,18 @@ public class PostLoginUI {
                 if (gameData.getGameID() == gameID) {
                     game = gameData.getGame();
                     game.makeMove(new ChessMove(new ChessPosition(2,1),new ChessPosition(4,1),null));
+                    // Make aggressive moves to lead to a fast checkmate
+                    game.makeMove(new ChessMove(new ChessPosition(7, 6), new ChessPosition(6, 6), null)); // Bishop to f5
+                    game.makeMove(new ChessMove(new ChessPosition(2, 4), new ChessPosition(4, 4), null));
+                    game.makeMove(new ChessMove(new ChessPosition(7, 1), new ChessPosition(6, 1), null));
+                    game.makeMove(new ChessMove(new ChessPosition(2, 5), new ChessPosition(4, 5), null));
+                    game.makeMove(new ChessMove(new ChessPosition(7, 7), new ChessPosition(5, 7), null));// Pawn to d4
+                    game.makeMove(new ChessMove(new ChessPosition(1, 4), new ChessPosition(5, 8), null));// Pawn to d4
+
+// Pawn to d4
+
+                    System.out.println(game.isInCheckmate(ChessGame.TeamColor.BLACK));
+                    System.out.println(game.isInCheckmate(ChessGame.TeamColor.WHITE));
                     board = game.getBoard();
                     printWhiteBoard();
                     printBlackBoard();
