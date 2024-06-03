@@ -57,7 +57,7 @@ public class PostLoginUI {
                 case "join":
                     if (commandParts.length == 3) {
                         handleJoinGame(Integer.parseInt(commandParts[1]),commandParts[2]);
-                        getBoard();
+                        getBoard(Integer.parseInt(commandParts[1]));
                         GameUI.display();
                     } else {
                         System.out.println("Usage: create <gameName>");
@@ -110,7 +110,7 @@ public class PostLoginUI {
         }
     }
 
-    private static void getBoard() {
+    private static void getBoard(Integer gameID) {
         try {
             String response = HandleClientRequest.sendGetRequest("http://localhost:4510/game");
             System.out.println("Server response: " + response);
@@ -119,11 +119,13 @@ public class PostLoginUI {
             List<GameData> gameDataList = responseData.getGames();
 
             for (GameData gameData : gameDataList) {
-                game = gameData.getGame();
-                game.makeMove(new ChessMove(new ChessPosition(2,1),new ChessPosition(4,1),null));
-                board = game.getBoard();
-                printWhiteBoard();
-                printBlackBoard();
+                if (gameData.getGameID() == gameID) {
+                    game = gameData.getGame();
+                    game.makeMove(new ChessMove(new ChessPosition(2,1),new ChessPosition(4,1),null));
+                    board = game.getBoard();
+                    printWhiteBoard();
+                    printBlackBoard();
+                }
             }
         } catch (Exception e) {
             System.out.println("Failed to fetch games: " + e.getMessage());
