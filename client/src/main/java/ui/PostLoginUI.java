@@ -68,6 +68,7 @@ public class PostLoginUI {
                         handleObserveGame(Integer.parseInt(commandParts[1]));
                         getBoard(Integer.parseInt(commandParts[1]));
                         GameUI.display();
+                        GameUI.setColor("Observer");
                     } else {
                         System.out.println("Usage: create <gameName>");
                     }
@@ -115,7 +116,7 @@ public class PostLoginUI {
         }
     }
 
-    private static void getBoard(Integer gameID) {
+    public static ChessBoard getBoard(Integer gameID) {
         try {
             String response = ServerFacade.sendGetRequest("http://localhost:4510/game",PreLoginUI.getAuthToken());
 //            System.out.println("Server response: " + response);
@@ -141,11 +142,13 @@ public class PostLoginUI {
                     board = game.getBoard();
 //                    printWhiteBoard();
 //                    printBlackBoard();
+
                 }
             }
         } catch (Exception e) {
             System.out.println("Failed to fetch games: " + e.getMessage());
         }
+        return board;
     }
 
     private static void handleListGames() {
@@ -174,9 +177,11 @@ public class PostLoginUI {
                 getBoard(gameID);
                 if (playerColor.equals("BLACK")) {
                     printBlackBoard();
+                    GameUI.setColor("BLACK");
                 }
                 if (playerColor.equals("WHITE")) {
                     printWhiteBoard();
+                    GameUI.setColor("WHITE");
                 }
             }
         } catch (Exception e) {
@@ -196,6 +201,10 @@ public class PostLoginUI {
                 System.out.println("Game Not found");
             } else {
                 System.out.println("Observing game");
+                getBoard(gameID);
+                printWhiteBoard();
+                printBlackBoard();
+                GameUI.setColor("Observer");
             }
         } catch (Exception e) {
             System.out.println("Failed to join game: " + e.getMessage());
@@ -237,7 +246,7 @@ public class PostLoginUI {
         return stateStr + " >>> ";
     }
 
-    private static void printWhiteBoard() {
+    public static void printWhiteBoard() {
         System.out.println("White Perspective:");
         System.out.println(EscapeSequences.ERASE_SCREEN);
 
@@ -267,7 +276,7 @@ public class PostLoginUI {
         System.out.println();
     }
 
-    private static void printBlackBoard() {
+    public static void printBlackBoard() {
         System.out.println("Black Perspective:");
         System.out.println(EscapeSequences.ERASE_SCREEN);
 
