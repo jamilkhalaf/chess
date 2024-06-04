@@ -2,7 +2,6 @@ package ui;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import server.Server;
 
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -10,7 +9,6 @@ import java.util.Scanner;
 
 public class PreLoginUI {
     private static Scanner scanner;
-    private static Server server;
     private static State currentState = State.LOGGED_OUT;
     private static String authToken;
 

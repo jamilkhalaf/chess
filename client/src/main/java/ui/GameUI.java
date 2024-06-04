@@ -6,10 +6,7 @@ import chess.ChessMove;
 import chess.ChessPosition;
 import dataaccess.DataAccessException;
 import dataaccess.SQLGameDAO;
-import handlers.CreateGameHandler;
-import server.Server;
 
-import java.sql.SQLException;
 import java.util.Scanner;
 
 

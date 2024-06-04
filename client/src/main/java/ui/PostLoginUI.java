@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import model.GameData;
-import server.Server;
+
 
 import java.lang.reflect.Type;
 import java.util.List;
