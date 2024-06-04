@@ -78,7 +78,7 @@ public class GameUI {
     }
 
     public static void displayHelp() {
-        System.out.println("helping");
+        System.out.println("Here is the list of available commands");
     }
 
     private static ChessMove convertToMove(String initialPosition, String finalPosition) {
@@ -102,7 +102,7 @@ public class GameUI {
         return new ChessPosition(row,column);
     }
 
-    private static void handleMakeMove(ChessMove move, Integer gameID) {
+    private static void getBoard(Integer gameID) {
         ChessBoard board = PostLoginUI.getBoard(gameID);
         if (color.equals("WHITE")) {
             PostLoginUI.printWhiteBoard();
@@ -114,22 +114,16 @@ public class GameUI {
             PostLoginUI.printWhiteBoard();
             PostLoginUI.printBlackBoard();
         }
+    }
+
+    private static void handleMakeMove(ChessMove move, Integer gameID) {
+        getBoard(gameID);
 
         GameUI.display();
     }
 
     private static void redrawBoard(Integer gameID) {
-        ChessBoard board = PostLoginUI.getBoard(gameID);
-        if (color.equals("WHITE")) {
-            PostLoginUI.printWhiteBoard();
-        }
-        if (color.equals("BLACK")) {
-            PostLoginUI.printBlackBoard();
-        }
-        if (color.equals("Observer")) {
-            PostLoginUI.printWhiteBoard();
-            PostLoginUI.printBlackBoard();
-        }
+        getBoard(gameID);
         GameUI.display();
     }
 
