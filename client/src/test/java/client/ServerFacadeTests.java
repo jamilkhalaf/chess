@@ -124,9 +124,11 @@ public class ServerFacadeTests {
         JsonObject jsonObject = JsonParser.parseString(loginResponse).getAsJsonObject();
         String authToken = jsonObject.get("authToken").getAsString();
         String gameUrl = baseUrl + "/game";
-        String json2 = "{\"playerColor\": \"BLACK\", \"gameID\": 1}";
-        String response = ServerFacade.sendPutRequest(gameUrl, json2, authToken);
-        Assertions.assertEquals("{}", response);
+        String json2 = "{\"gameName\":\"newgame\"}";
+        String response = ServerFacade.sendGameRequest(gameUrl, json2, authToken);
+        String json3 = "{\"playerColor\": \"WHITE\", \"gameID\": 2}";
+        String response2 = ServerFacade.sendPutRequest(gameUrl, json3, authToken);
+        Assertions.assertEquals("{\"message\": \"Error: bad request\"}", response2);
     }
 
     @Test
@@ -137,9 +139,9 @@ public class ServerFacadeTests {
         JsonObject jsonObject = JsonParser.parseString(loginResponse).getAsJsonObject();
         String authToken = jsonObject.get("authToken").getAsString();
         String gameUrl = baseUrl + "/game";
-        String json2 = "{\"playerColor\": \"BLACK\", \"gameID\": 1}";
+        String json2 = "{\"playerColor\": \"WHITE\", \"gameID\": 2}";
         String response = ServerFacade.sendPutRequest(gameUrl, json2, authToken);
-        Assertions.assertEquals("{\"message\": \"Error: bad request\"}", response);
+        Assertions.assertEquals("{}", response);
     }
 
     @Test
