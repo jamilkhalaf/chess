@@ -37,7 +37,7 @@ public class PostLoginUI {
         init();
         displayMenu();
         while (true) {
-            System.out.print(EscapeSequences.RESET_TEXT_COLOR + getPrompt());
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR + PreLoginUI.getPrompt());
             String command = scanner.nextLine().trim().toLowerCase();
             String[] commandParts = command.split(" ");
             switch (commandParts[0]) {
@@ -119,7 +119,6 @@ public class PostLoginUI {
     public static ChessBoard getBoard(Integer gameID) {
         try {
             String response = ServerFacade.sendGetRequest("http://localhost:4510/game",PreLoginUI.getAuthToken());
-//            System.out.println("Server response: " + response);
 
             GameDataResponseWrapper responseData = new Gson().fromJson(response, GameDataResponseWrapper.class);
             List<GameData> gameDataList = responseData.getGames();
@@ -127,21 +126,9 @@ public class PostLoginUI {
             for (GameData gameData : gameDataList) {
                 if (gameData.getGameID() == gameID) {
                     game = gameData.getGame();
-//                    game.makeMove(new ChessMove(new ChessPosition(2,1),new ChessPosition(4,1),null));
-//                    // Make aggressive moves to lead to a fast checkmate
-//                    game.makeMove(new ChessMove(new ChessPosition(7, 6), new ChessPosition(6, 6), null));
-//                    game.makeMove(new ChessMove(new ChessPosition(2, 4), new ChessPosition(4, 4), null));
-//                    game.makeMove(new ChessMove(new ChessPosition(7, 1), new ChessPosition(6, 1), null));
-//                    game.makeMove(new ChessMove(new ChessPosition(2, 5), new ChessPosition(4, 5), null));
-//                    game.makeMove(new ChessMove(new ChessPosition(7, 7), new ChessPosition(5, 7), null));
-//                    game.makeMove(new ChessMove(new ChessPosition(1, 4), new ChessPosition(5, 8), null));
-//
-//
-//                    System.out.println(game.isInCheckmate(ChessGame.TeamColor.BLACK));
-//                    System.out.println(game.isInCheckmate(ChessGame.TeamColor.WHITE));
+
                     board = game.getBoard();
-//                    printWhiteBoard();
-//                    printBlackBoard();
+
 
                 }
             }
@@ -167,7 +154,6 @@ public class PostLoginUI {
             String url = "http://localhost:4510/game";
             String json = "{\"playerColor\": \"" + playerColor + "\", \"gameID\": " + gameID + "}";
             String response = ServerFacade.sendPutRequest(url, json, PreLoginUI.getAuthToken());
-//            System.out.println("Server response: " + response);
             String knownErrorResponse = "{\"message\": \"Error: bad request\"}";
 
             if (response.equals(knownErrorResponse)) {
@@ -195,7 +181,6 @@ public class PostLoginUI {
             String url = "http://localhost:4510/game";
             String json = "{\"playerColor\": \"" + playerColor + "\", \"gameID\": " + gameID + "}";
             String response = ServerFacade.sendPutRequest(url, json, PreLoginUI.getAuthToken());
-//            System.out.println("Server response: " + response);
             String knownErrorResponse = "{\"message\": \"Error: bad request\"}";
             if (response.equals(knownErrorResponse)) {
                 System.out.println("Game Not found");
@@ -216,7 +201,6 @@ public class PostLoginUI {
         try {
             String response = ServerFacade.sendDeleteRequest("http://localhost:4510/session", PreLoginUI.getAuthToken());
             JsonObject jsonObject = JsonParser.parseString(response).getAsJsonObject();
-//            System.out.println("Server response: " + response);
             System.out.println("Logout Success");
             PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_OUT);
             PreLoginUI.display();
@@ -228,23 +212,6 @@ public class PostLoginUI {
         }
     }
 
-
-    private static String getPrompt() {
-        String stateStr;
-        switch (currentState) {
-            case LOGGED_IN:
-                stateStr = "[LOGGED_IN]";
-                break;
-            case IN_GAME:
-                stateStr = "[IN_GAME]";
-                break;
-            case LOGGED_OUT:
-            default:
-                stateStr = "[LOGGED_OUT]";
-                break;
-        }
-        return stateStr + " >>> ";
-    }
 
     public static void printWhiteBoard() {
         System.out.println("White Perspective:");

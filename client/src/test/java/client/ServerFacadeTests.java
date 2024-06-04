@@ -35,7 +35,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testRegister_Success() throws Exception {
+    public void testRegisterSuccess() throws Exception {
         String url = "http://localhost:4510/user";
         String uniqueUser = "user" + UUID.randomUUID();
         String uniquePass = "pass" + UUID.randomUUID();
@@ -45,7 +45,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testRegister_Failure() throws Exception {
+    public void testRegisterFailure() throws Exception {
         String url = "http://localhost:4510/user";
         String json = "{\"username\":\"j\",\"password\":\"j\",\"email\":\"newuser@example.com\"}";
         String response = ServerFacade.sendPostRequest(url, json);
@@ -53,7 +53,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testLogin_Success() throws Exception {
+    public void testLoginSuccess() throws Exception {
         String url = "http://localhost:4510/session";
         String json = "{\"username\":\"j\",\"password\":\"k\"}";
         String response = ServerFacade.sendPostRequest(url, json);
@@ -61,7 +61,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testLogin_Failure() throws Exception{
+    public void testLoginFailure() throws Exception{
         String url = "http://localhost:4510/session";
         String json = "{\"username\":\"wronguser\",\"password\":\"wrongpass\"}";
         String response = ServerFacade.sendPostRequest(url, json);
@@ -72,7 +72,7 @@ public class ServerFacadeTests {
 
     // Logout Test Cases
     @Test
-    public void testLogout_Success() throws Exception {
+    public void testLogoutSuccess() throws Exception {
         String url1 = "http://localhost:4510/session";
 
         String json = "{\"username\":\"j\",\"password\":\"k\"}";
@@ -88,14 +88,14 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testLogout_Failure() {
+    public void testLogoutFailure() {
         String authTOken = "";
         String url = "http://localhost:4510/session";
         Assertions.assertThrows(Exception.class, () -> ServerFacade.sendDeleteRequest(url,authTOken));
     }
 
     @Test
-    public void testCreateGame_Success() throws Exception {
+    public void testCreateGameSuccess() throws Exception {
         String url1 = "http://localhost:4510/session";
         String json = "{\"username\":\"j\",\"password\":\"k\"}";
         String loginResponse = ServerFacade.sendPostRequest(url1, json);
@@ -108,7 +108,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testCreateGame_Failure() throws Exception {
+    public void testCreateGameFailure() throws Exception {
         String url = "http://localhost:4510/game";
         String json = "{\"gameName\":\"\"}";
         String response = ServerFacade.sendPostRequest(url, json);
@@ -118,7 +118,7 @@ public class ServerFacadeTests {
 
     // Join Game Test Cases
     @Test
-    public void testJoinGame_Success() throws Exception {
+    public void testJoinGameSuccess() throws Exception {
         String url1 = "http://localhost:4510/session";
 
         String json = "{\"username\":\"j\",\"password\":\"k\"}";
@@ -132,7 +132,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testJoinGame_Failure() throws Exception {
+    public void testJoinGameFailure() throws Exception {
         String url1 = "http://localhost:4510/session";
         String json = "{\"username\":\"j\",\"password\":\"k\"}";
         String loginResponse = ServerFacade.sendPostRequest(url1, json);
@@ -146,7 +146,7 @@ public class ServerFacadeTests {
 
     // List Games Test Cases
     @Test
-    public void testListGames_Success() throws Exception {
+    public void testListGamesSuccess() throws Exception {
         String url1 = "http://localhost:4510/session";
 
         String json = "{\"username\":\"j\",\"password\":\"k\"}";
@@ -159,7 +159,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testListGames_Failure() {
+    public void testListGamesFailure() {
         String url = "http://localhost:4510/invalidEndpoint";
         Assertions.assertThrows(Exception.class, () -> ServerFacade.sendGetRequest(url,""));
     }

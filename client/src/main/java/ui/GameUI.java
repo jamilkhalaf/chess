@@ -1,11 +1,9 @@
 package ui;
 
 import chess.ChessBoard;
-import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
-//import dataaccess.DataAccessException;
-//import dataaccess.SQLGameDAO;
+
 
 import java.util.Scanner;
 
@@ -33,14 +31,14 @@ public class GameUI {
         init();
         displayMenu();
         while (true) {
-            System.out.print(EscapeSequences.RESET_TEXT_COLOR + getPrompt());
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR + PreLoginUI.getPrompt());
             String command = scanner.nextLine().trim().toLowerCase();
             String[] commandParts = command.split(" ");
             switch (commandParts[0]) {
                 case "make-move":
                     if (commandParts.length == 4) {
                         ChessMove move = convertToMove(commandParts[1], commandParts[2]);
-//                        handleMakeMove(move, Integer.parseInt(commandParts[3]));
+                        handleMakeMove(move, Integer.parseInt(commandParts[3]));
                     } else {
                         System.out.println("Usage: make move <initial position> <final position> <gameID>");
                     }
@@ -104,30 +102,21 @@ public class GameUI {
         return new ChessPosition(row,column);
     }
 
-//    private static void handleMakeMove(ChessMove move, Integer gameID) {
-//        try {
-//            SQLGameDAO gameDAO = new SQLGameDAO();
-//            gameDAO.makeChessMove(move, gameID);
-//        }
-//        catch (DataAccessException e) {
-//            System.out.println("error");
-//            redrawBoard(gameID);
-//            GameUI.display();
-//        }
-//        ChessBoard board = PostLoginUI.getBoard(gameID);
-//        if (color.equals("WHITE")) {
-//            PostLoginUI.printWhiteBoard();
-//        }
-//        if (color.equals("BLACK")) {
-//            PostLoginUI.printBlackBoard();
-//        }
-//        if (color.equals("Observer")) {
-//            PostLoginUI.printWhiteBoard();
-//            PostLoginUI.printBlackBoard();
-//        }
-//
-//        GameUI.display();
-//    }
+    private static void handleMakeMove(ChessMove move, Integer gameID) {
+        ChessBoard board = PostLoginUI.getBoard(gameID);
+        if (color.equals("WHITE")) {
+            PostLoginUI.printWhiteBoard();
+        }
+        if (color.equals("BLACK")) {
+            PostLoginUI.printBlackBoard();
+        }
+        if (color.equals("Observer")) {
+            PostLoginUI.printWhiteBoard();
+            PostLoginUI.printBlackBoard();
+        }
+
+        GameUI.display();
+    }
 
     private static void redrawBoard(Integer gameID) {
         ChessBoard board = PostLoginUI.getBoard(gameID);
@@ -145,22 +134,4 @@ public class GameUI {
     }
 
 
-
-
-    private static String getPrompt() {
-        String stateStr;
-        switch (currentState) {
-            case LOGGED_IN:
-                stateStr = "[LOGGED_IN]";
-                break;
-            case IN_GAME:
-                stateStr = "[IN_GAME]";
-                break;
-            case LOGGED_OUT:
-            default:
-                stateStr = "[LOGGED_OUT]";
-                break;
-        }
-        return stateStr + " >>> ";
-    }
 }

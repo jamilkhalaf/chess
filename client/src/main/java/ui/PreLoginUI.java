@@ -106,10 +106,6 @@ public class PreLoginUI {
         return authToken;
     }
 
-    public static void setAuthToken(String authToken) {
-        PreLoginUI.authToken = authToken;
-    }
-
     public static void displayMenu() {
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "register <USERNAME> <PASSWORD> <EMAIL>" + EscapeSequences.SET_TEXT_COLOR_MAGENTA + " - to create an account");
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "login <USERNAME> <PASSWORD>" + EscapeSequences.SET_TEXT_COLOR_MAGENTA + " - to play chess");
@@ -123,7 +119,7 @@ public class PreLoginUI {
 
 
 
-    private static String getPrompt() {
+    public static String getPrompt() {
         String stateStr;
         switch (currentState) {
             case LOGGED_IN:
