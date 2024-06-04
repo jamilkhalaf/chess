@@ -37,6 +37,8 @@ public class CreateGameSQLTest {
         CreateGameRes gameResponse = new CreateGameRes(gameID);
 
         assertEquals(2, gameResponse.getGameID());
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
     }
 
     @Test
@@ -56,5 +58,7 @@ public class CreateGameSQLTest {
             gameService.createGame(gameRequest.getGameName());
         });
         assertEquals("Invalid parameter", exception.getMessage(), "Exception message should be 'Invalid parameter' for user1");
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
     }
 }

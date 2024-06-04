@@ -40,7 +40,8 @@ public class GetChessGameSQLTest {
 
         assertEquals(board.getPiece(new ChessPosition(1,1)),new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
         ;
-
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
 
     }
 
@@ -63,6 +64,8 @@ public class GetChessGameSQLTest {
 
 
         assertNotEquals(board.getPiece(new ChessPosition(2,1)),new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
 
     }
 }

@@ -48,15 +48,17 @@ public class ServerFacadeTests {
     @Test
     public void testRegisterFailure() throws Exception {
         String url = baseUrl + "/user";
-        String json = "{\"username\":\"j\",\"password\":\"j\",\"email\":\"newuser@example.com\"}";
+        String json = String.format("{\"username\":\"%s\",\"password\":\"%s\",\"email\":\"newuser@example.com\"}", "j", "j");
         String response = ServerFacade.sendPostRequest(url, json);
-        Assertions.assertFalse(response.contains("authToken"));
+        String json2 = "{\"username\":\"j\",\"password\":\"j\",\"email\":\"newuser@example.com\"}";
+        String response2 = ServerFacade.sendPostRequest(url, json2);
+        Assertions.assertFalse(response2.contains("authToken"));
     }
 
     @Test
     public void testLoginSuccess() throws Exception {
         String url = baseUrl + "/session";
-        String json = "{\"username\":\"j\",\"password\":\"k\"}";
+        String json = "{\"username\":\"j\",\"password\":\"j\"}";
         String response = ServerFacade.sendPostRequest(url, json);
         Assertions.assertTrue(response.contains("authToken"));
     }
@@ -72,13 +74,18 @@ public class ServerFacadeTests {
     @Test
     public void testLogoutSuccess() throws Exception {
         String loginUrl = baseUrl + "/session";
-        String json = "{\"username\":\"j\",\"password\":\"k\"}";
+        String json = "{\"username\":\"j\",\"password\":\"j\"}";
         String loginResponse = ServerFacade.sendPostRequest(loginUrl, json);
         JsonObject jsonObject = JsonParser.parseString(loginResponse).getAsJsonObject();
-        String authToken = jsonObject.get("authToken").getAsString();
-        String logoutUrl = baseUrl + "/session";
-        String response = ServerFacade.sendDeleteRequest(logoutUrl, authToken);
-        Assertions.assertEquals("{}", response);
+
+        if (jsonObject.has("authToken")) {
+            String authToken = jsonObject.get("authToken").getAsString();
+            String logoutUrl = baseUrl + "/session";
+            String response = ServerFacade.sendDeleteRequest(logoutUrl, authToken);
+            Assertions.assertEquals("{}", response);
+        } else {
+            Assertions.fail("Login response did not contain authToken");
+        }
     }
 
     @Test
@@ -91,7 +98,7 @@ public class ServerFacadeTests {
     @Test
     public void testCreateGameSuccess() throws Exception {
         String loginUrl = baseUrl + "/session";
-        String json = "{\"username\":\"j\",\"password\":\"k\"}";
+        String json = "{\"username\":\"j\",\"password\":\"j\"}";
         String loginResponse = ServerFacade.sendPostRequest(loginUrl, json);
         JsonObject jsonObject = JsonParser.parseString(loginResponse).getAsJsonObject();
         String authToken = jsonObject.get("authToken").getAsString();
@@ -112,7 +119,7 @@ public class ServerFacadeTests {
     @Test
     public void testJoinGameSuccess() throws Exception {
         String loginUrl = baseUrl + "/session";
-        String json = "{\"username\":\"j\",\"password\":\"k\"}";
+        String json = "{\"username\":\"j\",\"password\":\"j\"}";
         String loginResponse = ServerFacade.sendPostRequest(loginUrl, json);
         JsonObject jsonObject = JsonParser.parseString(loginResponse).getAsJsonObject();
         String authToken = jsonObject.get("authToken").getAsString();
@@ -125,7 +132,7 @@ public class ServerFacadeTests {
     @Test
     public void testJoinGameFailure() throws Exception {
         String loginUrl = baseUrl + "/session";
-        String json = "{\"username\":\"j\",\"password\":\"k\"}";
+        String json = "{\"username\":\"j\",\"password\":\"j\"}";
         String loginResponse = ServerFacade.sendPostRequest(loginUrl, json);
         JsonObject jsonObject = JsonParser.parseString(loginResponse).getAsJsonObject();
         String authToken = jsonObject.get("authToken").getAsString();
@@ -138,7 +145,7 @@ public class ServerFacadeTests {
     @Test
     public void testListGamesSuccess() throws Exception {
         String loginUrl = baseUrl + "/session";
-        String json = "{\"username\":\"j\",\"password\":\"k\"}";
+        String json = "{\"username\":\"j\",\"password\":\"j\"}";
         String loginResponse = ServerFacade.sendPostRequest(loginUrl, json);
         JsonObject jsonObject = JsonParser.parseString(loginResponse).getAsJsonObject();
         String authToken = jsonObject.get("authToken").getAsString();

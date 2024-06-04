@@ -44,6 +44,8 @@ public class ListGamesSQLTest {
         ListGamesRes listGameResponse = new ListGamesRes(gamesList);
 
         assertNotNull(listGameResponse.getGames());
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
     }
 
     @Test
@@ -67,5 +69,7 @@ public class ListGamesSQLTest {
         List<GameData> gameData = listGameService.listGames("");
 
         assertNotNull(gameData);
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
     }
 }

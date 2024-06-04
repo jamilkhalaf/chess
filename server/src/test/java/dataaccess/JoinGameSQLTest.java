@@ -44,6 +44,8 @@ public class JoinGameSQLTest {
         BaseRes joinResponse = new BaseRes();
 
         assertNotNull(joinResponse);
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
     }
 
     @Test
@@ -75,5 +77,8 @@ public class JoinGameSQLTest {
         } catch (IllegalArgumentException e) {
             // Handle exception if necessary
         }
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
     }
+
 }

@@ -7,6 +7,7 @@ import requests.BaseReq;
 import requests.LoginReq;
 import responses.BaseRes;
 import responses.LoginRes;
+import service.ClearService;
 import service.LoginService;
 import service.LogoutService;
 
@@ -41,6 +42,8 @@ public class LogoutSQLTest {
         BaseRes logoutResponse = new BaseRes();
 
         assertNotNull(logoutResponse);
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
     }
 
     @Test
@@ -64,5 +67,7 @@ public class LogoutSQLTest {
             logoutService.logoutUser("");
         });
         assertEquals("Error: unauthorized", exception1.getMessage(), "Exception message should be 'Error: unauthorized' for user1");
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
     }
 }

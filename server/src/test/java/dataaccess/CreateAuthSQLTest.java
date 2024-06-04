@@ -82,5 +82,7 @@ public class CreateAuthSQLTest {
             registerService.createUser(registerRequest2.getUsername(), registerRequest2.getPassword(), registerRequest2.getEmail());
         });
         assertEquals("User already exists", exception2.getMessage(), "Exception message should be 'User already exists' for user2");
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
     }
 }

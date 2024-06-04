@@ -44,6 +44,8 @@ public class LoginSQLTest {
 
         assertNotNull(loginResponse2.getAuthToken());
         assertEquals("sara", loginResponse2.getUsername());
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
     }
 
     @Test
@@ -74,5 +76,7 @@ public class LoginSQLTest {
             loginService.loginUser(loginRequest2.getUsername(), loginRequest2.getPassword());
         });
         assertEquals("Error: unauthorized", exception2.getMessage());
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
     }
 }

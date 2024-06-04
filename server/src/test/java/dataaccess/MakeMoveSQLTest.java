@@ -42,6 +42,8 @@ public class MakeMoveSQLTest {
         gameDAO.makeChessMove(move,1);
 
         assertEquals(new ChessPosition(3,1), move.getEndPosition());
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
         ;
 
 
@@ -70,7 +72,8 @@ public class MakeMoveSQLTest {
 
         assertEquals("Invalid move: null", exception.getMessage(), "Exception message should be 'Error: unauthorized' for user1");
 
-
+        ClearService clearService2 = new ClearService(userDAO, gameDAO, authDAO);
+        clearService2.clearUser();
 
     }
 }
