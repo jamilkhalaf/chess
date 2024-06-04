@@ -3,8 +3,7 @@ package ui;
 import chess.ChessBoard;
 import chess.ChessMove;
 import chess.ChessPosition;
-import dataaccess.DataAccessException;
-import dataaccess.SQLGameDAO;
+
 
 
 import java.util.Scanner;
@@ -119,16 +118,6 @@ public class GameUI {
     }
 
     private static void handleMakeMove(ChessMove move, Integer gameID) {
-        try {
-            SQLGameDAO gameDao = new SQLGameDAO();
-            gameDao.makeChessMove(move, gameID);
-        }
-        catch (DataAccessException e) {
-            System.out.println("error");
-            redrawBoard(gameID);
-            GameUI.display();
-        }
-
         getBoard(gameID);
 
         GameUI.display();

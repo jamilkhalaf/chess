@@ -21,6 +21,9 @@ public class PostLoginUI {
     private static ChessBoard board = new ChessBoard();
     private static ChessGame game = new ChessGame();
     private static Gson gson = new Gson();
+    private static String whiteUsername;
+    private static String gameName;
+    private static String blackUsername;
 
 
     public static void init() {
@@ -109,8 +112,7 @@ public class PostLoginUI {
         String json = String.format("{\"gameName\":\"%s\"}", gameName);
         try {
             String response = ServerFacade.sendGameRequest("http://localhost:4510/game", json, PreLoginUI.getAuthToken());
-            System.out.println("Server response: " + response);
-
+            System.out.println(gameName + " created successfully");
         } catch (Exception e) {
             System.out.println("Failed to register: " + e.getMessage());
         }
@@ -133,7 +135,8 @@ public class PostLoginUI {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Failed to fetch games: " + e.getMessage());
+            System.out.println("Failed to fetch games: ");
+            PostLoginUI.display();
         }
         return board;
     }
@@ -141,7 +144,19 @@ public class PostLoginUI {
     private static void handleListGames() {
         try {
             String response = ServerFacade.sendGetRequest("http://localhost:4510/game",PreLoginUI.getAuthToken());
-            System.out.println("Server response: " + response);
+
+            GameDataResponseWrapper responseData = new Gson().fromJson(response, GameDataResponseWrapper.class);
+            List<GameData> gameDataList = responseData.getGames();
+            System.out.printf("%-20s %-20s %-20s%n", "Game Name", "White Username", "Black Username");
+            System.out.println("------------------------------------------------------------");
+            for (GameData gameData : gameDataList) {
+                whiteUsername = gameData.getWhiteUsername();
+                blackUsername = gameData.getBlackUsername();
+                gameName = gameData.getGameName();
+                System.out.printf("%-20s %-20s %-20s%n", gameName, whiteUsername, blackUsername);
+
+
+            }
             PostLoginUI.display();
         } catch (Exception e) {
             System.out.println("Failed to fetch games: " + e.getMessage());
@@ -157,7 +172,8 @@ public class PostLoginUI {
             String knownErrorResponse = "{\"message\": \"Error: bad request\"}";
 
             if (response.equals(knownErrorResponse)) {
-                System.out.println("Game Not found");
+                System.out.println("Color Taken");
+                PostLoginUI.display();
             } else {
                 System.out.println("Joined Game");
                 getBoard(gameID);
@@ -172,6 +188,7 @@ public class PostLoginUI {
             }
         } catch (Exception e) {
             System.out.println("Failed to join game: " + e.getMessage());
+            PostLoginUI.display();
         }
     }
 
@@ -228,7 +245,7 @@ public class PostLoginUI {
             for (int column = 1; column <= 8; column++) {
                 ChessPiece piece = board.getPiece(new ChessPosition(row, column));
                 String pieceSymbol = getPieceSymbol(piece);
-                boolean isBlackSquare = (row + column) % 2 != 0;
+                boolean isBlackSquare = (row + column) % 2 == 0;
                 String square = isBlackSquare ? String.format(EscapeSequences.SET_BG_COLOR_BLACK + pieceSymbol + EscapeSequences.RESET_BG_COLOR) : String.format(EscapeSequences.SET_BG_COLOR_WHITE + pieceSymbol + EscapeSequences.RESET_BG_COLOR);
                 System.out.print(square);
             }
@@ -257,7 +274,7 @@ public class PostLoginUI {
             for (int col = 8; col >= 1; col--) {
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
                 String pieceSymbol = getPieceSymbol(piece);
-                boolean isBlackSquare = (row + col) % 2 != 0;
+                boolean isBlackSquare = (row + col) % 2 == 0;
                 String square = isBlackSquare ? String.format(EscapeSequences.SET_BG_COLOR_BLACK + pieceSymbol + EscapeSequences.RESET_BG_COLOR) : String.format(EscapeSequences.SET_BG_COLOR_WHITE + pieceSymbol + EscapeSequences.RESET_BG_COLOR);
                 System.out.print(square);
             }
