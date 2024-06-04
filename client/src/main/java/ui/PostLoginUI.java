@@ -214,7 +214,6 @@ public class PostLoginUI {
 
 
     public static void printWhiteBoard() {
-        System.out.println("White Perspective:");
         System.out.println(EscapeSequences.ERASE_SCREEN);
 
         System.out.print("   ");
@@ -226,10 +225,10 @@ public class PostLoginUI {
         for (int row = 8; row >= 1; row--) {
             System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + row + " " + EscapeSequences.RESET_BG_COLOR);
 
-            for (int col = 1; col <= 8; col++) {
-                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+            for (int column = 1; column <= 8; column++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row, column));
                 String pieceSymbol = getPieceSymbol(piece);
-                boolean isBlackSquare = (row + col) % 2 != 0;
+                boolean isBlackSquare = (row + column) % 2 != 0;
                 String square = isBlackSquare ? String.format(EscapeSequences.SET_BG_COLOR_BLACK + pieceSymbol + EscapeSequences.RESET_BG_COLOR) : String.format(EscapeSequences.SET_BG_COLOR_WHITE + pieceSymbol + EscapeSequences.RESET_BG_COLOR);
                 System.out.print(square);
             }
@@ -244,7 +243,6 @@ public class PostLoginUI {
     }
 
     public static void printBlackBoard() {
-        System.out.println("Black Perspective:");
         System.out.println(EscapeSequences.ERASE_SCREEN);
 
         System.out.print("   ");
