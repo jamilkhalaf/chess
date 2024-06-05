@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.junit.jupiter.api.*;
 import server.Server;
-import ui.PreLoginUI;
 import ui.ServerFacade;
 
 import java.util.UUID;

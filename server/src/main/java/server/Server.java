@@ -44,6 +44,10 @@ public class Server {
         Spark.get("/game", (req, res) -> (new ListGamesHandler(userDAO, gameDAO, authDAO)).handleListGames.handle(req, res));
         Spark.put("/game", (req, res) -> (new JoinGameHandler(userDAO, gameDAO, authDAO)).handleJoinGame.handle(req, res));
 
+
+//        Spark.webSocket("/chess", ChessWebSocketHandler.class);
+
+
         Spark.awaitInitialization();
         return Spark.port();
     }

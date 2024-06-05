@@ -3,7 +3,6 @@ package ui;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.sql.SQLException;
 import java.util.Scanner;
 
 
@@ -71,15 +70,20 @@ public class PreLoginUI {
 
             if (response.equals(knownErrorResponse)) {
                 System.out.println("Already Taken username");
-            } else {
-                System.out.println("Registered successfully, login to continue");
                 PreLoginUI.display();
+            } else {
+                System.out.println("Registered successfully");
+                JsonObject jsonObject = JsonParser.parseString(response).getAsJsonObject();
+                authToken = jsonObject.get("authToken").getAsString();
+                currentState = State.LOGGED_IN;
+                PostLoginUI.display();
             }
 
 
 
         } catch (Exception e) {
             System.out.println("Failed to register: ");
+            PreLoginUI.display();
         }
     }
 
@@ -97,6 +101,7 @@ public class PreLoginUI {
         }
         catch (Exception e) {
             System.out.println("Unregistered User");
+            PreLoginUI.display();
         }
     }
 
