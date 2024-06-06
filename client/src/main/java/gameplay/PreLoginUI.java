@@ -1,4 +1,4 @@
-package ui;
+package gameplay;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -10,6 +10,8 @@ public class PreLoginUI {
     private static Scanner scanner;
     private static State currentState = State.LOGGED_OUT;
     private static String authToken;
+    public static WSClient wsClient;
+
 
     public enum State {
         LOGGED_OUT,
@@ -21,11 +23,10 @@ public class PreLoginUI {
         PreLoginUI.currentState = currentState;
     }
 
-    public static void init() {
+    public static void init(WSClient client) {
         scanner = new Scanner(System.in);
-//        server = new Server();
-//        var port = server.run(4510);
-        System.out.println(EscapeSequences.SET_TEXT_ITALIC +"♕ Welcome to 240 chess. Type Help to get started. ♕ ");
+        wsClient = client;
+        System.out.println(EscapeSequences.SET_TEXT_ITALIC + "♕ Welcome to 240 chess. Type Help to get started. ♕ ");
     }
 
     public static void display() {

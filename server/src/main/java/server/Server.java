@@ -24,6 +24,11 @@ public class Server {
 
         Spark.port(desiredPort);
 
+        //websocket spark
+
+        Spark.webSocket("/connect", new WebSocketServer(authDAO,gameDAO,userDAO));
+
+
         Spark.staticFiles.location("/web");
         Spark.get("/", (req, res) -> {
             String htmlContent = readHtmlFile("web/index.html");
@@ -36,6 +41,8 @@ public class Server {
         catch (DataAccessException e) {
         }
 
+
+
         Spark.post("/user", (req, res) -> (new RegisterHandler(userDAO, gameDAO, authDAO)).handleCreateUser.handle(req, res));
         Spark.post("/session", (req, res) -> (new LoginHandler(userDAO, gameDAO, authDAO)).handleLoginUser.handle(req, res));
         Spark.delete("/session", (req, res) -> (new LogoutHandler(userDAO, gameDAO, authDAO)).handleLogoutUser.handle(req, res));
@@ -43,9 +50,6 @@ public class Server {
         Spark.post("/game", (req, res) -> (new CreateGameHandler(userDAO, gameDAO, authDAO)).handleCreateGame.handle(req, res));
         Spark.get("/game", (req, res) -> (new ListGamesHandler(userDAO, gameDAO, authDAO)).handleListGames.handle(req, res));
         Spark.put("/game", (req, res) -> (new JoinGameHandler(userDAO, gameDAO, authDAO)).handleJoinGame.handle(req, res));
-
-
-//        Spark.webSocket("/chess", ChessWebSocketHandler.class);
 
 
         Spark.awaitInitialization();

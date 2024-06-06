@@ -1,4 +1,4 @@
-package ui;
+package gameplay;
 
 import java.net.HttpURLConnection;
 import java.net.URI;

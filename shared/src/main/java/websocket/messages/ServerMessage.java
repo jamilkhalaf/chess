@@ -1,5 +1,7 @@
 package websocket.messages;
 
+import chess.ChessGame;
+
 import java.util.Objects;
 
 /**
@@ -17,6 +19,7 @@ public class ServerMessage {
         NOTIFICATION
     }
 
+
     public ServerMessage(ServerMessageType type) {
         this.serverMessageType = type;
     }
@@ -24,6 +27,9 @@ public class ServerMessage {
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
     }
+
+
+
 
     @Override
     public boolean equals(Object o) {

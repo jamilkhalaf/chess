@@ -1,4 +1,4 @@
-package ui;
+package gameplay;
 
 import chess.*;
 import com.google.gson.Gson;
@@ -13,7 +13,6 @@ import java.util.Scanner;
 
 public class PostLoginUI {
     private static Scanner scanner;
-    private static State currentState = State.LOGGED_IN;
     private static ChessBoard board = new ChessBoard();
     private static ChessGame game = new ChessGame();
     private static Gson gson = new Gson();
@@ -26,10 +25,8 @@ public class PostLoginUI {
         scanner = new Scanner(System.in);
     }
 
-    public enum State {
-        LOGGED_OUT,
-        LOGGED_IN,
-        IN_GAME
+    public static ChessGame getGame() {
+        return game;
     }
 
     public static void display() {
@@ -56,7 +53,11 @@ public class PostLoginUI {
                 case "join":
                     if (commandParts.length == 3) {
                         handleJoinGame(Integer.parseInt(commandParts[1]),commandParts[2]);
+                        PreLoginUI.setCurrentState(PreLoginUI.State.IN_GAME);
+                        WSClient client = PreLoginUI.wsClient;
+                        client.onMessage("hello");
                         GameUI.display();
+
                     } else {
                         System.out.println("Usage: create <gameName>");
                     }

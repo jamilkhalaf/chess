@@ -1,10 +1,12 @@
-package ui;
+package gameplay;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import dataaccess.DataAccessException;
 import dataaccess.SQLGameDAO;
+import model.GameData;
 
 
 import java.util.Scanner;
@@ -12,17 +14,10 @@ import java.util.Scanner;
 
 public class GameUI {
     private static Scanner scanner;
-    private static State currentState = State.LOGGED_IN;
     private static String color;
 
     public static void init() {
         scanner = new Scanner(System.in);
-    }
-
-    public enum State {
-        LOGGED_OUT,
-        LOGGED_IN,
-        IN_GAME
     }
 
     public static void setColor(String color) {
@@ -53,7 +48,7 @@ public class GameUI {
                     } else {
                         System.out.println("Usage: make move <initial position> <final position> <gameID>");
                     }
-                case "highlight valid moves":
+                case "highlight":
                     PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_OUT);
                     PreLoginUI.display();
                     break;
@@ -74,7 +69,7 @@ public class GameUI {
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "make-move" + EscapeSequences.SET_TEXT_COLOR_MAGENTA );
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "resign" + EscapeSequences.SET_TEXT_COLOR_MAGENTA);
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "redraw" + EscapeSequences.SET_TEXT_COLOR_MAGENTA );
-        System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "Highlight Legal Moves" + EscapeSequences.SET_TEXT_COLOR_MAGENTA );
+        System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "Highlight" + EscapeSequences.SET_TEXT_COLOR_MAGENTA );
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "Leave" + EscapeSequences.SET_TEXT_COLOR_MAGENTA + " - playing chess");
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "help" + EscapeSequences.SET_TEXT_COLOR_MAGENTA + " - with possible commands");
     }
@@ -119,9 +114,13 @@ public class GameUI {
     }
 
     private static void handleMakeMove(ChessMove move, Integer gameID) {
+        ChessGame game = null;
         try {
+
             SQLGameDAO gameDao = new SQLGameDAO();
             gameDao.makeChessMove(move, gameID);
+            GameData data = gameDao.getGameData(gameID);
+            game = data.getGame();
         }
         catch (DataAccessException e) {
             System.out.println("error");
@@ -129,6 +128,27 @@ public class GameUI {
             GameUI.display();
         }
 
+        if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
+            System.out.println("White won");
+            getBoard(gameID);
+            System.exit(0);
+        }
+        if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
+            System.out.println("Black won");
+            getBoard(gameID);
+            System.exit(0);
+        }
+        if (game.isInStalemate(ChessGame.TeamColor.BLACK) || PostLoginUI.getGame().isInStalemate(ChessGame.TeamColor.WHITE)) {
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
+            System.out.println("Draw");
+            getBoard(gameID);
+            System.exit(0);
+        }
         getBoard(gameID);
 
         GameUI.display();
@@ -137,6 +157,7 @@ public class GameUI {
     private static void redrawBoard(Integer gameID) {
         getBoard(gameID);
         GameUI.display();
+
     }
 
 
