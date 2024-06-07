@@ -24,6 +24,10 @@ public class GameUI {
 
     }
 
+    public static ChessGame.TeamColor getPlayerColor() {
+        return playerColor;
+    }
+
     public static void setPlayerColor(ChessGame.TeamColor playerColor) {
         GameUI.playerColor = playerColor;
     }

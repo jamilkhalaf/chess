@@ -14,6 +14,7 @@ public class ServerMessage {
     ServerMessageType serverMessageType;
     public ChessGame game;
     public int gameID;
+    public String playerColor;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -35,8 +36,16 @@ public class ServerMessage {
         this.gameID = gameID;
     }
 
-    public ServerMessage(ChessGame game) {
-        ServerMessageType type = ServerMessageType.LOAD_GAME;
+    //Load
+    public ServerMessage(ServerMessageType type, String playerColor, int gameID, ChessGame game) {
+        this.serverMessageType = type;
+        this.gameID = gameID;
+        this.playerColor = playerColor;
+        this.game = game;
+    }
+
+    public ServerMessage(ServerMessageType serverMessageType, ChessGame game) {
+        this.serverMessageType = serverMessageType;
         this.game = game;
     }
 

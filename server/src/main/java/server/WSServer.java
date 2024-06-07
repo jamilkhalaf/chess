@@ -117,8 +117,8 @@ public class WSServer {
     private void handleConnect(UserGameCommand command, Session session) {
         try {
             WSSessions.addSession(command.getGameID(), command.getAuthToken(), session);
-            session.getRemote().sendString(new Gson().toJson(command));
-            message = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+//            session.getRemote().sendString(new Gson().toJson(command));
+            message = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, command.game);
             WSSessions.broadcastSession(command.getGameID(), null, message);
         }
         catch (Exception e) {

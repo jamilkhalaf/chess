@@ -31,10 +31,11 @@ public class UserGameCommand {
     }
 
     //connect
-    public UserGameCommand(String authToken, Integer gameID, String color) {
+    public UserGameCommand(String authToken, Integer gameID, String color, ChessGame game) {
         this.authToken = authToken;
         this.gameID = gameID;
         this.color = color;
+        this.game = game;
     }
 
     public enum CommandType {
@@ -49,7 +50,7 @@ public class UserGameCommand {
     public int gameID;
     public ChessMove move;
     public String color;
-
+    public ChessGame game;
 
 
     public String getAuthString() {

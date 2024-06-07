@@ -174,7 +174,7 @@ public class PostLoginUI {
                 PreLoginUI.setCurrentState(PreLoginUI.State.IN_GAME);
                 WSClient client = PreLoginUI.wsClient;
                 String authToken = PreLoginUI.getAuthToken();
-                UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, playerColor);
+                UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, playerColor, game);
                 gameCommand.setCommandType(UserGameCommand.CommandType.CONNECT);
                 Gson gson = new Gson();
                 String message = gson.toJson(gameCommand);

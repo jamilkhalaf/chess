@@ -28,15 +28,15 @@ public class WSClient {
 
         ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
 
-        if (userGameCommand.getCommandType() == UserGameCommand.CommandType.CONNECT) {
-            if (userGameCommand.getColor().equals("WHITE")) {
+        if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+            if (GameUI.getPlayerColor() == ChessGame.TeamColor.WHITE) {
 
-                Integer gameID = userGameCommand.gameID;
+                Integer gameID = GameUI.getGameID();
                 PostLoginUI.getBoard(gameID);
                 PostLoginUI.printWhiteBoard();
             }
-            if (userGameCommand.getColor().equals("BLACK")) {
-                Integer gameID = userGameCommand.gameID;
+            if (GameUI.getPlayerColor() == ChessGame.TeamColor.BLACK) {
+                Integer gameID = GameUI.getGameID();
                 PostLoginUI.getBoard(gameID);
                 PostLoginUI.printBlackBoard();
             }
