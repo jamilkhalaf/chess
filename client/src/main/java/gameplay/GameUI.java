@@ -4,9 +4,11 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
+import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.SQLGameDAO;
 import model.GameData;
+import websocket.commands.UserGameCommand;
 
 
 import java.util.Scanner;
@@ -14,28 +16,45 @@ import java.util.Scanner;
 
 public class GameUI {
     private static Scanner scanner;
-    private static String color;
+    private static ChessGame.TeamColor playerColor;
+    private static int gameID;
 
     public static void init() {
         scanner = new Scanner(System.in);
+
     }
 
-    public static void setColor(String color) {
-        GameUI.color = color;
+    public static void setPlayerColor(ChessGame.TeamColor playerColor) {
+        GameUI.playerColor = playerColor;
+    }
+
+    public static int getGameID() {
+        return gameID;
+    }
+
+    public static void setGameID(int gameID) {
+        GameUI.gameID = gameID;
     }
 
     public static void display() {
         init();
         displayMenu();
         while (true) {
+
             System.out.print(EscapeSequences.RESET_TEXT_COLOR + PreLoginUI.getPrompt());
             String command = scanner.nextLine().trim().toLowerCase();
             String[] commandParts = command.split(" ");
             switch (commandParts[0]) {
                 case "make-move":
-                    if (commandParts.length == 4) {
-                        ChessMove move = convertToMove(commandParts[1], commandParts[2]);
-                        handleMakeMove(move, Integer.parseInt(commandParts[3]));
+                    if (commandParts.length == 3) {
+                        if (PostLoginUI.getGame().getTeamTurn().equals(playerColor)) {
+                            ChessMove move = convertToMove(commandParts[1], commandParts[2]);
+                            handleMakeMove(move, gameID);
+                        }
+                        else {
+                            System.out.println("Not your turn");
+                            GameUI.display();
+                        }
                     } else {
                         System.out.println("Usage: make move <initial position> <final position> <gameID>");
                     }
@@ -48,6 +67,7 @@ public class GameUI {
                     } else {
                         System.out.println("Usage: make move <initial position> <final position> <gameID>");
                     }
+                    break;
                 case "highlight":
                     PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_OUT);
                     PreLoginUI.display();
@@ -101,64 +121,40 @@ public class GameUI {
 
     private static void getBoard(Integer gameID) {
         ChessBoard board = PostLoginUI.getBoard(gameID);
-        if (color.equals("WHITE")) {
+        if (playerColor == ChessGame.TeamColor.WHITE) {
             PostLoginUI.printWhiteBoard();
         }
-        if (color.equals("BLACK")) {
+        if (playerColor == ChessGame.TeamColor.BLACK) {
             PostLoginUI.printBlackBoard();
         }
-        if (color.equals("Observer")) {
+        if (playerColor == ChessGame.TeamColor.empty) {
             PostLoginUI.printWhiteBoard();
             PostLoginUI.printBlackBoard();
         }
     }
 
     private static void handleMakeMove(ChessMove move, Integer gameID) {
-        ChessGame game = null;
-        try {
+        WSClient client = PreLoginUI.wsClient;
+        String authToken = PreLoginUI.getAuthToken();
+        UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, move);
+        gameCommand.setCommandType(UserGameCommand.CommandType.MAKE_MOVE);
 
-            SQLGameDAO gameDao = new SQLGameDAO();
-            gameDao.makeChessMove(move, gameID);
-            GameData data = gameDao.getGameData(gameID);
-            game = data.getGame();
-        }
-        catch (DataAccessException e) {
-            System.out.println("error");
-            redrawBoard(gameID);
-            GameUI.display();
-        }
+        Gson gson = new Gson();
+        String message = gson.toJson(gameCommand);
 
-        if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
-            System.out.print("\033[H\033[2J");
-            System.out.flush();
-            System.out.println("White won");
-            getBoard(gameID);
-            System.exit(0);
-        }
-        if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
-            System.out.print("\033[H\033[2J");
-            System.out.flush();
-            System.out.println("Black won");
-            getBoard(gameID);
-            System.exit(0);
-        }
-        if (game.isInStalemate(ChessGame.TeamColor.BLACK) || PostLoginUI.getGame().isInStalemate(ChessGame.TeamColor.WHITE)) {
-            System.out.print("\033[H\033[2J");
-            System.out.flush();
-            System.out.println("Draw");
-            getBoard(gameID);
-            System.exit(0);
-        }
-        getBoard(gameID);
+        System.out.println("Sending message: " + message);
 
+        client.sendMessage(message);
         GameUI.display();
-    }
+        System.out.println(
 
-    private static void redrawBoard(Integer gameID) {
-        getBoard(gameID);
-        GameUI.display();
+
+        );
 
     }
 
 
+    public static void redrawBoard(Integer gameID) {
+        getBoard(gameID);
+    }
 }

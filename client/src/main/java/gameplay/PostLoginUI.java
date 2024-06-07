@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import model.GameData;
+import websocket.commands.UserGameCommand;
 
 import java.util.List;
 import java.util.Scanner;
@@ -23,6 +24,7 @@ public class PostLoginUI {
 
     public static void init() {
         scanner = new Scanner(System.in);
+        game.setTeamTurn(ChessGame.TeamColor.WHITE);
     }
 
     public static ChessGame getGame() {
@@ -53,10 +55,7 @@ public class PostLoginUI {
                 case "join":
                     if (commandParts.length == 3) {
                         handleJoinGame(Integer.parseInt(commandParts[1]),commandParts[2]);
-                        PreLoginUI.setCurrentState(PreLoginUI.State.IN_GAME);
-                        WSClient client = PreLoginUI.wsClient;
-                        client.onMessage("hello");
-                        GameUI.display();
+
 
                     } else {
                         System.out.println("Usage: create <gameName>");
@@ -68,7 +67,7 @@ public class PostLoginUI {
                         handleObserveGame(Integer.parseInt(commandParts[1]));
                         getBoard(Integer.parseInt(commandParts[1]));
                         GameUI.display();
-                        GameUI.setColor("Observer");
+                        GameUI.setPlayerColor(ChessGame.TeamColor.empty);
                     } else {
                         System.out.println("Usage: create <gameName>");
                     }
@@ -127,8 +126,6 @@ public class PostLoginUI {
                     game = gameData.getGame();
 
                     board = game.getBoard();
-
-
                 }
             }
         } catch (Exception e) {
@@ -174,15 +171,33 @@ public class PostLoginUI {
                 PostLoginUI.display();
             } else {
                 System.out.println("Joined Game");
-                getBoard(gameID);
-                if (playerColor.equals("BLACK")) {
-                    printBlackBoard();
-                    GameUI.setColor("BLACK");
-                }
+                PreLoginUI.setCurrentState(PreLoginUI.State.IN_GAME);
+                WSClient client = PreLoginUI.wsClient;
+                String authToken = PreLoginUI.getAuthToken();
+                UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, playerColor);
+                gameCommand.setCommandType(UserGameCommand.CommandType.CONNECT);
+                Gson gson = new Gson();
+                String message = gson.toJson(gameCommand);
+                client.sendMessage(message);
                 if (playerColor.equals("WHITE")) {
-                    printWhiteBoard();
-                    GameUI.setColor("WHITE");
+                    GameUI.setPlayerColor(ChessGame.TeamColor.WHITE);
                 }
+                if (playerColor.equals("BLACK")) {
+                    GameUI.setPlayerColor(ChessGame.TeamColor.BLACK);
+                }
+
+
+                GameUI.setGameID(gameID);
+                GameUI.display();
+//                getBoard(gameID);
+//                if (playerColor.equals("BLACK")) {
+//                    printBlackBoard();
+//                    GameUI.setPlayerColor(ChessGame.TeamColor.BLACK);
+//                }
+//                if (playerColor.equals("WHITE")) {
+//                    printWhiteBoard();
+//                    GameUI.setPlayerColor(ChessGame.TeamColor.WHITE);
+//                }
             }
         } catch (Exception e) {
             System.out.println("Failed to join game: " + e.getMessage());
@@ -204,7 +219,7 @@ public class PostLoginUI {
                 getBoard(gameID);
                 printWhiteBoard();
                 printBlackBoard();
-                GameUI.setColor("Observer");
+                GameUI.setPlayerColor(ChessGame.TeamColor.empty);
             }
         } catch (Exception e) {
             System.out.println("Failed to join game: " + e.getMessage());

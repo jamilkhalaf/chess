@@ -1,12 +1,16 @@
 package gameplay;
 
+import com.google.gson.Gson;
+import com.mysql.cj.x.protobuf.Mysqlx;
+import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
+
 import javax.websocket.*;
 import java.net.URI;
 
 @ClientEndpoint
 public class WSClient {
     private Session session;
-
     @OnOpen
     public void onOpen(Session session) {
         this.session = session;
@@ -14,8 +18,36 @@ public class WSClient {
     }
 
     @OnMessage
-    public void onMessage(String message) {
+    public void onMessage(String message) throws InterruptedException {
         System.out.println("Message from server: " + message);
+
+        UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
+
+        ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
+
+        if (userGameCommand.getCommandType() == UserGameCommand.CommandType.CONNECT) {
+            if (userGameCommand.getColor().equals("WHITE")) {
+
+                Integer gameID = userGameCommand.gameID;
+                PostLoginUI.getBoard(gameID);
+                PostLoginUI.printWhiteBoard();
+            }
+            if (userGameCommand.getColor().equals("BLACK")) {
+                Integer gameID = userGameCommand.gameID;
+                PostLoginUI.getBoard(gameID);
+                PostLoginUI.printBlackBoard();
+            }
+        }
+
+        if (userGameCommand.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
+            int gameID = userGameCommand.getGameID();
+            GameUI.redrawBoard(gameID);
+        }
+
+        else if (msg.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+            GameUI.redrawBoard(userGameCommand.getGameID());
+        }
+
     }
 
     @OnClose

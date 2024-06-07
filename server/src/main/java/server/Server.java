@@ -26,7 +26,7 @@ public class Server {
 
         //websocket spark
 
-        Spark.webSocket("/connect", new WebSocketServer(authDAO,gameDAO,userDAO));
+        Spark.webSocket("/connect", new WSServer(authDAO,gameDAO,userDAO));
 
 
         Spark.staticFiles.location("/web");
