@@ -1,5 +1,8 @@
 package gameplay;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import com.mysql.cj.x.protobuf.Mysqlx;
 import websocket.commands.UserGameCommand;
@@ -43,12 +46,12 @@ public class WSClient {
             int gameID = userGameCommand.getGameID();
             GameUI.redrawBoard(gameID);
         }
-
-        else if (msg.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
-            GameUI.redrawBoard(userGameCommand.getGameID());
+        if (msg.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+            GameUI.redrawBoard(msg.gameID);
         }
 
     }
+
 
     @OnClose
     public void onClose(Session session, CloseReason closeReason) {

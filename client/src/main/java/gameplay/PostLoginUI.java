@@ -122,7 +122,7 @@ public class PostLoginUI {
             List<GameData> gameDataList = responseData.getGames();
 
             for (GameData gameData : gameDataList) {
-                if (gameData.getGameID() == gameID) {
+                if (gameData.getGameID().equals(gameID)) {
                     game = gameData.getGame();
 
                     board = game.getBoard();

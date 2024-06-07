@@ -28,6 +28,7 @@ public class WSServer {
         this.gameDAO = gameDAO;
         this.userDAO = userDAO;
 
+
     }
 
     @OnWebSocketConnect
@@ -46,7 +47,7 @@ public class WSServer {
 
             switch (command.getCommandType()) {
                 case MAKE_MOVE:
-                    handleMakeMove(command);
+                    handleMakeMove(command, session);
                     break;
                 case LEAVE:
                     break;
@@ -60,7 +61,7 @@ public class WSServer {
                     break;
             }
 
-            session.getRemote().sendString(new Gson().toJson(command));
+
         } catch (Exception e) {
             System.out.println("Error parsing message: " + e.getMessage());
             e.printStackTrace();
@@ -68,7 +69,7 @@ public class WSServer {
     }
 
 
-    private void handleMakeMove(UserGameCommand command) throws DataAccessException {
+    private void handleMakeMove(UserGameCommand command, Session session) throws DataAccessException, InterruptedException {
         Integer gameID = command.getGameID();
         ChessMove move = command.getMove();
         System.out.println("Handling make move command: " + command);
@@ -99,8 +100,10 @@ public class WSServer {
             System.out.println("Draw");
             System.exit(0);
         }
+
         try {
-            message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+            session.getRemote().sendString(new Gson().toJson(command));
+            message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,gameID);
             WSSessions.broadcastSession(gameID, null, message);
         }
         catch (Exception e) {
@@ -109,10 +112,12 @@ public class WSServer {
 
     }
 
+
+
     private void handleConnect(UserGameCommand command, Session session) {
         try {
             WSSessions.addSession(command.getGameID(), command.getAuthToken(), session);
-
+            session.getRemote().sendString(new Gson().toJson(command));
             message = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
             WSSessions.broadcastSession(command.getGameID(), null, message);
         }

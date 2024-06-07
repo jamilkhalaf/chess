@@ -6,13 +6,14 @@ import java.util.Objects;
 
 /**
  * Represents a Message the server can send through a WebSocket
- * 
+ *
  * Note: You can add to this class, but you should not alter the existing
  * methods.
  */
 public class ServerMessage {
     ServerMessageType serverMessageType;
     public ChessGame game;
+    public int gameID;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -27,6 +28,11 @@ public class ServerMessage {
 
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
+    }
+
+    public ServerMessage(ServerMessageType type, int gameID) {
+        this.serverMessageType = type;
+        this.gameID = gameID;
     }
 
     public ServerMessage(ChessGame game) {

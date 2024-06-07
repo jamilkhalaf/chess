@@ -119,7 +119,7 @@ public class GameUI {
         return new ChessPosition(row,column);
     }
 
-    private static void getBoard(Integer gameID) {
+    public static void getBoard(Integer gameID) {
         ChessBoard board = PostLoginUI.getBoard(gameID);
         if (playerColor == ChessGame.TeamColor.WHITE) {
             PostLoginUI.printWhiteBoard();
@@ -147,8 +147,6 @@ public class GameUI {
         client.sendMessage(message);
         GameUI.display();
         System.out.println(
-
-
         );
 
     }
