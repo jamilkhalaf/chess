@@ -4,7 +4,6 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPosition;
 import com.google.gson.Gson;
-import com.mysql.cj.x.protobuf.Mysqlx;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
@@ -14,6 +13,7 @@ import java.net.URI;
 @ClientEndpoint
 public class WSClient {
     private Session session;
+
     @OnOpen
     public void onOpen(Session session) {
         this.session = session;
@@ -22,15 +22,16 @@ public class WSClient {
 
     @OnMessage
     public void onMessage(String message) throws InterruptedException {
-        System.out.println("Message from server: " + message);
-
-        UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
-
         ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
 
-        if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
-            if (GameUI.getPlayerColor() == ChessGame.TeamColor.WHITE) {
+        if (msg.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
+            System.out.println(msg.errorMessage);
+            GameUI.redrawBoard(msg.gameID);
+        }
 
+        if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+            System.out.println(msg.username + " connected as " + msg.playerColor + " player");
+            if (GameUI.getPlayerColor() == ChessGame.TeamColor.WHITE) {
                 Integer gameID = GameUI.getGameID();
                 PostLoginUI.getBoard(gameID);
                 PostLoginUI.printWhiteBoard();
@@ -42,16 +43,16 @@ public class WSClient {
             }
         }
 
-        if (userGameCommand.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
-            int gameID = userGameCommand.getGameID();
-            GameUI.redrawBoard(gameID);
-        }
         if (msg.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+            System.out.println(msg.errorMessage);
             GameUI.redrawBoard(msg.gameID);
         }
 
+        if (msg.getServerMessageType() == ServerMessage.ServerMessageType.WINNINGPLAYER) {
+            System.out.println(msg.username + " won");
+            GameUI.redrawBoard(msg.gameID);
+        }
     }
-
 
     @OnClose
     public void onClose(Session session, CloseReason closeReason) {
@@ -60,7 +61,8 @@ public class WSClient {
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        System.out.println("Error: " + throwable.getMessage());
+        System.err.println("WebSocket error: " + throwable.getMessage());
+        throwable.printStackTrace(System.err);
     }
 
     public void sendMessage(String message) {

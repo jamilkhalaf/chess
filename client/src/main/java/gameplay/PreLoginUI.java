@@ -11,12 +11,17 @@ public class PreLoginUI {
     private static State currentState = State.LOGGED_OUT;
     private static String authToken;
     public static WSClient wsClient;
+    private static String usernameP;
 
 
     public enum State {
         LOGGED_OUT,
         LOGGED_IN,
         IN_GAME
+    }
+
+    public static String getUsernameP() {
+        return usernameP;
     }
 
     public static void setCurrentState(State currentState) {
@@ -77,6 +82,7 @@ public class PreLoginUI {
                 JsonObject jsonObject = JsonParser.parseString(response).getAsJsonObject();
                 authToken = jsonObject.get("authToken").getAsString();
                 currentState = State.LOGGED_IN;
+                usernameP = username;
                 PostLoginUI.display();
             }
 
@@ -97,6 +103,7 @@ public class PreLoginUI {
             authToken = jsonObject.get("authToken").getAsString();
 //            System.out.println("Server response: " + response);
             currentState = State.LOGGED_IN;
+            usernameP = username;
             PostLoginUI.display();
 
         }

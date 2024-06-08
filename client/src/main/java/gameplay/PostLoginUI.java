@@ -5,7 +5,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import model.GameData;
+import org.eclipse.jetty.websocket.api.Session;
+import server.WSSessions;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
 
 import java.util.List;
 import java.util.Scanner;
@@ -20,6 +23,9 @@ public class PostLoginUI {
     private static String whiteUsername;
     private static String gameName;
     private static String blackUsername;
+    private static ServerMessage message = null;
+
+
 
 
     public static void init() {
@@ -124,12 +130,11 @@ public class PostLoginUI {
             for (GameData gameData : gameDataList) {
                 if (gameData.getGameID().equals(gameID)) {
                     game = gameData.getGame();
-
                     board = game.getBoard();
                 }
             }
         } catch (Exception e) {
-            System.out.println("Failed to fetch games: ");
+            e.printStackTrace();
             PostLoginUI.display();
         }
         return board;
@@ -165,39 +170,32 @@ public class PostLoginUI {
             String json = "{\"playerColor\": \"" + playerColor + "\", \"gameID\": " + gameID + "}";
             String response = ServerFacade.sendPutRequest(url, json, PreLoginUI.getAuthToken());
             String knownErrorResponse = "{\"message\": \"Error: bad request\"}";
-
+            WSClient client = PreLoginUI.wsClient;
             if (response.equals(knownErrorResponse)) {
-                System.out.println("Color Taken");
-                PostLoginUI.display();
-            } else {
-                System.out.println("Joined Game");
-                PreLoginUI.setCurrentState(PreLoginUI.State.IN_GAME);
-                WSClient client = PreLoginUI.wsClient;
-                String authToken = PreLoginUI.getAuthToken();
-                UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, playerColor, game);
+                UserGameCommand gameCommand = new UserGameCommand(PreLoginUI.getAuthToken(), gameID, playerColor, game, PreLoginUI.getUsernameP());
                 gameCommand.setCommandType(UserGameCommand.CommandType.CONNECT);
                 Gson gson = new Gson();
                 String message = gson.toJson(gameCommand);
                 client.sendMessage(message);
+            } else {
+                System.out.println("Joined Game");
+                PreLoginUI.setCurrentState(PreLoginUI.State.IN_GAME);
+
+                String authToken = PreLoginUI.getAuthToken();
                 if (playerColor.equals("WHITE")) {
                     GameUI.setPlayerColor(ChessGame.TeamColor.WHITE);
                 }
                 if (playerColor.equals("BLACK")) {
                     GameUI.setPlayerColor(ChessGame.TeamColor.BLACK);
                 }
-
+                UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, playerColor, game, PreLoginUI.getUsernameP());
+                gameCommand.setCommandType(UserGameCommand.CommandType.CONNECT);
+                Gson gson = new Gson();
+                String message = gson.toJson(gameCommand);
+                client.sendMessage(message);
 
                 GameUI.setGameID(gameID);
                 GameUI.display();
-//                getBoard(gameID);
-//                if (playerColor.equals("BLACK")) {
-//                    printBlackBoard();
-//                    GameUI.setPlayerColor(ChessGame.TeamColor.BLACK);
-//                }
-//                if (playerColor.equals("WHITE")) {
-//                    printWhiteBoard();
-//                    GameUI.setPlayerColor(ChessGame.TeamColor.WHITE);
-//                }
             }
         } catch (Exception e) {
             System.out.println("Failed to join game: " + e.getMessage());

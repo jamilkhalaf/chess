@@ -16,6 +16,7 @@ public class UserGameCommand {
     public UserGameCommand(String authToken) {
         this.authToken = authToken;
     }
+
     //move
     public UserGameCommand(String authToken, Integer gameID, ChessMove move) {
         this.authToken = authToken;
@@ -24,25 +25,26 @@ public class UserGameCommand {
     }
 
     //leave and resign
-    public UserGameCommand(String authToken, int gameID, CommandType commandtype) {
-        this.commandType = CommandType.LEAVE;
+    public UserGameCommand(String authToken, int gameID, ChessGame.TeamColor playerColor) {
+        this.playerColor = playerColor;
         this.authToken = authToken;
         this.gameID = gameID;
     }
 
     //connect
-    public UserGameCommand(String authToken, Integer gameID, String color, ChessGame game) {
+    public UserGameCommand(String authToken, Integer gameID, String color, ChessGame game, String username) {
         this.authToken = authToken;
         this.gameID = gameID;
         this.color = color;
         this.game = game;
+        this.username = username;
     }
 
     public enum CommandType {
         CONNECT,
         MAKE_MOVE,
         LEAVE,
-        RESIGN
+        RESIGN,
     }
 
     protected CommandType commandType;
@@ -51,10 +53,16 @@ public class UserGameCommand {
     public ChessMove move;
     public String color;
     public ChessGame game;
+    public String username;
+    public ChessGame.TeamColor playerColor;
 
 
     public String getAuthString() {
         return authToken;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public void setCommandType(CommandType commandType) {

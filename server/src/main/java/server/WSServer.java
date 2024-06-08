@@ -1,34 +1,30 @@
 package server;
-import org.eclipse.jetty.websocket.api.Session;
+
+import com.google.gson.Gson;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 import chess.ChessGame;
 import chess.ChessMove;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import dataaccess.*;
 
+import java.io.IOException;
 
 @WebSocket
 public class WSServer {
     private UserDAO userDAO;
     private GameDAO gameDAO;
     private AuthDAO authDAO;
-    private ServerMessage message = null;
-
 
     public WSServer(AuthDAO authDAO, GameDAO gameDAO, UserDAO userDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
         this.userDAO = userDAO;
-
-
     }
 
     @OnWebSocketConnect
@@ -52,6 +48,7 @@ public class WSServer {
                 case LEAVE:
                     break;
                 case RESIGN:
+                    handleResign(command,session);
                     break;
                 case CONNECT:
                     handleConnect(command, session);
@@ -60,69 +57,122 @@ public class WSServer {
                     System.out.println("Unknown command type: " + command.getCommandType());
                     break;
             }
-
-
         } catch (Exception e) {
-            System.out.println("Error parsing message: " + e.getMessage());
+            System.err.println("Error parsing message: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+
+    private void handleResign(UserGameCommand command, Session session) throws Exception {
+        Integer gameID = command.getGameID();
+        ChessMove move = command.getMove();
+        System.out.println("Handling make move command: " + command);
+
+        try {
+            SQLGameDAO gameDao = new SQLGameDAO();
+            gameDao.updateGame(command.playerColor, command.gameID, command.getUsername());
+        } catch (DataAccessException e) {
+            sendErrorMessage(command,session, "error");
+            return;
+        }
+        sendResignMessage(command,session,command.playerColor + " resigned");
+
+    }
+
+    private void handleMakeMove(UserGameCommand command, Session session) throws Exception {
+        Integer gameID = command.getGameID();
+        ChessMove move = command.getMove();
+        System.out.println("Handling make move command: " + command);
+
+        try {
+            SQLGameDAO gameDao = new SQLGameDAO();
+            gameDao.makeChessMove(move, gameID);
+        } catch (DataAccessException e) {
+            sendErrorMessage(command,session, "error");
+            return;
+        }
+
+        ChessGame game = gameDAO.getGameData(gameID).getGame();
+
+        if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
+            sendWinningMessage(gameID, "WHITE");
+        } else if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+            sendWinningMessage(gameID, "BLACK");
+        } else if (game.isInStalemate(ChessGame.TeamColor.BLACK) || game.isInStalemate(ChessGame.TeamColor.WHITE)) {
+            sendWinningMessage(gameID, "Draw");
+        } else {
+            sendMoveMessage(command,session,"Move was made");
+        }
+    }
+
+    private void handleConnect(UserGameCommand command, Session session) throws Exception {
+            SQLGameDAO gameDAO = new SQLGameDAO();
+            GameData data = gameDAO.getGameData(command.gameID);
+            String playerColor = command.color;
+
+            if (playerColor == null) {
+                sendErrorMessage(command, session, "player is null");
+                return;
+            }
+
+            if (playerColor.equals("BLACK")) {
+                if ((!data.getBlackUsername().equals(command.username))) {
+                    sendErrorMessage(command, session, "You are not authorized to join as BLACK");
+                    return;
+                }
+            }
+            if (playerColor.equals("WHITE")) {
+                System.out.println(data.getWhiteUsername());
+                if ((!data.getWhiteUsername().equals(command.username))) {
+                    System.out.println(data.getWhiteUsername());
+                    sendErrorMessage(command, session,"You are not authorized to join as WHITE" );
+                    return;
+                }
+            }
+
+            WSSessions.addSession(command.getGameID(), command.getAuthToken(), session);
+            ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, command.game, command.color, command.username);
+            WSSessions.broadcastSession(command.getGameID(), null, loadGameMessage);
+    }
+
+    private void sendErrorMessage(UserGameCommand command, Session session, String errorMessage) {
+        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.ERROR, command.getGameID(), errorMessage);
+        try {
+            session.getRemote().sendString(new Gson().toJson(message));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendResignMessage(UserGameCommand command, Session session, String errorMessage) {
+        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, command.getGameID(), errorMessage);
+        try {
+            WSSessions.broadcastSession(command.getGameID(), null, message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendMoveMessage(UserGameCommand command, Session session, String errorMessage) {
+        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, command.getGameID(), errorMessage);
+        try {
+            WSSessions.broadcastSession(command.getGameID(), null, message);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-    private void handleMakeMove(UserGameCommand command, Session session) throws DataAccessException, InterruptedException {
-        Integer gameID = command.getGameID();
-        ChessMove move = command.getMove();
-        System.out.println("Handling make move command: " + command);
-        try {
-            SQLGameDAO gameDao = new SQLGameDAO();
-            gameDao.makeChessMove(move, gameID);
-        }
-        catch (DataAccessException e) {
-            System.out.println("error");
-        }
-        ChessGame game = gameDAO.getGameData(gameID).getGame();
 
-        if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
-            System.out.print("\033[H\033[2J");
-            System.out.flush();
-            System.out.println("White won");
-            System.exit(0);
-        }
-        if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
-            System.out.print("\033[H\033[2J");
-            System.out.flush();
-            System.out.println("Black won");
-            System.exit(0);
-        }
-        if (game.isInStalemate(ChessGame.TeamColor.BLACK) || game.isInStalemate(ChessGame.TeamColor.WHITE)) {
-            System.out.print("\033[H\033[2J");
-            System.out.flush();
-            System.out.println("Draw");
-            System.exit(0);
-        }
-
-        try {
-            session.getRemote().sendString(new Gson().toJson(command));
-            message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,gameID);
-            WSSessions.broadcastSession(gameID, null, message);
-        }
-        catch (Exception e) {
-            System.out.println();
-        }
-
+    private void sendWinningMessage(Integer gameID, String winner) throws Exception {
+        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.WINNINGPLAYER, winner, gameID);
+        WSSessions.broadcastSession(gameID, null, message);
+        System.exit(0);
     }
 
-
-
-    private void handleConnect(UserGameCommand command, Session session) {
-        try {
-            WSSessions.addSession(command.getGameID(), command.getAuthToken(), session);
-//            session.getRemote().sendString(new Gson().toJson(command));
-            message = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, command.game);
-            WSSessions.broadcastSession(command.getGameID(), null, message);
-        }
-        catch (Exception e) {
-            System.out.println();
-        }
+    @OnWebSocketError
+    public void onError(Session session, Throwable throwable) {
+        System.err.println("WebSocket error: " + throwable.getMessage());
+        throwable.printStackTrace(System.err);
     }
 }

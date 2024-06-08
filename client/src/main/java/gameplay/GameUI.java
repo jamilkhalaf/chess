@@ -64,13 +64,10 @@ public class GameUI {
                     }
                     break;
                 case "resign":
+                    handleResign(gameID, playerColor);
                     break;
                 case "redraw":
-                    if (commandParts.length == 2) {
-                        redrawBoard(Integer.parseInt(commandParts[1]));
-                    } else {
-                        System.out.println("Usage: make move <initial position> <final position> <gameID>");
-                    }
+                    redrawBoard(gameID);
                     break;
                 case "highlight":
                     PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_OUT);
@@ -81,6 +78,7 @@ public class GameUI {
                     break;
                 case "help":
                     displayHelp();
+                    GameUI.display();
                     break;
                 default:
                     System.out.println("Unknown command. Type 'Help' for a list of commands.");
@@ -142,6 +140,24 @@ public class GameUI {
         String authToken = PreLoginUI.getAuthToken();
         UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, move);
         gameCommand.setCommandType(UserGameCommand.CommandType.MAKE_MOVE);
+
+        Gson gson = new Gson();
+        String message = gson.toJson(gameCommand);
+
+        System.out.println("Sending message: " + message);
+
+        client.sendMessage(message);
+        GameUI.display();
+        System.out.println(
+        );
+
+    }
+
+    private static void handleResign(Integer gameID, ChessGame.TeamColor playerColor) {
+        WSClient client = PreLoginUI.wsClient;
+        String authToken = PreLoginUI.getAuthToken();
+        UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, playerColor);
+        gameCommand.setCommandType(UserGameCommand.CommandType.RESIGN);
 
         Gson gson = new Gson();
         String message = gson.toJson(gameCommand);
