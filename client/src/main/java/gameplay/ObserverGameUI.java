@@ -4,12 +4,10 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
-import com.google.gson.Gson;
 
 
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Scanner;
 
 
