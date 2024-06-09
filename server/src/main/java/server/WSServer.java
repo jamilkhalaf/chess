@@ -115,11 +115,19 @@ public class WSServer {
 
     }
 
-    public static void handleMakeMove(UserGameCommand command, Session session) throws IOException {
+    public static void handleMakeMove(UserGameCommand command, Session session) throws IOException, DataAccessException {
         Integer gameID = command.getGameID();
         String authToken = command.getAuthString();
+        SQLAuthDAO sqlAuthDAO = new SQLAuthDAO();
+        String username = sqlAuthDAO.getUsername(authToken);
         ChessMove move = command.getMove();
         SQLGameDAO sqlGameDAO = new SQLGameDAO();
+
+        if (username == null) {
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid auth");
+            session.getRemote().sendString(new Gson().toJson(msg));
+            return;
+        }
         try {
             sqlGameDAO.makeChessMove(move,gameID);
             ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
