@@ -47,9 +47,9 @@ public class WSServer {
                     break;
 //                case LEAVE:
 //                    break;
-//                case RESIGN:
-//                    handleResign(command,session);
-//                    break;
+                case RESIGN:
+                    handleResign(command,session);
+                    break;
                 case CONNECT:
                     handleConnect(command, session);
                     break;
@@ -100,7 +100,8 @@ public class WSServer {
             WSSessions.broadcastSession(gameID,authToken, notificationMessage);
             return;
         }
-        if (observer == null) {
+
+        if ((observer == null) || observer.equals(username)) {
             WSSessions.addSession(command.getGameID(), authToken, session);
             ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
             session.getRemote().sendString(new Gson().toJson(loadGameMessage));
@@ -142,6 +143,38 @@ public class WSServer {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void handleResign(UserGameCommand command, Session session) throws Exception {
+        ChessGame.TeamColor playerColor = null;
+        ChessGame.TeamColor oppPlayerColor = null;
+
+        Integer gameID = command.getGameID();
+        String authToken = command.getAuthString();
+        SQLAuthDAO sqlAuthDAO = new SQLAuthDAO();
+        String username = sqlAuthDAO.getUsername(authToken);
+        ChessMove move = command.getMove();
+        SQLGameDAO sqlGameDAO = new SQLGameDAO();
+        GameData data = sqlGameDAO.getGameData(gameID);
+
+        if (username == null) {
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid auth");
+            session.getRemote().sendString(new Gson().toJson(msg));
+            return;
+        }
+        if (data.getBlackUsername().equals(username)) {
+            playerColor = ChessGame.TeamColor.BLACK;
+            oppPlayerColor = ChessGame.TeamColor.WHITE;
+        }
+        if (data.getWhiteUsername().equals(username)) {
+            playerColor = ChessGame.TeamColor.WHITE;
+            oppPlayerColor = ChessGame.TeamColor.BLACK;
+        }
+        sqlGameDAO.updateGame(playerColor,gameID, null);
+        ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, oppPlayerColor + " won the game",gameID);
+        session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+        ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, oppPlayerColor + " won the game", gameID);
+        WSSessions.broadcastSession(gameID,authToken, notificationMessage);
     }
 
     @OnWebSocketError

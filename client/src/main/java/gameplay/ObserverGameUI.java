@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Scanner;
 
 
-public class GameUI {
+public class ObserverGameUI {
     private static Scanner scanner;
     private static ChessGame.TeamColor playerColor;
     private static int gameID;
@@ -34,7 +34,7 @@ public class GameUI {
     }
 
     public static void setPlayerColor(ChessGame.TeamColor playerColor) {
-        GameUI.playerColor = playerColor;
+        ObserverGameUI.playerColor = playerColor;
     }
 
     public static int getGameID() {
@@ -42,7 +42,7 @@ public class GameUI {
     }
 
     public static void setGameID(int gameID) {
-        GameUI.gameID = gameID;
+        ObserverGameUI.gameID = gameID;
     }
 
 
@@ -57,26 +57,7 @@ public class GameUI {
             String[] commandParts = command.split(" ");
 
             switch (commandParts[0]) {
-                case "make-move":
-                    if (resigned) {
-                        System.out.println("Can't make a move, you resigned");
-                    }
-                    else if (commandParts.length == 3) {
-                        if (PostLoginUI.getGame().getTeamTurn().equals(playerColor)) {
-                            ChessMove move = convertToMove(commandParts[1], commandParts[2]);
-                            handleMakeMove(move, getGameID());
-                        }
-                        else {
-                            System.out.println("Not your turn");
-                            GameUI.displayMenu();
-                        }
-                    } else {
-                        System.out.println("Usage: make move <initial position> <final position> <gameID>");
-                    }
-                    break;
-                case "resign":
-                    handleResign(gameID);
-                    break;
+
                 case "redraw":
                     redrawBoard(gameID);
                     break;
@@ -91,18 +72,16 @@ public class GameUI {
                     break;
                 case "help":
                     displayHelp();
-                    GameUI.displayMenu();
+                    ObserverGameUI.displayMenu();
                     break;
                 default:
-                    PostLoginUI.display();
+                    ObserverGameUI.displayMenu();
             }
         }
     }
 
 
     public static void displayMenu() {
-        System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "make-move" + EscapeSequences.SET_TEXT_COLOR_MAGENTA );
-        System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "resign" + EscapeSequences.SET_TEXT_COLOR_MAGENTA);
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "redraw" + EscapeSequences.SET_TEXT_COLOR_MAGENTA );
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "Highlight" + EscapeSequences.SET_TEXT_COLOR_MAGENTA );
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "Leave" + EscapeSequences.SET_TEXT_COLOR_MAGENTA + " - playing chess");
@@ -113,9 +92,6 @@ public class GameUI {
         System.out.println("Here is the list of available commands");
     }
 
-    private static ChessMove convertToMove(String initialPosition, String finalPosition) {
-        return new ChessMove(convertPosition(initialPosition), convertPosition(finalPosition),null);
-    }
 
     private static ChessPosition convertPosition(String position) {
         if (position == null || position.length() != 2) {
@@ -148,18 +124,6 @@ public class GameUI {
         }
     }
 
-    private static void handleMakeMove(ChessMove move, Integer gameID) {
-        WSClient client = PreLoginUI.wsClient;
-        String authToken = PreLoginUI.getAuthToken();
-        UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, move, UserGameCommand.CommandType.MAKE_MOVE);
-
-        Gson gson = new Gson();
-        String message = gson.toJson(gameCommand);
-
-        client.sendMessage(message);
-        GameUI.display();
-
-    }
 
     private static void handleHighlight(ChessPosition position, Integer gameID) {
         ChessGame game = PostLoginUI.getGame();
@@ -186,27 +150,6 @@ public class GameUI {
 
     }
 
-    private static void handleResign(Integer gameID) {
-        System.out.print("Are you sure you want to resign? Press Enter to confirm or type 'cancel' to abort: ");
-        String confirmation = scanner.nextLine().trim().toLowerCase();
-
-        if (confirmation.equals("") || confirmation.equals("confirm")) {
-            WSClient client = PreLoginUI.wsClient;
-            String authToken = PreLoginUI.getAuthToken();
-            UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, UserGameCommand.CommandType.RESIGN);
-
-            Gson gson = new Gson();
-            String message = gson.toJson(gameCommand);
-
-            client.sendMessage(message);
-            System.out.println("You have resigned.");
-            resigned = true;
-        } else {
-            System.out.println("Resignation cancelled.");
-        }
-        GameUI.display();
-
-    }
 
     public static void handleLeave() {
         PostLoginUI.display();

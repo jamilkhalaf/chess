@@ -10,6 +10,7 @@ import server.WSSessions;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
@@ -71,8 +72,8 @@ public class PostLoginUI {
                     if (commandParts.length == 2) {
                         handleObserveGame(Integer.parseInt(commandParts[1]));
                         getBoard(Integer.parseInt(commandParts[1]));
-                        GameUI.display();
-                        GameUI.setPlayerColor(ChessGame.TeamColor.empty);
+                        ObserverGameUI.display();
+                        ObserverGameUI.setPlayerColor(ChessGame.TeamColor.empty);
                     } else {
                         System.out.println("Usage: create <gameName>");
                     }
@@ -199,13 +200,12 @@ public class PostLoginUI {
             String url = "http://localhost:4510/game";
             String json = "{\"playerColor\": \"" + playerColor + "\", \"gameID\": " + gameID + "}";
             String response = ServerFacade.sendPutRequest(url, json, PreLoginUI.getAuthToken());
-            String knownErrorResponse = "{\"message\": \"Error: bad request\"}";
 
             System.out.println("Observing game");
             getBoard(gameID);
             printWhiteBoard();
             printBlackBoard();
-            GameUI.setPlayerColor(ChessGame.TeamColor.empty);
+            ObserverGameUI.setPlayerColor(ChessGame.TeamColor.empty);
 
             UserGameCommand gameCommand = new UserGameCommand(PreLoginUI.getAuthToken(), gameID, UserGameCommand.CommandType.CONNECT);
             Gson gson = new Gson();
@@ -290,6 +290,83 @@ public class PostLoginUI {
             System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + (char)('a' + i) + " " + EscapeSequences.RESET_BG_COLOR);
         }
         System.out.println();
+    }
+
+    public static void printWhiteBoardHighlighted(Collection<ChessMove> highlightedMoves) {
+        System.out.println(EscapeSequences.ERASE_SCREEN);
+
+        System.out.print("   ");
+        for (int i = 0; i < 8; i++) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + (char)('a' + i) + " " + EscapeSequences.RESET_BG_COLOR);
+        }
+        System.out.println();
+
+        for (int row = 8; row >= 1; row--) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + row + " " + EscapeSequences.RESET_BG_COLOR);
+
+            for (int column = 1; column <= 8; column++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row, column));
+                String pieceSymbol = getPieceSymbol(piece);
+                boolean isBlackSquare = (row + column) % 2 == 0;
+                boolean isHighlighted = isHighlighted(new ChessPosition(row, column), highlightedMoves);
+
+                String square = isBlackSquare ?
+                        (isHighlighted ? EscapeSequences.SET_BG_COLOR_GREEN + pieceSymbol + EscapeSequences.RESET_BG_COLOR : EscapeSequences.SET_BG_COLOR_BLACK + pieceSymbol + EscapeSequences.RESET_BG_COLOR) :
+                        (isHighlighted ? EscapeSequences.SET_BG_COLOR_GREEN + pieceSymbol + EscapeSequences.RESET_BG_COLOR : EscapeSequences.SET_BG_COLOR_WHITE + pieceSymbol + EscapeSequences.RESET_BG_COLOR);
+
+                System.out.print(square);
+            }
+            System.out.println(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + row + " " + EscapeSequences.RESET_BG_COLOR);
+        }
+
+        System.out.print("   ");
+        for (int i = 0; i < 8; i++) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + (char)('a' + i) + " " + EscapeSequences.RESET_BG_COLOR);
+        }
+        System.out.println();
+    }
+
+    public static void printBlackBoardHighlighted(Collection<ChessMove> highlightedMoves) {
+        System.out.println(EscapeSequences.ERASE_SCREEN);
+
+        System.out.print("   ");
+        for (int i = 7; i >= 0; i--) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + (char)('a' + i) + " " + EscapeSequences.RESET_BG_COLOR);
+        }
+        System.out.println();
+
+        for (int row = 1; row <= 8; row++) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + row + " " + EscapeSequences.RESET_BG_COLOR);
+
+            for (int col = 8; col >= 1; col--) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                String pieceSymbol = getPieceSymbol(piece);
+                boolean isBlackSquare = (row + col) % 2 == 0;
+                boolean isHighlighted = isHighlighted(new ChessPosition(row, col), highlightedMoves);
+
+                String square = isBlackSquare ?
+                        (isHighlighted ? EscapeSequences.SET_BG_COLOR_GREEN + pieceSymbol + EscapeSequences.RESET_BG_COLOR : EscapeSequences.SET_BG_COLOR_BLACK + pieceSymbol + EscapeSequences.RESET_BG_COLOR) :
+                        (isHighlighted ? EscapeSequences.SET_BG_COLOR_GREEN + pieceSymbol + EscapeSequences.RESET_BG_COLOR : EscapeSequences.SET_BG_COLOR_WHITE + pieceSymbol + EscapeSequences.RESET_BG_COLOR);
+
+                System.out.print(square);
+            }
+            System.out.println(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + row + " " + EscapeSequences.RESET_BG_COLOR);
+        }
+
+        System.out.print("   ");
+        for (int i = 7; i >= 0; i--) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + " " + (char)('a' + i) + " " + EscapeSequences.RESET_BG_COLOR);
+        }
+        System.out.println();
+    }
+
+    private static boolean isHighlighted(ChessPosition position, Collection<ChessMove> highlightedMoves) {
+        for (ChessMove move : highlightedMoves) {
+            if (move.getEndPosition().equals(position)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

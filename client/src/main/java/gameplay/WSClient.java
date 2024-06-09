@@ -30,12 +30,16 @@ public class WSClient {
                 System.out.println("press enter to continue");
                 PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_IN);
             }
+            if (msg.getErrorMessage().equals("invalid command")) {
+                System.out.println("press enter to continue");
+                PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_IN);
+            }
         }
 
         if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
-            PreLoginUI.setCurrentState(PreLoginUI.State.IN_GAME);
-            GameUI.redrawBoard(msg.getGame());
-
+                PreLoginUI.setCurrentState(PreLoginUI.State.IN_GAME);
+                ObserverGameUI.redrawBoard(msg.getGame());
+                GameUI.redrawBoard(msg.getGame());
         }
 
         if (msg.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
@@ -43,6 +47,10 @@ public class WSClient {
                 System.out.println(msg.getMessage());
             }
             if (msg.getMessage().contains("joined as observer")) {
+                System.out.println(msg.getMessage());
+            }
+            if (msg.getMessage().contains("won the game")) {
+                GameUI.resigned = true;
                 System.out.println(msg.getMessage());
             }
 

@@ -37,6 +37,7 @@ public class ServerMessage {
         this.game = game;
     }
 
+
     public ServerMessage(ServerMessageType type, String message, int gameID) {
         this.serverMessageType = type;
         this.message = message;
