@@ -1,10 +1,7 @@
 package gameplay;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPosition;
+
 import com.google.gson.Gson;
-import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
@@ -42,7 +39,7 @@ public class WSClient {
 
         if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
                 PreLoginUI.setCurrentState(PreLoginUI.State.IN_GAME);
-                ObserverGameUI.redrawBoard(msg.getGame());
+                GameUI.redrawBoard(msg.getGame());
                 GameUI.redrawBoard(msg.getGame());
         }
 
