@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
-import server.WSSessions;
+
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 

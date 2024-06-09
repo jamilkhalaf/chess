@@ -5,8 +5,6 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
-import dataaccess.SQLGameDAO;
 import model.GameData;
 import websocket.commands.UserGameCommand;
 
