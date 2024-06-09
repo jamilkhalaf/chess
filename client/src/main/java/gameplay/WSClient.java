@@ -25,33 +25,26 @@ public class WSClient {
         ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
 
         if (msg.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
-            System.out.println(msg.errorMessage);
-            GameUI.redrawBoard(msg.gameID);
+            System.out.println(msg.getErrorMessage());
+            if (msg.getErrorMessage().equals("invalid gameID")) {
+                System.out.println("press enter to continue");
+                PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_IN);
+            }
         }
 
         if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
-            System.out.println(GameUI.getPlayerColor() + " connected");
-            if (GameUI.getPlayerColor() == ChessGame.TeamColor.WHITE) {
-                Integer gameID = GameUI.getGameID();
-                PostLoginUI.getBoard(gameID);
-                PostLoginUI.printWhiteBoard();
-            }
-            if (GameUI.getPlayerColor() == ChessGame.TeamColor.BLACK) {
-                Integer gameID = GameUI.getGameID();
-                PostLoginUI.getBoard(gameID);
-                PostLoginUI.printBlackBoard();
+            System.out.println(msg.getMessage());
+            if (msg.getMessage().contains("joined game")) {
+                PreLoginUI.setCurrentState(PreLoginUI.State.IN_GAME);
+                GameUI.redrawBoard(msg.getGame());
             }
         }
 
         if (msg.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
-            System.out.println(msg.errorMessage);
-            GameUI.redrawBoard(msg.gameID);
+
+
         }
 
-        if (msg.getServerMessageType() == ServerMessage.ServerMessageType.WINNINGPLAYER) {
-            System.out.println(msg.username + " won");
-            GameUI.redrawBoard(msg.gameID);
-        }
     }
 
     @OnClose

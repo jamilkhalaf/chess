@@ -19,6 +19,8 @@ public class GameUI {
     private static ChessGame.TeamColor playerColor;
     private static int gameID;
 
+
+
     public static void init() {
         scanner = new Scanner(System.in);
 
@@ -40,14 +42,17 @@ public class GameUI {
         GameUI.gameID = gameID;
     }
 
+
+
     public static void display() {
         init();
         displayMenu();
         while (true) {
-
             System.out.print(EscapeSequences.RESET_TEXT_COLOR + PreLoginUI.getPrompt());
+
             String command = scanner.nextLine().trim().toLowerCase();
             String[] commandParts = command.split(" ");
+
             switch (commandParts[0]) {
                 case "make-move":
                     if (commandParts.length == 3) {
@@ -57,7 +62,7 @@ public class GameUI {
                         }
                         else {
                             System.out.println("Not your turn");
-                            GameUI.display();
+                            GameUI.displayMenu();
                         }
                     } else {
                         System.out.println("Usage: make move <initial position> <final position> <gameID>");
@@ -70,18 +75,16 @@ public class GameUI {
                     redrawBoard(gameID);
                     break;
                 case "highlight":
-                    PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_OUT);
-                    PreLoginUI.display();
                     break;
                 case "leave":
-                    PostLoginUI.display();
+                    handleLeave();
                     break;
                 case "help":
                     displayHelp();
-                    GameUI.display();
+                    GameUI.displayMenu();
                     break;
                 default:
-                    System.out.println("Unknown command. Type 'Help' for a list of commands.");
+                    PostLoginUI.display();
             }
         }
     }
@@ -136,17 +139,16 @@ public class GameUI {
     }
 
     private static void handleMakeMove(ChessMove move, Integer gameID) {
-        WSClient client = PreLoginUI.wsClient;
-        String authToken = PreLoginUI.getAuthToken();
-        UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, move);
-        gameCommand.setCommandType(UserGameCommand.CommandType.MAKE_MOVE);
-
-        Gson gson = new Gson();
-        String message = gson.toJson(gameCommand);
-
-        System.out.println("Sending message: " + message);
-
-        client.sendMessage(message);
+//        WSClient client = PreLoginUI.wsClient;
+//        String authToken = PreLoginUI.getAuthToken();
+//        UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, move);
+//
+//        Gson gson = new Gson();
+//        String message = gson.toJson(gameCommand);
+//
+//        System.out.println("Sending message: " + message);
+//
+//        client.sendMessage(message);
         GameUI.display();
         System.out.println(
         );
@@ -154,21 +156,25 @@ public class GameUI {
     }
 
     private static void handleResign(Integer gameID, ChessGame.TeamColor playerColor) {
-        WSClient client = PreLoginUI.wsClient;
-        String authToken = PreLoginUI.getAuthToken();
-        UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, playerColor);
-        gameCommand.setCommandType(UserGameCommand.CommandType.RESIGN);
-
-        Gson gson = new Gson();
-        String message = gson.toJson(gameCommand);
-
-        System.out.println("Sending message: " + message);
-
-        client.sendMessage(message);
+//        WSClient client = PreLoginUI.wsClient;
+//        String authToken = PreLoginUI.getAuthToken();
+//        UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, playerColor);
+//        gameCommand.setCommandType(UserGameCommand.CommandType.RESIGN);
+//
+//        Gson gson = new Gson();
+//        String message = gson.toJson(gameCommand);
+//
+//        System.out.println("Sending message: " + message);
+//
+//        client.sendMessage(message);
         GameUI.display();
         System.out.println(
         );
 
+    }
+
+    public static void handleLeave() {
+        PostLoginUI.display();
     }
 
 
