@@ -101,7 +101,7 @@ public class WSServer {
             return;
         }
 
-        if ((observer == null) || observer.equals(username)) {
+        if ((observer != null)) {
             WSSessions.addSession(command.getGameID(), authToken, session);
             ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
             session.getRemote().sendString(new Gson().toJson(loadGameMessage));

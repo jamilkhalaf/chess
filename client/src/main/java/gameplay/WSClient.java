@@ -16,7 +16,7 @@ public class WSClient {
     public void onOpen(Session session) throws Exception {
         this.session = session;
         System.out.println("Connected to server");
-        simulateLifecycleMethods();
+//        simulateLifecycleMethods();
     }
 
     @OnMessage
@@ -27,10 +27,19 @@ public class WSClient {
         if (msg.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
             System.out.println(msg.getErrorMessage());
             if (msg.getErrorMessage().equals("invalid gameID")) {
+                GameUI.stopRun = true;
+                System.out.println("press enter to continue");
+                PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_IN);
+            }
+            if (msg.getErrorMessage().equals("invalid auth")) {
+                GameUI.stopRun = true;
+
                 System.out.println("press enter to continue");
                 PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_IN);
             }
             if (msg.getErrorMessage().equals("invalid command")) {
+                GameUI.stopRun = true;
+
                 System.out.println("press enter to continue");
                 PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_IN);
             }

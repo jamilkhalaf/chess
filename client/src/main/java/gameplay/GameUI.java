@@ -18,7 +18,7 @@ public class GameUI {
     private static int gameID;
     public static boolean resigned = false;
 
-
+    public static boolean stopRun = false;
 
     public static void init() {
         scanner = new Scanner(System.in);
@@ -57,6 +57,9 @@ public class GameUI {
                     if (resigned) {
                         System.out.println("Can't make a move, you resigned");
                     }
+                    if (stopRun) {
+                        PostLoginUI.display();
+                    }
                     else if (commandParts.length == 3) {
                         if (PostLoginUI.getGame().getTeamTurn().equals(playerColor)) {
                             ChessMove move = convertToMove(commandParts[1], commandParts[2]);
@@ -71,21 +74,41 @@ public class GameUI {
                     }
                     break;
                 case "resign":
+                    if (stopRun) {
+                        PostLoginUI.display();
+                        break;
+                    }
                     handleResign(gameID);
                     break;
                 case "redraw":
+                    if (stopRun) {
+                        PostLoginUI.display();
+                        break;
+                    }
                     redrawBoard(gameID);
                     break;
                 case "highlight":
+                    if (stopRun) {
+                        PostLoginUI.display();
+                        break;
+                    }
                     if (commandParts.length == 2) {
                         handleHighlight(convertPosition(commandParts[1]), getGameID());
                     }
 
                     break;
                 case "leave":
+                    if (stopRun) {
+                        PostLoginUI.display();
+                        break;
+                    }
                     handleLeave();
                     break;
                 case "help":
+                    if (stopRun) {
+                        PostLoginUI.display();
+                        break;
+                    }
                     displayHelp();
                     GameUI.displayMenu();
                     break;
