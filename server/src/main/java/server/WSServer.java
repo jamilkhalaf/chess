@@ -106,33 +106,70 @@ public class WSServer {
     }
 
     private void handleConnect(UserGameCommand command, Session session) throws Exception {
+            SQLAuthDAO sqlAuthDAO = new SQLAuthDAO();
+            String username = sqlAuthDAO.getUsername(command.getAuthToken());
+            boolean hasObserver = false;
+            boolean hasBlack = false;
+            boolean hasWhite = false;
             SQLGameDAO gameDAO = new SQLGameDAO();
             GameData data = gameDAO.getGameData(command.gameID);
-            String playerColor = command.color;
 
-            if (playerColor == null) {
-                sendErrorMessage(command, session, "player is null");
+            if (username == null) {
+                sendErrorMessage(command, session, "Game not found");
                 return;
             }
 
-            if (playerColor.equals("BLACK")) {
-                if ((!data.getBlackUsername().equals(command.username))) {
-                    sendErrorMessage(command, session, "You are not authorized to join as BLACK");
-                    return;
-                }
-            }
-            if (playerColor.equals("WHITE")) {
-                System.out.println(data.getWhiteUsername());
-                if ((!data.getWhiteUsername().equals(command.username))) {
-                    System.out.println(data.getWhiteUsername());
-                    sendErrorMessage(command, session,"You are not authorized to join as WHITE" );
-                    return;
-                }
+            if (gameDAO.getGame(command.gameID) == null) {
+                sendErrorMessage(command, session, "Game not found");
+                return;
             }
 
-            WSSessions.addSession(command.getGameID(), command.getAuthToken(), session);
-            ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, command.game, command.color, command.username);
-            WSSessions.broadcastSession(command.getGameID(), null, loadGameMessage);
+            if ((data.getSpectators() == null)){
+                hasObserver = true;
+            }
+            System.out.println(hasObserver);
+
+            if (data.getWhiteUsername() != null) {
+                hasWhite = true;
+            }
+
+            if (data.getBlackUsername() != null) {
+                hasBlack = true;
+            }
+
+            if ((hasBlack && data.getBlackUsername().equals(username)) || (hasWhite && data.getWhiteUsername().equals(username)) || (hasObserver) ) {
+                WSSessions.addSession(command.getGameID(), command.getAuthToken(), session);
+                ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, data.getGame());
+                session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+                String joinMessageContent = username + " has joined the game.";
+                sendJoinMessage(command, command.getAuthToken(), joinMessageContent);
+                return;
+            }
+
+
+            sendErrorMessage(command, session, "Color Taken");
+
+
+
+
+    }
+
+    private void sendObserveMessage(UserGameCommand command, Session session, String errorMessage) {
+        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, command.getGameID(), errorMessage);
+        try {
+            session.getRemote().sendString(new Gson().toJson(message));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void sendJoinMessage(UserGameCommand command, String excludeAuthToken, String messageContent) {
+        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, messageContent);
+        try {
+            WSSessions.broadcastSession(command.getGameID(), excludeAuthToken, message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void sendErrorMessage(UserGameCommand command, Session session, String errorMessage) {

@@ -172,7 +172,7 @@ public class PostLoginUI {
             String knownErrorResponse = "{\"message\": \"Error: bad request\"}";
             WSClient client = PreLoginUI.wsClient;
             if (response.equals(knownErrorResponse)) {
-                UserGameCommand gameCommand = new UserGameCommand(PreLoginUI.getAuthToken(), gameID, playerColor, game, PreLoginUI.getUsernameP());
+                UserGameCommand gameCommand = new UserGameCommand(PreLoginUI.getAuthToken(), gameID);
                 gameCommand.setCommandType(UserGameCommand.CommandType.CONNECT);
                 Gson gson = new Gson();
                 String message = gson.toJson(gameCommand);
@@ -188,7 +188,7 @@ public class PostLoginUI {
                 if (playerColor.equals("BLACK")) {
                     GameUI.setPlayerColor(ChessGame.TeamColor.BLACK);
                 }
-                UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, playerColor, game, PreLoginUI.getUsernameP());
+                UserGameCommand gameCommand = new UserGameCommand(authToken, gameID);
                 gameCommand.setCommandType(UserGameCommand.CommandType.CONNECT);
                 Gson gson = new Gson();
                 String message = gson.toJson(gameCommand);
@@ -205,6 +205,8 @@ public class PostLoginUI {
 
     private static void handleObserveGame(Integer gameID) {
         String playerColor = "empty";
+        WSClient client = PreLoginUI.wsClient;
+
         try {
             String url = "http://localhost:4510/game";
             String json = "{\"playerColor\": \"" + playerColor + "\", \"gameID\": " + gameID + "}";
@@ -219,6 +221,12 @@ public class PostLoginUI {
                 printBlackBoard();
                 GameUI.setPlayerColor(ChessGame.TeamColor.empty);
             }
+            UserGameCommand gameCommand = new UserGameCommand(PreLoginUI.getAuthToken(), gameID);
+            gameCommand.setCommandType(UserGameCommand.CommandType.CONNECT);
+            Gson gson = new Gson();
+            String message = gson.toJson(gameCommand);
+            client.sendMessage(message);
+
         } catch (Exception e) {
             System.out.println("Failed to join game: " + e.getMessage());
         }

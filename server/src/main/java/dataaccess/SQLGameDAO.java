@@ -52,7 +52,8 @@ public class SQLGameDAO implements GameDAO{
                             rs.getString("gameName"),
                             rs.getString("whiteUsername"),
                             rs.getString("blackUsername"),
-                            chessGame
+                            chessGame,
+                            rs.getString("spectators")
                     );
                 }
             }
@@ -117,7 +118,8 @@ public class SQLGameDAO implements GameDAO{
                         rs.getString("gameName"),
                         rs.getString("whiteUsername"),
                         rs.getString("blackUsername"),
-                        chessGame
+                        chessGame,
+                        rs.getString("spectators")
                 ));
             }
         } catch (SQLException ex) {

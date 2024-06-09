@@ -32,12 +32,10 @@ public class UserGameCommand {
     }
 
     //connect
-    public UserGameCommand(String authToken, Integer gameID, String color, ChessGame game, String username) {
+    public UserGameCommand(String authToken, Integer gameID) {
         this.authToken = authToken;
         this.gameID = gameID;
         this.color = color;
-        this.game = game;
-        this.username = username;
     }
 
     public enum CommandType {

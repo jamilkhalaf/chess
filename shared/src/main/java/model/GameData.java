@@ -8,12 +8,13 @@ public class GameData {
     private ChessBoard board;
     private ChessGame game;
     private Integer gameID;
+    private String spectators = null;
     private String whiteUsername = null;
     private String blackUsername = null;
     private String gameName;
 
 
-    public GameData(Integer gameID, String gameName, String whiteUsername,String blackUsername, ChessGame chessGame){
+    public GameData(Integer gameID, String gameName, String whiteUsername,String blackUsername, ChessGame chessGame, String spectators){
         this.gameName = gameName;
 
         this.gameID = gameID;
@@ -24,7 +25,12 @@ public class GameData {
         this.board = chessGame.getBoard();
 
         this.game = chessGame;
+        this.spectators = spectators;
 
+    }
+
+    public String getSpectators() {
+        return spectators;
     }
 
     public String getGameName() {

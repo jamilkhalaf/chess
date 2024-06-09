@@ -30,7 +30,7 @@ public class WSClient {
         }
 
         if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
-            System.out.println(msg.username + " connected as " + msg.playerColor + " player");
+            System.out.println(GameUI.getPlayerColor() + " connected");
             if (GameUI.getPlayerColor() == ChessGame.TeamColor.WHITE) {
                 Integer gameID = GameUI.getGameID();
                 PostLoginUI.getBoard(gameID);

@@ -17,6 +17,7 @@ public class ServerMessage {
     public String playerColor;
     public String username;
     public String errorMessage;
+    public String message;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -38,6 +39,11 @@ public class ServerMessage {
         this.serverMessageType = type;
         this.gameID = gameID;
         this.errorMessage = errorMessage;
+    }
+
+    public ServerMessage(ServerMessageType type, String message) {
+        this.serverMessageType = type;
+        this.message = message;
     }
 
     public String getErrorMessage() {
@@ -64,11 +70,11 @@ public class ServerMessage {
         this.game = game;
     }
 
-    public ServerMessage(ServerMessageType serverMessageType, ChessGame game, String playerColor, String username) {
+    //load
+
+    public ServerMessage(ServerMessageType serverMessageType, ChessGame game) {
         this.serverMessageType = serverMessageType;
         this.game = game;
-        this.playerColor = playerColor;
-        this.username = username;
     }
 
 

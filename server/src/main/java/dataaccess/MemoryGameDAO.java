@@ -40,7 +40,7 @@ public class MemoryGameDAO implements GameDAO{
     public Integer createGame(String gameName) throws DataAccessException {
         Integer gameID = nextGameID++;
 
-        GameData game = new GameData(gameID, gameName,null,null,new ChessGame());
+        GameData game = new GameData(gameID, gameName,null,null,new ChessGame(), null);
         game.setBlackUsername(null);
         game.setWhiteUsername(null);
         games.put(gameID, game);
