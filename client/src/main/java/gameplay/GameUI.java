@@ -58,7 +58,7 @@ public class GameUI {
                     if (commandParts.length == 3) {
                         if (PostLoginUI.getGame().getTeamTurn().equals(playerColor)) {
                             ChessMove move = convertToMove(commandParts[1], commandParts[2]);
-                            handleMakeMove(move, gameID);
+                            handleMakeMove(move, getGameID());
                         }
                         else {
                             System.out.println("Not your turn");
@@ -139,19 +139,15 @@ public class GameUI {
     }
 
     private static void handleMakeMove(ChessMove move, Integer gameID) {
-//        WSClient client = PreLoginUI.wsClient;
-//        String authToken = PreLoginUI.getAuthToken();
-//        UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, move);
-//
-//        Gson gson = new Gson();
-//        String message = gson.toJson(gameCommand);
-//
-//        System.out.println("Sending message: " + message);
-//
-//        client.sendMessage(message);
+        WSClient client = PreLoginUI.wsClient;
+        String authToken = PreLoginUI.getAuthToken();
+        UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, move, UserGameCommand.CommandType.MAKE_MOVE);
+
+        Gson gson = new Gson();
+        String message = gson.toJson(gameCommand);
+
+        client.sendMessage(message);
         GameUI.display();
-        System.out.println(
-        );
 
     }
 

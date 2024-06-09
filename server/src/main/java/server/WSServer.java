@@ -42,9 +42,9 @@ public class WSServer {
             System.out.println("Command Type: " + command.getCommandType());
 
             switch (command.getCommandType()) {
-//                case MAKE_MOVE:
-//                    handleMakeMove(command, session);
-//                    break;
+                case MAKE_MOVE:
+                    handleMakeMove(command, session);
+                    break;
 //                case LEAVE:
 //                    break;
 //                case RESIGN:
@@ -71,6 +71,15 @@ public class WSServer {
         SQLAuthDAO sqlAuthDAO = new SQLAuthDAO();
         String username = sqlAuthDAO.getUsername(authToken);
 
+
+        if (data == null) {
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid auth");
+            session.getRemote().sendString(new Gson().toJson(msg));
+            return;
+        }
+
+        String observer = data.getSpectators();
+
         if (username == null) {
             ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid auth");
             session.getRemote().sendString(new Gson().toJson(msg));
@@ -85,10 +94,46 @@ public class WSServer {
 
         if (username.equals(data.getWhiteUsername()) || username.equals(data.getBlackUsername())) {
             WSSessions.addSession(command.getGameID(), authToken, session);
-            ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, username + " joined game", gameID);
-            WSSessions.broadcastSession(command.getGameID(),null, loadGameMessage);
+            ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
+            session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+            ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username +" joined", gameID);
+            WSSessions.broadcastSession(gameID,authToken, notificationMessage);
+            return;
+        }
+        if (observer == null) {
+            WSSessions.addSession(command.getGameID(), authToken, session);
+            ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
+            session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+            ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username +" joined as observer", gameID);
+            WSSessions.broadcastSession(gameID,authToken, notificationMessage);
+
+        }
+        else {
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid command");
+            session.getRemote().sendString(new Gson().toJson(msg));
         }
 
+    }
+
+    public static void handleMakeMove(UserGameCommand command, Session session) throws IOException {
+        Integer gameID = command.getGameID();
+        String authToken = command.getAuthString();
+        ChessMove move = command.getMove();
+        SQLGameDAO sqlGameDAO = new SQLGameDAO();
+        try {
+            sqlGameDAO.makeChessMove(move,gameID);
+            ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
+            WSSessions.broadcastSession(gameID,null, loadGameMessage);
+            ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "move was made", gameID);
+            WSSessions.broadcastSession(gameID,authToken, notificationMessage);
+
+        }
+        catch (DataAccessException e) {
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid move");
+            session.getRemote().sendString(new Gson().toJson(msg));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @OnWebSocketError

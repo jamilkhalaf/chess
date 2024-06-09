@@ -13,6 +13,7 @@ public class ServerMessage {
     private String message;
     private String errorMessage;
     private Integer game;
+    private int gameID;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -31,10 +32,15 @@ public class ServerMessage {
 
 
     //load game, game is gameID
-    public ServerMessage(ServerMessageType type, String message, Integer game) {
+    public ServerMessage(ServerMessageType type, Integer game) {
+        this.serverMessageType = type;
+        this.game = game;
+    }
+
+    public ServerMessage(ServerMessageType type, String message, int gameID) {
         this.serverMessageType = type;
         this.message = message;
-        this.game = game;
+        this.gameID = gameID;
     }
 
     public String getErrorMessage() {

@@ -33,15 +33,18 @@ public class WSClient {
         }
 
         if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
-            System.out.println(msg.getMessage());
-            if (msg.getMessage().contains("joined game")) {
-                PreLoginUI.setCurrentState(PreLoginUI.State.IN_GAME);
-                GameUI.redrawBoard(msg.getGame());
-            }
+            PreLoginUI.setCurrentState(PreLoginUI.State.IN_GAME);
+            GameUI.redrawBoard(msg.getGame());
+
         }
 
         if (msg.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
-
+            if (msg.getMessage().equals("move was made")) {
+                System.out.println(msg.getMessage());
+            }
+            if (msg.getMessage().contains("joined as observer")) {
+                System.out.println(msg.getMessage());
+            }
 
         }
 
