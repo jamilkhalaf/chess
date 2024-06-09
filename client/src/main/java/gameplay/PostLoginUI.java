@@ -70,8 +70,8 @@ public class PostLoginUI {
                     if (commandParts.length == 2) {
                         handleObserveGame(Integer.parseInt(commandParts[1]));
                         getBoard(Integer.parseInt(commandParts[1]));
-                        ObserverGameUI.display();
-                        ObserverGameUI.setPlayerColor(ChessGame.TeamColor.empty);
+                        GameUI.display();
+                        GameUI.setPlayerColor(ChessGame.TeamColor.empty);
                     } else {
                         System.out.println("Usage: create <gameName>");
                     }
@@ -203,7 +203,7 @@ public class PostLoginUI {
             getBoard(gameID);
             printWhiteBoard();
             printBlackBoard();
-            ObserverGameUI.setPlayerColor(ChessGame.TeamColor.empty);
+            GameUI.setPlayerColor(ChessGame.TeamColor.empty);
 
             UserGameCommand gameCommand = new UserGameCommand(PreLoginUI.getAuthToken(), gameID, UserGameCommand.CommandType.CONNECT);
             Gson gson = new Gson();

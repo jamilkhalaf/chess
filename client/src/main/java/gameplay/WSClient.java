@@ -15,12 +15,16 @@ public class WSClient {
     private Session session;
 
     @OnOpen
+    @SuppressWarnings("unused")
+
     public void onOpen(Session session) {
         this.session = session;
         System.out.println("Connected to server");
     }
 
     @OnMessage
+    @SuppressWarnings("unused")
+
     public void onMessage(String message) throws InterruptedException {
         ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
 
@@ -59,11 +63,15 @@ public class WSClient {
     }
 
     @OnClose
+    @SuppressWarnings("unused")
+
     public void onClose(Session session, CloseReason closeReason) {
         System.out.println("Connection closed: " + closeReason);
     }
 
     @OnError
+    @SuppressWarnings("unused")
+
     public void onError(Session session, Throwable throwable) {
         System.err.println("WebSocket error: " + throwable.getMessage());
         throwable.printStackTrace(System.err);
@@ -82,6 +90,8 @@ public class WSClient {
         container.connectToServer(this, new URI(uri));
     }
 
+
+    @SuppressWarnings("unused")
     public void close() throws Exception {
         if (session != null) {
             session.close();

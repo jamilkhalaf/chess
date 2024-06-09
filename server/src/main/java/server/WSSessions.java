@@ -8,20 +8,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WSSessions {
-    private static final Map<Integer, Map<String, Session>> sessions = new HashMap<>();
+    private static final Map<Integer, Map<String, Session>> SESSIONS = new HashMap<>();
 
     public static void addSession(Integer gameID, String authToken, Session session) {
-        sessions.computeIfAbsent(gameID, k -> new HashMap<>()).put(authToken, session);
+        SESSIONS.computeIfAbsent(gameID, k -> new HashMap<>()).put(authToken, session);
     }
 
     public static void broadcastSession(Integer gameID, String excludeAuthToken, ServerMessage message) throws Exception {
-        Map<String, Session> sessionsForGame = getSessionsForGame(gameID);
+        Map<String, Session> SESSIONSForGame = getSESSIONSForGame(gameID);
 
-        if (sessionsForGame == null) {
+        if (SESSIONSForGame == null) {
             throw new Exception("Game ID not found: " + gameID);
         }
 
-        for (Map.Entry<String, Session> entry : sessionsForGame.entrySet()) {
+        for (Map.Entry<String, Session> entry : SESSIONSForGame.entrySet()) {
             String authToken = entry.getKey();
             Session session = entry.getValue();
 
@@ -31,7 +31,7 @@ public class WSSessions {
         }
     }
 
-    static Map<String, Session> getSessionsForGame(Integer gameID) {
-        return sessions.get(gameID);
+    static Map<String, Session> getSESSIONSForGame(Integer gameID) {
+        return SESSIONS.get(gameID);
     }
 }

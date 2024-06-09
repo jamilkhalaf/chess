@@ -12,18 +12,18 @@ import java.util.concurrent.ConcurrentMap;
 
 @WebSocket
 public class ChessWebSocketHandler {
-    private static final ConcurrentMap<Session, String> sessions = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<Session, String> SESSIONS = new ConcurrentHashMap<>();
 
     @OnWebSocketConnect
     public void onConnect(Session session) {
-        sessions.put(session, "");
+        SESSIONS.put(session, "");
         System.out.println("New client connected: " + session.getRemoteAddress().getAddress());
     }
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) {
         System.out.println("Message received: " + message);
-        sessions.forEach((s, user) -> {
+        SESSIONS.forEach((s, user) -> {
             try {
                 s.getRemote().sendString("Server received message: " + message);
             } catch (IOException e) {
@@ -34,7 +34,7 @@ public class ChessWebSocketHandler {
 
     @OnWebSocketClose
     public void onClose(Session session, int statusCode, String reason) {
-        sessions.remove(session);
+        SESSIONS.remove(session);
         System.out.println("Client disconnected: " + session.getRemoteAddress().getAddress());
     }
 }
