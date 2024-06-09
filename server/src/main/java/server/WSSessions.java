@@ -15,13 +15,13 @@ public class WSSessions {
     }
 
     public static void broadcastSession(Integer gameID, String excludeAuthToken, ServerMessage message) throws Exception {
-        Map<String, Session> SESSIONSForGame = getSESSIONSForGame(gameID);
+        Map<String, Session> sessionsForGame = getSESSIONSForGame(gameID);
 
-        if (SESSIONSForGame == null) {
+        if (sessionsForGame == null) {
             throw new Exception("Game ID not found: " + gameID);
         }
 
-        for (Map.Entry<String, Session> entry : SESSIONSForGame.entrySet()) {
+        for (Map.Entry<String, Session> entry : sessionsForGame.entrySet()) {
             String authToken = entry.getKey();
             Session session = entry.getValue();
 

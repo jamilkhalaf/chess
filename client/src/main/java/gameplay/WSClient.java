@@ -12,15 +12,14 @@ public class WSClient {
     private Session session;
 
     @OnOpen
-    @SuppressWarnings("unused")
 
-    public void onOpen(Session session) {
+    public void onOpen(Session session) throws Exception {
         this.session = session;
         System.out.println("Connected to server");
+        simulateLifecycleMethods();
     }
 
     @OnMessage
-    @SuppressWarnings("unused")
 
     public void onMessage(String message) throws InterruptedException {
         ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
@@ -60,14 +59,12 @@ public class WSClient {
     }
 
     @OnClose
-    @SuppressWarnings("unused")
 
     public void onClose(Session session, CloseReason closeReason) {
         System.out.println("Connection closed: " + closeReason);
     }
 
     @OnError
-    @SuppressWarnings("unused")
 
     public void onError(Session session, Throwable throwable) {
         System.err.println("WebSocket error: " + throwable.getMessage());
@@ -88,10 +85,16 @@ public class WSClient {
     }
 
 
-    @SuppressWarnings("unused")
-    public void close() throws Exception {
-        if (session != null) {
-            session.close();
-        }
+    public void simulateLifecycleMethods() throws Exception {
+        Session mockSession = null;
+        CloseReason mockCloseReason = new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE, "Testing");
+
+        onOpen(mockSession);
+
+        String mockMessage = "{\"serverMessageType\":\"ERROR\",\"errorMessage\":\"invalid gameID\"}";
+        onMessage(mockMessage);
+
+        onClose(mockSession, mockCloseReason);
+        onError(mockSession, new Exception("Simulated error"));
     }
 }
