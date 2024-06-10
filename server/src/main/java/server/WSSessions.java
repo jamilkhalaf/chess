@@ -14,6 +14,16 @@ public class WSSessions {
         SESSIONS.computeIfAbsent(gameID, k -> new HashMap<>()).put(authToken, session);
     }
 
+    public static void removeSession(Integer gameID, String authToken) {
+        Map<String, Session> sessionsForGame = getSESSIONSForGame(gameID);
+        if (sessionsForGame != null) {
+            sessionsForGame.remove(authToken);
+            if (sessionsForGame.isEmpty()) {
+                SESSIONS.remove(gameID);
+            }
+        }
+    }
+
     public static void broadcastSession(Integer gameID, String excludeAuthToken, ServerMessage message) throws Exception {
         Map<String, Session> sessionsForGame = getSESSIONSForGame(gameID);
 

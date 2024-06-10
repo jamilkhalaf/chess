@@ -39,7 +39,6 @@ public class WSClient {
             }
             if (msg.getErrorMessage().equals("invalid command")) {
                 GameUI.stopRun = true;
-
                 System.out.println("press enter to continue");
                 PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_IN);
             }
@@ -47,7 +46,6 @@ public class WSClient {
 
         if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
                 PreLoginUI.setCurrentState(PreLoginUI.State.IN_GAME);
-                GameUI.redrawBoard(msg.getGame());
                 GameUI.redrawBoard(msg.getGame());
         }
 
@@ -58,8 +56,29 @@ public class WSClient {
             if (msg.getMessage().contains("joined as observer")) {
                 System.out.println(msg.getMessage());
             }
+            if (msg.getMessage().contains("joined")) {
+                System.out.println(msg.getMessage());
+            }
+            if (msg.getMessage().contains("in check")) {
+                System.out.println(msg.getMessage());
+            }
+            if (msg.getMessage().contains("in checkmate")) {
+                System.out.println(msg.getMessage());
+            }
+            if (msg.getMessage().contains("Stalemate")) {
+                System.out.println(msg.getMessage());
+            }
+            if (msg.getMessage().contains("Game ended")) {
+                System.out.println(msg.getMessage());
+            }
             if (msg.getMessage().contains("won the game")) {
                 GameUI.resigned = true;
+                System.out.println(msg.getMessage());
+            }
+            if (msg.getMessage().contains("left the game")) {
+                System.out.println(msg.getMessage());
+            }
+            if (msg.getMessage().contains("cant resign yet")) {
                 System.out.println(msg.getMessage());
             }
 

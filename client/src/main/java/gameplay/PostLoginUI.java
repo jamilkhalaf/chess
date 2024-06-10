@@ -195,9 +195,9 @@ public class PostLoginUI {
         WSClient client = PreLoginUI.wsClient;
 
         try {
-            String url = "http://localhost:4510/game";
-            String json = "{\"playerColor\": \"" + playerColor + "\", \"gameID\": " + gameID + "}";
-            String response = ServerFacade.sendPutRequest(url, json, PreLoginUI.getAuthToken());
+//            String url = "http://localhost:4510/game";
+//            String json = "{\"playerColor\": \"" + playerColor + "\", \"gameID\": " + gameID + "}";
+//            String response = ServerFacade.sendPutRequest(url, json, PreLoginUI.getAuthToken());
 
             System.out.println("Observing game");
             getBoard(gameID);

@@ -99,7 +99,7 @@ public class GameUI {
                     break;
                 case "leave":
                     if (stopRun) {
-                        PostLoginUI.display();
+                        handleLeave();
                         break;
                     }
                     handleLeave();
@@ -218,16 +218,25 @@ public class GameUI {
             String message = gson.toJson(gameCommand);
 
             client.sendMessage(message);
-            System.out.println("You have resigned.");
-            resigned = true;
-        } else {
-            System.out.println("Resignation cancelled.");
         }
         GameUI.display();
 
     }
 
     public static void handleLeave() {
+        System.out.print("Are you sure you want to leave? Press Enter to confirm or type 'cancel' to abort: ");
+        String confirmation = scanner.nextLine().trim().toLowerCase();
+
+        if (confirmation.equals("") || confirmation.equals("confirm")) {
+            WSClient client = PreLoginUI.wsClient;
+            String authToken = PreLoginUI.getAuthToken();
+            UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, UserGameCommand.CommandType.LEAVE);
+
+            Gson gson = new Gson();
+            String message = gson.toJson(gameCommand);
+
+            client.sendMessage(message);
+        }
         PostLoginUI.display();
     }
 
