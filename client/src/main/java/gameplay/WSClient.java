@@ -55,15 +55,18 @@ public class WSClient {
             if (msg.getMessage().contains("joined as observer")) {
                 System.out.println(msg.getMessage());
             }
-            if (msg.getMessage().contains("joined")) {
+            else if (msg.getMessage().contains("joined")) {
                 System.out.println(msg.getMessage());
             }
-            if (msg.getMessage().contains("in check")) {
-                System.out.println(msg.getMessage());
-            }
+
             if (msg.getMessage().contains("in checkmate")) {
                 System.out.println(msg.getMessage());
             }
+
+            else if (msg.getMessage().contains("in check")) {
+                System.out.println(msg.getMessage());
+            }
+
             if (msg.getMessage().contains("Stalemate")) {
                 System.out.println(msg.getMessage());
             }

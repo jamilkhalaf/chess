@@ -21,6 +21,7 @@ public class WSServer {
     private GameDAO gameDAO;
     private AuthDAO authDAO;
     private static boolean ended = false;
+    private static String color;
 
     public WSServer(AuthDAO authDAO, GameDAO gameDAO, UserDAO userDAO) {
         this.authDAO = authDAO;
@@ -80,7 +81,6 @@ public class WSServer {
             return;
         }
 
-        String observer = data.getSpectators();
 
         if (username == null) {
             ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid GameID");
@@ -95,26 +95,21 @@ public class WSServer {
         }
 
         if (username.equals(data.getWhiteUsername()) || username.equals(data.getBlackUsername())) {
+            if (username.equals(data.getWhiteUsername())) {color = "WHITE";}
+            else {color = "BLACK";}
             WSSessions.addSession(command.getGameID(), authToken, session);
             ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
             session.getRemote().sendString(new Gson().toJson(loadGameMessage));
-            ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username +" joined", gameID);
+            ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username +" joined as " + color, gameID);
             WSSessions.broadcastSession(gameID,authToken, notificationMessage);
             return;
         }
 
-        if ((observer == null) || observer.equals(username)) {
-            WSSessions.addSession(command.getGameID(), authToken, session);
-            ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
-            session.getRemote().sendString(new Gson().toJson(loadGameMessage));
-            ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username +" joined as observer", gameID);
-            WSSessions.broadcastSession(gameID,authToken, notificationMessage);
-
-        }
-        else {
-            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid command");
-            session.getRemote().sendString(new Gson().toJson(msg));
-        }
+        WSSessions.addSession(command.getGameID(), authToken, session);
+        ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
+        session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+        ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username +" joined as observer", gameID);
+        WSSessions.broadcastSession(gameID,authToken, notificationMessage);
 
     }
 
@@ -136,7 +131,7 @@ public class WSServer {
 
             if (ended) {
                 ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "Game ended, cannot make any more moves", gameID);
-                WSSessions.broadcastSession(gameID,null, notificationMessage);
+                session.getRemote().sendString(new Gson().toJson(notificationMessage));
                 return;
             }
 
@@ -226,7 +221,7 @@ public class WSServer {
             oppPlayerColor = ChessGame.TeamColor.BLACK;
         }
 
-        sqlGameDAO.updateGame(playerColor,gameID, null);
+//        sqlGameDAO.updateGame(playerColor,gameID, null);
         ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, oppPlayerColor + " won the game",gameID);
         session.getRemote().sendString(new Gson().toJson(loadGameMessage));
         ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, oppPlayerColor + " won the game", gameID);

@@ -61,6 +61,10 @@ public class GameUI {
                         PostLoginUI.display();
                     }
                     else if (commandParts.length == 3) {
+                        if (playerColor == ChessGame.TeamColor.empty) {
+                            System.out.println("Can't make moves as an observer");
+                            break;
+                        }
                         if (PostLoginUI.getGame().getTeamTurn().equals(playerColor)) {
                             ChessMove move = convertToMove(commandParts[1], commandParts[2]);
                             handleMakeMove(move, getGameID());

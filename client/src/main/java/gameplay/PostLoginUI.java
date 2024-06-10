@@ -199,12 +199,7 @@ public class PostLoginUI {
 //            String json = "{\"playerColor\": \"" + playerColor + "\", \"gameID\": " + gameID + "}";
 //            String response = ServerFacade.sendPutRequest(url, json, PreLoginUI.getAuthToken());
 
-            System.out.println("Observing game");
-            getBoard(gameID);
-            printWhiteBoard();
-            printBlackBoard();
             GameUI.setPlayerColor(ChessGame.TeamColor.empty);
-
             UserGameCommand gameCommand = new UserGameCommand(PreLoginUI.getAuthToken(), gameID, UserGameCommand.CommandType.CONNECT);
             Gson gson = new Gson();
             String message = gson.toJson(gameCommand);
