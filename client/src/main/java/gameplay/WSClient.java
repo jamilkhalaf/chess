@@ -28,18 +28,17 @@ public class WSClient {
             System.out.println(msg.getErrorMessage());
             if (msg.getErrorMessage().equals("invalid gameID")) {
                 GameUI.stopRun = true;
-                System.out.println("press enter to continue");
+                System.out.println("press c to continue");
                 PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_IN);
             }
             if (msg.getErrorMessage().equals("invalid auth")) {
                 GameUI.stopRun = true;
-
-                System.out.println("press enter to continue");
+                System.out.println("press c to continue");
                 PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_IN);
             }
             if (msg.getErrorMessage().equals("invalid command")) {
                 GameUI.stopRun = true;
-                System.out.println("press enter to continue");
+                System.out.println("press c to continue");
                 PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_IN);
             }
         }

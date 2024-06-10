@@ -75,7 +75,7 @@ public class WSServer {
 
 
         if (data == null) {
-            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid auth");
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid gameID");
             session.getRemote().sendString(new Gson().toJson(msg));
             return;
         }
@@ -83,7 +83,7 @@ public class WSServer {
         String observer = data.getSpectators();
 
         if (username == null) {
-            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid auth");
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid GameID");
             session.getRemote().sendString(new Gson().toJson(msg));
             return;
         }

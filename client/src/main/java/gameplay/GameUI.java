@@ -112,8 +112,10 @@ public class GameUI {
                     displayHelp();
                     GameUI.displayMenu();
                     break;
-                default:
+                case "c":
                     PostLoginUI.display();
+                default:
+                    GameUI.displayMenu();
             }
         }
     }
