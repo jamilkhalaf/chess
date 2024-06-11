@@ -195,9 +195,6 @@ public class PostLoginUI {
         WSClient client = PreLoginUI.wsClient;
 
         try {
-//            String url = "http://localhost:4510/game";
-//            String json = "{\"playerColor\": \"" + playerColor + "\", \"gameID\": " + gameID + "}";
-//            String response = ServerFacade.sendPutRequest(url, json, PreLoginUI.getAuthToken());
 
             GameUI.setPlayerColor(ChessGame.TeamColor.empty);
             UserGameCommand gameCommand = new UserGameCommand(PreLoginUI.getAuthToken(), gameID, UserGameCommand.CommandType.CONNECT);

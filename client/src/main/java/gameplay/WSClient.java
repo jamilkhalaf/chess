@@ -17,7 +17,7 @@ public class WSClient {
     public void onOpen(Session session) throws Exception {
         this.session = session;
         System.out.println("Connected to server");
-//        simulateLifecycleMethods();
+        simulateLifecycleMethods();
     }
 
     @OnMessage

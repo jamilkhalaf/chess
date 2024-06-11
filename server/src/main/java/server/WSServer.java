@@ -201,8 +201,6 @@ public class WSServer {
         ChessGame game = data.getGame();
 
         if (username == null) {
-            System.out.println("0");
-
             ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid auth");
             session.getRemote().sendString(new Gson().toJson(msg));
             return;
@@ -247,6 +245,7 @@ public class WSServer {
 
         if (username == null) {
             System.out.println("0");
+            System.out.println("check");
 
             ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid auth");
             session.getRemote().sendString(new Gson().toJson(msg));
