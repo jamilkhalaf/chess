@@ -41,19 +41,25 @@ public class WSClient {
                 System.out.println("press c to continue");
                 PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_IN);
             }
+            if (msg.getErrorMessage().contains("invalid move")) {
+                System.out.println(msg.getErrorMessage());
+            }
             if (msg.getErrorMessage().contains("Game ended")) {
+                System.out.println(msg.getErrorMessage());
+            }
+            else if (msg.getErrorMessage().contains("as the game ended")) {
+                System.out.println(msg.getErrorMessage());
+            }
+
+            else if (msg.getErrorMessage().contains("game is over")) {
                 System.out.println(msg.getErrorMessage());
             }
             if (msg.getErrorMessage().contains("as observer")) {
                 System.out.println(msg.getErrorMessage());
             }
-            if (msg.getErrorMessage().contains("as the game ended")) {
-                System.out.println(msg.getErrorMessage());
-            }
-            if (msg.getErrorMessage().contains("game is over")) {
-                System.out.println(msg.getErrorMessage());
-            }
-            if (msg.getMessage().contains("cant resign")) {
+
+
+            if (msg.getErrorMessage().contains("cant resign")) {
                 System.out.println(msg.getErrorMessage());
             }
         }

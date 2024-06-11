@@ -129,6 +129,7 @@ public class WSServer {
         }
         try {
             if (ended) {
+                System.out.println("no");
                 ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game ended, cannot make any more moves");
                 session.getRemote().sendString(new Gson().toJson(msg));
                 return;
@@ -141,10 +142,10 @@ public class WSServer {
             check(game,gameID,session, authToken);
         }
         catch (DataAccessException e) {
+            check(data.getGame(),gameID,session, authToken);
             if (ended) {
                 ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game ended, cannot make any more moves");
                 session.getRemote().sendString(new Gson().toJson(msg));
-
                 return;
             }
             ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid move");
