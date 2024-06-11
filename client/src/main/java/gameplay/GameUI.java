@@ -83,6 +83,7 @@ public class GameUI {
                         break;
                     }
                     handleResign(gameID);
+                    resigned = true;
                     break;
                 case "redraw":
                     if (stopRun) {

@@ -128,24 +128,23 @@ public class WSServer {
             return;
         }
         try {
-
             if (ended) {
-                ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "Game ended, cannot make any more moves", gameID);
-                session.getRemote().sendString(new Gson().toJson(notificationMessage));
+                ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game ended, cannot make any more moves");
+                session.getRemote().sendString(new Gson().toJson(msg));
                 return;
             }
-
             ChessGame game = sqlGameDAO.makeChessMove(move,gameID);
             ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
             WSSessions.broadcastSession(gameID,null, loadGameMessage);
             ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "move was made", gameID);
             WSSessions.broadcastSession(gameID,authToken, notificationMessage);
-            check(game,gameID);
+            check(game,gameID,session, authToken);
         }
         catch (DataAccessException e) {
             if (ended) {
-                ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "Game ended, cannot make any more moves", gameID);
-                WSSessions.broadcastSession(gameID,null, notificationMessage);
+                ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game ended, cannot make any more moves");
+                session.getRemote().sendString(new Gson().toJson(msg));
+
                 return;
             }
             ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "invalid move");
@@ -155,23 +154,25 @@ public class WSServer {
         }
     }
 
-    public static void check(ChessGame game, Integer gameID) throws Exception {
+    public static void check(ChessGame game, Integer gameID, Session session,String authToken) throws Exception {
         if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
-            ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "Black in checkmate, White won", gameID);
-            WSSessions.broadcastSession(gameID,null, notificationMessage);
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "Black in checkmate, White won", gameID);
+            WSSessions.broadcastSession(gameID,null, msg);
             ended = true;
             return;
         }
         if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
-            ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "White in checkmate, Black won", gameID);
-            WSSessions.broadcastSession(gameID,null, notificationMessage);
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "White in checkmate, Black won", gameID);
+            WSSessions.broadcastSession(gameID,null, msg);
             ended = true;
             return;
 
         }
         if (game.isInStalemate(ChessGame.TeamColor.BLACK) || game.isInStalemate(ChessGame.TeamColor.WHITE)) {
-            ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "Stalemate, game is a draw", gameID);
-            WSSessions.broadcastSession(gameID,null, notificationMessage);
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "Stalemate", gameID);
+            WSSessions.broadcastSession(gameID,null, msg);
+            ServerMessage msg2 = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Stalemate");
+            WSSessions.broadcastSession(gameID,authToken, msg2);
             ended = true;
             return;
 
@@ -197,6 +198,7 @@ public class WSServer {
         ChessMove move = command.getMove();
         SQLGameDAO sqlGameDAO = new SQLGameDAO();
         GameData data = sqlGameDAO.getGameData(gameID);
+        ChessGame game = data.getGame();
 
         if (username == null) {
             System.out.println("0");
@@ -206,10 +208,16 @@ public class WSServer {
             return;
         }
 
+        if (!username.equals(data.getBlackUsername()) && !username.equals(data.getWhiteUsername())) {
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "cant resign as observer");
+            session.getRemote().sendString(new Gson().toJson(msg));
+            return;
+        }
+
         if ((data.getWhiteUsername() == null) || (data.getBlackUsername() == null)) {
             System.out.println("1");
-            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "cant resign yet", gameID);
-            WSSessions.broadcastSession(gameID,null, msg);
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "cant resign, opponent already resigned");
+            session.getRemote().sendString(new Gson().toJson(msg));
             return;
         }
         if (data.getBlackUsername().equals(username)) {
@@ -220,8 +228,7 @@ public class WSServer {
             playerColor = ChessGame.TeamColor.WHITE;
             oppPlayerColor = ChessGame.TeamColor.BLACK;
         }
-
-//        sqlGameDAO.updateGame(playerColor,gameID, null);
+        sqlGameDAO.updateGame(playerColor,gameID, null);
         ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, oppPlayerColor + " won the game",gameID);
         session.getRemote().sendString(new Gson().toJson(loadGameMessage));
         ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, oppPlayerColor + " won the game", gameID);
@@ -230,8 +237,6 @@ public class WSServer {
 
     public static void handleLeave(UserGameCommand command, Session session) throws Exception {
         ChessGame.TeamColor playerColor = null;
-        ChessGame.TeamColor oppPlayerColor = null;
-
         Integer gameID = command.getGameID();
         String authToken = command.getAuthString();
         SQLAuthDAO sqlAuthDAO = new SQLAuthDAO();
@@ -248,21 +253,21 @@ public class WSServer {
             return;
         }
 
-        if ((data.getBlackUsername()!=null) && data.getBlackUsername().equals(username)) {
+        if (!username.equals(data.getBlackUsername()) && !username.equals(data.getWhiteUsername())) {
+            ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username + " left the game", gameID);
+            WSSessions.broadcastSession(gameID,authToken, notificationMessage);
+            return;
+        }
+        if (data.getBlackUsername().equals(username)) {
             playerColor = ChessGame.TeamColor.BLACK;
-            oppPlayerColor = ChessGame.TeamColor.WHITE;
         }
-        if ((data.getWhiteUsername()!= null) && data.getWhiteUsername().equals(username)) {
+        if (data.getWhiteUsername().equals(username)) {
             playerColor = ChessGame.TeamColor.WHITE;
-            oppPlayerColor = ChessGame.TeamColor.BLACK;
         }
-
+        ended = false;
         sqlGameDAO.updateGame(playerColor,gameID, null);
-        ServerMessage leaveMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, playerColor + " left the game",gameID);
-        session.getRemote().sendString(new Gson().toJson(leaveMessage));
-        ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, playerColor + " left the game", gameID);
+        ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username + " left the game", gameID);
         WSSessions.broadcastSession(gameID,authToken, notificationMessage);
-
         WSSessions.removeSession(gameID, authToken);
     }
 

@@ -10,6 +10,7 @@ import java.net.URI;
 @ClientEndpoint
 public class WSClient {
     private Session session;
+    private boolean resigned = false;
 
     @OnOpen
 
@@ -41,6 +42,21 @@ public class WSClient {
                 System.out.println("press c to continue");
                 PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_IN);
             }
+            if (msg.getErrorMessage().contains("Game ended")) {
+                System.out.println(msg.getMessage());
+            }
+            if (msg.getErrorMessage().contains("as observer")) {
+                System.out.println(msg.getMessage());
+            }
+            if (msg.getErrorMessage().contains("as the game ended")) {
+                System.out.println(msg.getMessage());
+            }
+            if (msg.getErrorMessage().contains("game is over")) {
+                System.out.println(msg.getMessage());
+            }
+            if (msg.getMessage().contains("cant resign")) {
+                System.out.println(msg.getErrorMessage());
+            }
         }
 
         if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
@@ -70,19 +86,14 @@ public class WSClient {
             if (msg.getMessage().contains("Stalemate")) {
                 System.out.println(msg.getMessage());
             }
-            if (msg.getMessage().contains("Game ended")) {
-                System.out.println(msg.getMessage());
-            }
+
             if (msg.getMessage().contains("won the game")) {
-                GameUI.resigned = true;
                 System.out.println(msg.getMessage());
             }
             if (msg.getMessage().contains("left the game")) {
                 System.out.println(msg.getMessage());
             }
-            if (msg.getMessage().contains("cant resign yet")) {
-                System.out.println(msg.getMessage());
-            }
+
 
         }
 

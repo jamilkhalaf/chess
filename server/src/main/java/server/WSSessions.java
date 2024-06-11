@@ -34,9 +34,10 @@ public class WSSessions {
         for (Map.Entry<String, Session> entry : sessionsForGame.entrySet()) {
             String authToken = entry.getKey();
             Session session = entry.getValue();
-
-            if (excludeAuthToken == null || !authToken.equals(excludeAuthToken)) {
-                session.getRemote().sendString(new Gson().toJson(message));
+            if (session.isOpen()) {
+                if (excludeAuthToken == null || !authToken.equals(excludeAuthToken)) {
+                    session.getRemote().sendString(new Gson().toJson(message));
+                }
             }
         }
     }
