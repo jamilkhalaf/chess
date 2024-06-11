@@ -259,13 +259,14 @@ public class GameUI {
         if (confirmation.equals("") || confirmation.equals("confirm")) {
             WSClient client = PreLoginUI.wsClient;
             String authToken = PreLoginUI.getAuthToken();
-            UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, UserGameCommand.CommandType.LEAVE);
+            UserGameCommand gameCommand = new UserGameCommand(authToken, gameID, UserGameCommand.CommandType.LEAVE, playerColor);
 
             Gson gson = new Gson();
             String message = gson.toJson(gameCommand);
 
             client.sendMessage(message);
         }
+        PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_IN);
         PostLoginUI.display();
     }
 

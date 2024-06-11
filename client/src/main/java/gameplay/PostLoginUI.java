@@ -215,7 +215,7 @@ public class PostLoginUI {
         WSClient client = PreLoginUI.wsClient;
 
         try {
-
+            GameUI.setGameID(gameID);
             GameUI.setPlayerColor(ChessGame.TeamColor.empty);
             UserGameCommand gameCommand = new UserGameCommand(PreLoginUI.getAuthToken(), gameID, UserGameCommand.CommandType.CONNECT, ChessGame.TeamColor.empty);
             Gson gson = new Gson();

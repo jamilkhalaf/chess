@@ -258,9 +258,10 @@ public class WSServer {
             return;
         }
 
-        if (!username.equals(data.getBlackUsername()) && !username.equals(data.getWhiteUsername())) {
+        if (command.getPlayerColor() == ChessGame.TeamColor.empty) {
             ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username + " left the game", gameID);
             WSSessions.broadcastSession(gameID,authToken, notificationMessage);
+            WSSessions.removeSession(gameID, authToken);
             return;
         }
         if (data.getBlackUsername().equals(username)) {
