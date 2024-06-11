@@ -17,7 +17,6 @@ public class WSClient {
     public void onOpen(Session session) throws Exception {
         this.session = session;
         System.out.println("Connected to server");
-        simulateLifecycleMethods();
     }
 
     @OnMessage
@@ -43,16 +42,16 @@ public class WSClient {
                 PreLoginUI.setCurrentState(PreLoginUI.State.LOGGED_IN);
             }
             if (msg.getErrorMessage().contains("Game ended")) {
-                System.out.println(msg.getMessage());
+                System.out.println(msg.getErrorMessage());
             }
             if (msg.getErrorMessage().contains("as observer")) {
-                System.out.println(msg.getMessage());
+                System.out.println(msg.getErrorMessage());
             }
             if (msg.getErrorMessage().contains("as the game ended")) {
-                System.out.println(msg.getMessage());
+                System.out.println(msg.getErrorMessage());
             }
             if (msg.getErrorMessage().contains("game is over")) {
-                System.out.println(msg.getMessage());
+                System.out.println(msg.getErrorMessage());
             }
             if (msg.getMessage().contains("cant resign")) {
                 System.out.println(msg.getErrorMessage());
@@ -125,17 +124,4 @@ public class WSClient {
         container.connectToServer(this, new URI(uri));
     }
 
-
-    public void simulateLifecycleMethods() throws Exception {
-        Session mockSession = null;
-        CloseReason mockCloseReason = new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE, "Testing");
-
-        onOpen(mockSession);
-
-        String mockMessage = "{\"serverMessageType\":\"ERROR\",\"errorMessage\":\"invalid gameID\"}";
-        onMessage(mockMessage);
-
-        onClose(mockSession, mockCloseReason);
-        onError(mockSession, new Exception("Simulated error"));
-    }
 }
