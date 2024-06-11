@@ -1,6 +1,7 @@
 package gameplay;
 
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import websocket.messages.ServerMessage;
 
@@ -97,6 +98,12 @@ public class WSClient {
             }
             if (msg.getMessage().contains("left the game")) {
                 System.out.println(msg.getMessage());
+            }
+            if (msg.getMessage().contains("color is already taken")) {
+                System.out.println(msg.getMessage());
+                GameUI.stopRun = true;
+                System.out.println("press c to continue");
+
             }
 
 

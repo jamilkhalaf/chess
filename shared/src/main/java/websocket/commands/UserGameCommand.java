@@ -25,6 +25,14 @@ public class UserGameCommand {
         this.commandType = type;
     }
 
+    public UserGameCommand(String authToken, Integer gameID, CommandType type, ChessGame.TeamColor playerColor)
+    {
+        this.authToken = authToken;
+        this.gameID = gameID;
+        this.commandType = type;
+        this.playerColor = playerColor;
+    }
+
     public UserGameCommand(String authToken, Integer gameID, ChessMove move, CommandType type)
     {
         this.authToken = authToken;
@@ -32,6 +40,7 @@ public class UserGameCommand {
         this.move = move;
         this.commandType = type;
     }
+
 
 
     public enum CommandType {
@@ -45,6 +54,11 @@ public class UserGameCommand {
     private ChessMove move;
     private final String authToken;
     private Integer gameID;
+    private ChessGame.TeamColor playerColor;
+
+    public ChessGame.TeamColor getPlayerColor() {
+        return playerColor;
+    }
 
     public ChessMove getMove() {
         return move;

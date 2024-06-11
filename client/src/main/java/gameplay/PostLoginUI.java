@@ -197,7 +197,7 @@ public class PostLoginUI {
         try {
 
             GameUI.setPlayerColor(ChessGame.TeamColor.empty);
-            UserGameCommand gameCommand = new UserGameCommand(PreLoginUI.getAuthToken(), gameID, UserGameCommand.CommandType.CONNECT);
+            UserGameCommand gameCommand = new UserGameCommand(PreLoginUI.getAuthToken(), gameID, UserGameCommand.CommandType.CONNECT, ChessGame.TeamColor.empty);
             Gson gson = new Gson();
             String message = gson.toJson(gameCommand);
             client.sendMessage(message);

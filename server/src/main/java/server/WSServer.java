@@ -104,13 +104,18 @@ public class WSServer {
             WSSessions.broadcastSession(gameID,authToken, notificationMessage);
             return;
         }
+        if (command.getPlayerColor() == ChessGame.TeamColor.empty) {
+            WSSessions.addSession(command.getGameID(), authToken, session);
+            ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
+            session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+            ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username +" joined as observer", gameID);
+            WSSessions.broadcastSession(gameID,authToken, notificationMessage);
+        }
+        else {
+            ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "color is already taken", gameID);
+            session.getRemote().sendString(new Gson().toJson(notificationMessage));
 
-        WSSessions.addSession(command.getGameID(), authToken, session);
-        ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
-        session.getRemote().sendString(new Gson().toJson(loadGameMessage));
-        ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username +" joined as observer", gameID);
-        WSSessions.broadcastSession(gameID,authToken, notificationMessage);
-
+        }
     }
 
     public static void handleMakeMove(UserGameCommand command, Session session) throws Exception {
