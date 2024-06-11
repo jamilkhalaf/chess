@@ -115,7 +115,6 @@ public class GameUI {
                         break;
                     }
                     displayHelp();
-                    GameUI.displayMenu();
                     break;
                 case "c":
                     PostLoginUI.display();
@@ -136,7 +135,30 @@ public class GameUI {
     }
 
     public static void displayHelp() {
-        System.out.println("Here is the list of available commands");
+        System.out.println("Available commands:");
+        System.out.println("  make-move <initial position> <final position>");
+        System.out.println("    - Make a move from the initial position to the final position.");
+        System.out.println("    - Example: make-move e2 e4");
+        System.out.println();
+        System.out.println("  resign");
+        System.out.println("    - Resign from the current game.");
+        System.out.println("    - Example: resign");
+        System.out.println();
+        System.out.println("  redraw");
+        System.out.println("    - Redraw the current game board.");
+        System.out.println("    - Example: redraw");
+        System.out.println();
+        System.out.println("  highlight <position>");
+        System.out.println("    - Highlight a specific position on the board.");
+        System.out.println("    - Example: highlight e4");
+        System.out.println();
+        System.out.println("  leave");
+        System.out.println("    - Leave the current game.");
+        System.out.println("    - Example: leave");
+        System.out.println();
+        System.out.println("  help");
+        System.out.println("    - Show detailed information about available commands.");
+        System.out.println("    - Example: help");
     }
 
     private static ChessMove convertToMove(String initialPosition, String finalPosition) {

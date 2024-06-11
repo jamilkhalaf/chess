@@ -104,7 +104,27 @@ public class PostLoginUI {
     }
 
     public static void displayHelp() {
-        System.out.println("helping");
+        System.out.println("Available commands:");
+        System.out.println("  create <NAME>");
+        System.out.println("    - Create a new game with the specified name.");
+        System.out.println();
+        System.out.println("  list");
+        System.out.println("    - List all available games.");
+        System.out.println();
+        System.out.println("  join <ID> [WHITE|BLACK]");
+        System.out.println("    - Join a game by its ID and choose a side (WHITE or BLACK).");
+        System.out.println();
+        System.out.println("  observe <ID>");
+        System.out.println("    - Observe a game by its ID.");
+        System.out.println();
+        System.out.println("  logout");
+        System.out.println("    - Log out of your account.");
+        System.out.println();
+        System.out.println("  quit");
+        System.out.println("    - Quit the game.");
+        System.out.println();
+        System.out.println("  help");
+        System.out.println("    - Show detailed information about available commands.");
     }
 
     private static void handleCreateGame(String gameName) {

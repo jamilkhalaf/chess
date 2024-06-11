@@ -127,7 +127,19 @@ public class PreLoginUI {
     }
 
     public static void displayHelp() {
-        System.out.println("helping");
+        System.out.println("Here is a list of available commands and their descriptions:");
+
+        System.out.println("\nregister <USERNAME> <PASSWORD> <EMAIL>");
+        System.out.println("    - This command allows you to create a new account. You need to provide a unique username, a password, and a valid email address.");
+
+        System.out.println("\nlogin <USERNAME> <PASSWORD>");
+        System.out.println("    - This command allows you to log into your existing account. You need to provide your username and password.");
+
+        System.out.println("\nquit");
+        System.out.println("    - This command will exit the application. Use this command when you want to stop playing.");
+
+        System.out.println("\nhelp");
+        System.out.println("    - This command displays this help menu, providing details about all available commands.");
     }
 
 
